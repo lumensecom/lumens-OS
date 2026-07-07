@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Paleta de marca LUMENS (raw) */
+    --lumens-yellow: #f5c518;
+    --lumens-black: #1a1a1a;
+    --lumens-beige: #fff8f5;
+    --lumens-green: #22a55b;
+    --lumens-red: #ef4444;
+    --lumens-purple: #7c3aed;
+
+    /* Tokens shadcn (HSL) — modo claro por default */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+
+    /* Primario = amarillo LUMENS (CTAs), texto oscuro encima */
+    --primary: 46 92% 53%;
+    --primary-foreground: 0 0% 10%;
+
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 6% 10%;
+
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 46%;
+
+    --accent: 240 5% 96%;
+    --accent-foreground: 240 6% 10%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 0 0% 10%;
+
+    --radius: 0.5rem;
+
+    /* Colores para gráficos (recharts) */
+    --chart-1: 142 65% 39%;
+    --chart-2: 46 92% 53%;
+    --chart-3: 262 83% 58%;
+    --chart-4: 0 84% 60%;
+    --chart-5: 217 91% 60%;
+  }
+
+  .dark {
+    --background: 0 0% 10%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 13%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 13%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 46 92% 53%;
+    --primary-foreground: 0 0% 10%;
+    --secondary: 240 4% 16%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 4% 16%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 240 4% 16%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 4% 20%;
+    --input: 240 4% 20%;
+    --ring: 240 5% 84%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .font-display {
+    font-family: var(--font-syne), system-ui, sans-serif;
+  }
+}
