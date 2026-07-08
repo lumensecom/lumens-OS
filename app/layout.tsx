@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { Syne, DM_Sans, DM_Mono } from "next/font/google"
+import { NuqsAdapter } from "nuqs/adapters/next/app"
 import { cn } from "@/lib/utils"
 import { Toaster } from "@/components/ui/sonner"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -50,7 +51,7 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          {children}
+          <NuqsAdapter>{children}</NuqsAdapter>
           <Toaster richColors position="top-right" />
         </ThemeProvider>
       </body>

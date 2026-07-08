@@ -14,22 +14,44 @@ import {
 import { createClient } from "@/lib/supabase/server"
 import { GOALS } from "@/lib/constants"
 import { formatCOP } from "@/lib/format"
+import { computeTotals } from "@/lib/contabilidad"
+import { resolveMonth, fetchEntries } from "@/lib/contabilidad-queries"
 import { StatCard } from "@/components/dashboard/stat-card"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default async function DashboardHomePage() {
   const supabase = createClient()
+  const today = format(new Date(), "yyyy-MM-dd")
+  const { start, end } = resolveMonth()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  const { count: productsCount } = await supabase
-    .from("products")
-    .select("*", { count: "exact", head: true })
-    .in("status", ["active", "testing", "paused"])
+  const [
+    {
+      data: { user },
+    },
+    { count: productsCount },
+    todayEntries,
+    monthEntries,
+  ] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase
+      .from("products")
+      .select("*", { count: "exact", head: true })
+      .in("status", ["active", "testing", "paused"]),
+    fetchEntries(today, today),
+    fetchEntries(start, end),
+  ])
+
+  const utilidadHoy = computeTotals(
+    todayEntries.revenue,
+    todayEntries.expenses,
+  ).utilidad
+  const utilidadMes = computeTotals(
+    monthEntries.revenue,
+    monthEntries.expenses,
+  ).utilidad
 
   const displayName = user?.email?.split("@")[0] ?? "de nuevo"
-  const today = format(new Date(), "EEEE, d 'de' MMMM", { locale: es })
+  const todayLabel = format(new Date(), "EEEE, d 'de' MMMM", { locale: es })
 
   return (
     <div className="space-y-6">
@@ -37,24 +59,25 @@ export default async function DashboardHomePage() {
         <h2 className="font-display text-xl font-bold tracking-tight">
           Hola, {displayName}
         </h2>
-        <p className="text-sm capitalize text-muted-foreground">{today}</p>
+        <p className="text-sm capitalize text-muted-foreground">{todayLabel}</p>
       </div>
 
-      {/* Métricas clave — datos en vivo llegan en Sprint 2 */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Utilidad hoy"
-          value="—"
-          hint="Se conecta en Sprint 2"
+          value={formatCOP(utilidadHoy)}
+          hint="Ingresos menos gastos de hoy"
           icon={Wallet}
-          accent="green"
+          accent={utilidadHoy >= 0 ? "green" : "red"}
+          valueColor={utilidadHoy >= 0 ? "green" : "red"}
         />
         <StatCard
           title="Utilidad del mes"
-          value="—"
-          hint="Se conecta en Sprint 2"
+          value={formatCOP(utilidadMes)}
+          hint="Acumulado del mes en curso"
           icon={TrendingUp}
-          accent="yellow"
+          accent={utilidadMes >= 0 ? "green" : "red"}
+          valueColor={utilidadMes >= 0 ? "green" : "red"}
         />
         <StatCard
           title="Productos activos"
@@ -66,24 +89,22 @@ export default async function DashboardHomePage() {
         <StatCard
           title="Campañas activas"
           value="—"
-          hint="Se conecta en Sprint 2"
+          hint="Se conecta en el siguiente módulo"
           icon={Target}
           accent="blue"
         />
       </div>
 
-      {/* Progreso de metas */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Metas del mes</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <GoalBar label="Meta A" goal={GOALS.metaA} current={0} />
-          <GoalBar label="Meta B" goal={GOALS.metaB} current={0} />
+          <GoalBar label="Meta A" goal={GOALS.metaA} current={utilidadMes} />
+          <GoalBar label="Meta B" goal={GOALS.metaB} current={utilidadMes} />
         </CardContent>
       </Card>
 
-      {/* Paneles */}
       <div className="grid gap-4 lg:grid-cols-3">
         <PlaceholderPanel
           title="Top campañas por ROAS"
@@ -114,7 +135,7 @@ function GoalBar({
   goal: number
   current: number
 }) {
-  const pct = Math.min(100, Math.round((current / goal) * 100))
+  const pct = Math.max(0, Math.min(100, Math.round((current / goal) * 100)))
   return (
     <div>
       <div className="mb-1 flex items-center justify-between text-sm">
@@ -125,7 +146,7 @@ function GoalBar({
           </span>
         </span>
         <span className="font-mono text-muted-foreground">
-          {formatCOP(current)} / {formatCOP(goal)}
+          {formatCOP(Math.max(0, current))} / {formatCOP(goal)}
         </span>
       </div>
       <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
