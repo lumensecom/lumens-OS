@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Syne, DM_Sans, DM_Mono } from "next/font/google"
 import { cn } from "@/lib/utils"
 import { Toaster } from "@/components/ui/sonner"
+import { ThemeProvider } from "@/components/theme-provider"
 import { APP_NAME, APP_DESCRIPTION } from "@/lib/constants"
 import "./globals.css"
 
@@ -34,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es">
+    <html lang="es" suppressHydrationWarning>
       <body
         className={cn(
           syne.variable,
@@ -43,8 +44,15 @@ export default function RootLayout({
           "font-sans antialiased",
         )}
       >
-        {children}
-        <Toaster richColors position="top-right" />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem={false}
+          disableTransitionOnChange
+        >
+          {children}
+          <Toaster richColors position="top-right" />
+        </ThemeProvider>
       </body>
     </html>
   )

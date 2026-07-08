@@ -51,7 +51,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="rounded-lg border border-white/10 bg-white p-8 shadow-sm">
+    <div className="rounded-lg border border-white/10 bg-white p-8 shadow-sm duration-500 animate-in fade-in zoom-in-95">
+
       <div className="mb-6 text-center">
         <h1 className="font-display text-2xl font-extrabold tracking-tight text-lumens-black">
           {APP_NAME}

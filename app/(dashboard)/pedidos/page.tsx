@@ -6,6 +6,7 @@ export default function PedidosPage() {
   return (
     <ModulePlaceholder
       icon={ClipboardList}
+      accent="neutral"
       title="Pedidos"
       description="Módulo en construcción — Fase 2. Se conectará con la API de Dropi."
     />

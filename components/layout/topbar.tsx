@@ -21,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { SidebarNav } from "@/components/layout/sidebar-nav"
+import { ThemeToggle } from "@/components/theme-toggle"
 import type { Profile } from "@/lib/types"
 
 function currentTitle(pathname: string): string {
@@ -47,7 +48,10 @@ export function Topbar({ profile }: { profile: Profile | null }) {
             <span className="sr-only">Abrir menú</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="w-[280px] bg-lumens-beige p-0">
+        <SheetContent
+          side="left"
+          className="w-[280px] bg-lumens-beige p-0 dark:bg-card"
+        >
           <SheetTitle className="sr-only">Navegación</SheetTitle>
           <SidebarNav profile={profile} />
         </SheetContent>
@@ -57,7 +61,8 @@ export function Topbar({ profile }: { profile: Profile | null }) {
         {title}
       </h1>
 
-      <div className="ml-auto">
+      <div className="ml-auto flex items-center gap-1">
+        <ThemeToggle />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">

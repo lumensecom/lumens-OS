@@ -1,6 +1,15 @@
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
-import { Wallet, TrendingUp, Package, Target } from "lucide-react"
+import {
+  Wallet,
+  TrendingUp,
+  Package,
+  Target,
+  Trophy,
+  Sparkles,
+  Receipt,
+  type LucideIcon,
+} from "lucide-react"
 
 import { createClient } from "@/lib/supabase/server"
 import { GOALS } from "@/lib/constants"
@@ -11,7 +20,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 export default async function DashboardHomePage() {
   const supabase = createClient()
 
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
   const { count: productsCount } = await supabase
     .from("products")
     .select("*", { count: "exact", head: true })
@@ -36,24 +47,28 @@ export default async function DashboardHomePage() {
           value="—"
           hint="Se conecta en Sprint 2"
           icon={Wallet}
+          accent="green"
         />
         <StatCard
           title="Utilidad del mes"
           value="—"
           hint="Se conecta en Sprint 2"
           icon={TrendingUp}
+          accent="yellow"
         />
         <StatCard
           title="Productos activos"
           value={String(productsCount ?? 0)}
           hint="En catálogo"
           icon={Package}
+          accent="purple"
         />
         <StatCard
           title="Campañas activas"
           value="—"
           hint="Se conecta en Sprint 2"
           icon={Target}
+          accent="blue"
         />
       </div>
 
@@ -68,11 +83,23 @@ export default async function DashboardHomePage() {
         </CardContent>
       </Card>
 
-      {/* Paneles placeholder */}
+      {/* Paneles */}
       <div className="grid gap-4 lg:grid-cols-3">
-        <PlaceholderPanel title="Top campañas por ROAS" />
-        <PlaceholderPanel title="Top productos por margen" />
-        <PlaceholderPanel title="Últimos movimientos" />
+        <PlaceholderPanel
+          title="Top campañas por ROAS"
+          icon={Trophy}
+          accentClass="text-lumens-green"
+        />
+        <PlaceholderPanel
+          title="Top productos por margen"
+          icon={Sparkles}
+          accentClass="text-lumens-purple"
+        />
+        <PlaceholderPanel
+          title="Últimos movimientos"
+          icon={Receipt}
+          accentClass="text-blue-500"
+        />
       </div>
     </div>
   )
@@ -91,14 +118,19 @@ function GoalBar({
   return (
     <div>
       <div className="mb-1 flex items-center justify-between text-sm">
-        <span className="font-medium">{label}</span>
+        <span className="font-medium">
+          {label}{" "}
+          <span className="ml-1 font-mono text-xs text-muted-foreground">
+            {pct}%
+          </span>
+        </span>
         <span className="font-mono text-muted-foreground">
           {formatCOP(current)} / {formatCOP(goal)}
         </span>
       </div>
       <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
         <div
-          className="h-full rounded-full bg-primary transition-all"
+          className="h-full rounded-full bg-primary transition-all duration-700"
           style={{ width: `${pct}%` }}
         />
       </div>
@@ -106,10 +138,19 @@ function GoalBar({
   )
 }
 
-function PlaceholderPanel({ title }: { title: string }) {
+function PlaceholderPanel({
+  title,
+  icon: Icon,
+  accentClass,
+}: {
+  title: string
+  icon: LucideIcon
+  accentClass: string
+}) {
   return (
-    <Card>
-      <CardHeader>
+    <Card className="transition-shadow duration-200 hover:shadow-md">
+      <CardHeader className="flex-row items-center gap-2 space-y-0">
+        <Icon className={`h-4 w-4 ${accentClass}`} />
         <CardTitle className="text-base">{title}</CardTitle>
       </CardHeader>
       <CardContent>

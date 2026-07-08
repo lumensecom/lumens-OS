@@ -6,6 +6,7 @@ export default function CreativosPage() {
   return (
     <ModulePlaceholder
       icon={Clapperboard}
+      accent="red"
       title="Creativos"
       description="Biblioteca de creativos ganadores con guiones, hooks y métricas por ángulo. Se implementa en el Sprint 4."
     />

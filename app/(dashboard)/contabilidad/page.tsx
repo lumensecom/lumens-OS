@@ -6,6 +6,7 @@ export default function ContabilidadPage() {
   return (
     <ModulePlaceholder
       icon={Wallet}
+      accent="green"
       title="Contabilidad"
       description="Ingresos, gastos, utilidad neta y flujo de caja diario. Se implementa en el Sprint 2."
     />
