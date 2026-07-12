@@ -14,6 +14,10 @@ export const productSchema = z.object({
   compared_price: z.coerce.number().nonnegative().optional().nullable(),
   cost_dropi: z.coerce.number().nonnegative("No puede ser negativo"),
   shipping_cost: z.coerce.number().nonnegative("No puede ser negativo"),
+  fulfillment_cost: z.coerce.number().nonnegative("No puede ser negativo").default(0),
+  cpa_real: z.coerce.number().nonnegative().optional().nullable(),
+  admin_cost: z.coerce.number().nonnegative("No puede ser negativo").default(2000),
+  price_rule_pct: z.coerce.number().min(1).max(100).default(50),
   landing_url: z.string().optional().nullable(),
   shopify_product_id: z.string().optional().nullable(),
   dropi_product_id: z.string().optional().nullable(),
@@ -63,4 +67,51 @@ export function computeMargin(
   const margin = selling - cost - shipping
   const marginPct = selling > 0 ? (margin / selling) * 100 : 0
   return { margin, marginPct, cpaMax: margin }
+}
+
+export type Costing = {
+  /** Costo total del producto puesto en la puerta (costo + fulfillment + flete). */
+  cogs: number
+  /** Margen bruto por venta (venta − COGS). */
+  margin: number
+  marginPct: number
+  /** El margen bruto es a la vez el CPA máximo de break-even. */
+  cpaMax: number
+  /** Utilidad neta = margen − publicidad (CPA) − costo admin. */
+  utility: number
+  utilityPct: number
+  /** Precio mínimo según la regla (COGS ≤ rulePct% del precio). */
+  minPrice: number
+  /** true si el precio actual cumple la regla de precio. */
+  meetsRule: boolean
+}
+
+/** Costeo completo estilo Excel COSTOS Y OFERTAS. */
+export function computeCosting(input: {
+  selling: number
+  cost: number
+  fulfillment: number
+  shipping: number
+  cpaReal?: number | null
+  admin?: number
+  rulePct?: number
+}): Costing {
+  const selling = input.selling || 0
+  const cogs = (input.cost || 0) + (input.fulfillment || 0) + (input.shipping || 0)
+  const margin = selling - cogs
+  const marginPct = selling > 0 ? (margin / selling) * 100 : 0
+  const utility = margin - (input.cpaReal ?? 0) - (input.admin ?? 0)
+  const utilityPct = selling > 0 ? (utility / selling) * 100 : 0
+  const rulePct = input.rulePct ?? 50
+  const minPrice = rulePct > 0 ? cogs / (rulePct / 100) : 0
+  return {
+    cogs,
+    margin,
+    marginPct,
+    cpaMax: margin,
+    utility,
+    utilityPct,
+    minPrice,
+    meetsRule: selling >= minPrice,
+  }
 }

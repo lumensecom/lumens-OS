@@ -22,7 +22,7 @@ export default async function UploadMetricsPage() {
           </Link>
         </Button>
         <div>
-          <h2 className="font-display text-xl font-bold tracking-tight">
+          <h2 className="page-title">
             Subir métricas desde CSV
           </h2>
           <p className="text-sm text-muted-foreground">

@@ -18,6 +18,7 @@ export async function createProduct(values: unknown): Promise<ActionResult> {
   const { error } = await supabase.from("products").insert({
     ...parsed.data,
     compared_price: parsed.data.compared_price ?? null,
+    cpa_real: parsed.data.cpa_real ?? null,
     landing_url: parsed.data.landing_url || null,
     shopify_product_id: parsed.data.shopify_product_id || null,
     dropi_product_id: parsed.data.dropi_product_id || null,
@@ -68,6 +69,7 @@ export async function updateProduct(
     .update({
       ...parsed.data,
       compared_price: parsed.data.compared_price ?? null,
+      cpa_real: parsed.data.cpa_real ?? null,
       landing_url: parsed.data.landing_url || null,
       shopify_product_id: parsed.data.shopify_product_id || null,
       dropi_product_id: parsed.data.dropi_product_id || null,

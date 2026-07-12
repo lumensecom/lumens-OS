@@ -1,10 +1,13 @@
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 
+import { fetchSettings } from "@/lib/settings-queries"
 import { Button } from "@/components/ui/button"
 import { ProductForm } from "@/components/productos/product-form"
 
-export default function NuevoProductoPage() {
+export default async function NuevoProductoPage() {
+  const settings = await fetchSettings()
+
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-3">
@@ -14,15 +17,19 @@ export default function NuevoProductoPage() {
           </Link>
         </Button>
         <div>
-          <h2 className="font-display text-xl font-bold tracking-tight">
-            Crear producto
-          </h2>
+          <h2 className="page-title">Crear producto</h2>
           <p className="text-sm text-muted-foreground">
-            El margen y el CPA máximo rentable se calculan en vivo
+            El costeo completo (COGS, margen, utilidad y venta mínima) se calcula en vivo
           </p>
         </div>
       </div>
-      <ProductForm />
+      <ProductForm
+        defaultValues={{
+          shipping_cost: Number(settings.default_shipping_cost),
+          admin_cost: Number(settings.default_admin_cost),
+          price_rule_pct: Number(settings.default_price_rule_pct),
+        }}
+      />
     </div>
   )
 }

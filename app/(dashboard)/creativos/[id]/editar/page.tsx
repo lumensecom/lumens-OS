@@ -32,7 +32,7 @@ export default async function EditarCreativoPage({
           </Link>
         </Button>
         <div>
-          <h2 className="font-display text-xl font-bold tracking-tight">
+          <h2 className="page-title">
             Editar creativo
           </h2>
           <p className="text-sm text-muted-foreground">{creative.name}</p>

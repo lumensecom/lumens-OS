@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation"
 import { Menu, LogOut } from "lucide-react"
 
-import { NAV_MAIN, NAV_SOON } from "@/lib/constants"
+import { NAV_MAIN, NAV_SOON, NAV_SYSTEM } from "@/lib/constants"
 import { logout } from "@/app/(auth)/actions"
 import { Button } from "@/components/ui/button"
 import {
@@ -25,7 +25,7 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import type { Profile } from "@/lib/types"
 
 function currentTitle(pathname: string): string {
-  const all = [...NAV_MAIN, ...NAV_SOON]
+  const all = [...NAV_MAIN, ...NAV_SOON, ...NAV_SYSTEM]
   const match = all.find((i) =>
     i.href === "/" ? pathname === "/" : pathname.startsWith(i.href),
   )

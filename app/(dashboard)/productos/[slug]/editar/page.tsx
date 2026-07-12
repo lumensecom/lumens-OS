@@ -32,7 +32,7 @@ export default async function EditarProductoPage({
           </Link>
         </Button>
         <div>
-          <h2 className="font-display text-xl font-bold tracking-tight">
+          <h2 className="page-title">
             Editar producto
           </h2>
           <p className="text-sm text-muted-foreground">
@@ -51,6 +51,10 @@ export default async function EditarProductoPage({
             product.compared_price != null ? Number(product.compared_price) : undefined,
           cost_dropi: Number(product.cost_dropi),
           shipping_cost: Number(product.shipping_cost),
+          fulfillment_cost: Number(product.fulfillment_cost),
+          cpa_real: product.cpa_real != null ? Number(product.cpa_real) : undefined,
+          admin_cost: Number(product.admin_cost),
+          price_rule_pct: Number(product.price_rule_pct),
           landing_url: product.landing_url ?? "",
           shopify_product_id: product.shopify_product_id ?? "",
           dropi_product_id: product.dropi_product_id ?? "",

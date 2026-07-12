@@ -8,6 +8,8 @@ import {
   Clapperboard,
   ClipboardList,
   Users,
+  Sparkles,
+  Settings,
   type LucideIcon,
 } from "lucide-react"
 
@@ -47,12 +49,18 @@ export const NAV_MAIN: NavItem[] = [
   { label: "Conocimiento", href: "/conocimiento", icon: BookOpen },
   { label: "Research", href: "/research", icon: Search },
   { label: "Creativos", href: "/creativos", icon: Clapperboard },
+  { label: "AI Studio", href: "/ai", icon: Sparkles },
 ]
 
 /** Módulos de fase 2 (aún no funcionales). */
 export const NAV_SOON: NavItem[] = [
   { label: "Pedidos", href: "/pedidos", icon: ClipboardList, soon: true },
   { label: "Clientes", href: "/clientes", icon: Users, soon: true },
+]
+
+/** Sistema (siempre al final del sidebar). */
+export const NAV_SYSTEM: NavItem[] = [
+  { label: "Configuración", href: "/configuracion", icon: Settings },
 ]
 
 /** Etiquetas legibles para categorías de gasto. */

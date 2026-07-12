@@ -32,7 +32,7 @@ export default async function ConocimientoPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="font-display text-xl font-bold tracking-tight">
+          <h2 className="page-title">
             Base de conocimiento
           </h2>
           <p className="text-sm text-muted-foreground">

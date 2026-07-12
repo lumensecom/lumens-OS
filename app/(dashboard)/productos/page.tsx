@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Plus, Package } from "lucide-react"
+import { Plus, Package, Table2 } from "lucide-react"
 
 import { createClient } from "@/lib/supabase/server"
 import { firstParam, type SearchParams } from "@/lib/contabilidad-queries"
@@ -33,19 +33,27 @@ export default async function ProductosPage({
     <div className="space-y-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="font-display text-xl font-bold tracking-tight">
+          <h2 className="page-title">
             Productos
           </h2>
           <p className="text-sm text-muted-foreground">
             Catálogo con costeo y margen por producto
           </p>
         </div>
-        <Button size="sm" asChild>
-          <Link href="/productos/nuevo">
-            <Plus className="mr-1 h-4 w-4" />
-            Crear producto
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button size="sm" variant="outline" asChild>
+            <Link href="/productos/costeo">
+              <Table2 className="mr-1 h-4 w-4" />
+              Tabla de costeo
+            </Link>
+          </Button>
+          <Button size="sm" asChild>
+            <Link href="/productos/nuevo">
+              <Plus className="mr-1 h-4 w-4" />
+              Crear producto
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <StatusFilter />

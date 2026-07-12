@@ -41,7 +41,7 @@ export default async function AngulosPage() {
           </Link>
         </Button>
         <div>
-          <h2 className="font-display text-xl font-bold tracking-tight">
+          <h2 className="page-title">
             Creativos por ángulo
           </h2>
           <p className="text-sm text-muted-foreground">

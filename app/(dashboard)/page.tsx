@@ -12,7 +12,7 @@ import {
 } from "lucide-react"
 
 import { createClient } from "@/lib/supabase/server"
-import { GOALS } from "@/lib/constants"
+import { fetchSettings } from "@/lib/settings-queries"
 import { formatCOP } from "@/lib/format"
 import { computeTotals } from "@/lib/contabilidad"
 import { resolveMonth, fetchEntries } from "@/lib/contabilidad-queries"
@@ -39,6 +39,7 @@ export default async function DashboardHomePage() {
     highlights,
     topProducts,
     movements,
+    settings,
   ] = await Promise.all([
     supabase.auth.getUser(),
     supabase
@@ -50,6 +51,7 @@ export default async function DashboardHomePage() {
     fetchCampaignHighlights(),
     fetchTopProducts(),
     fetchRecentMovements(),
+    fetchSettings(),
   ])
 
   const utilidadHoy = computeTotals(todayEntries.revenue, todayEntries.expenses).utilidad
@@ -61,8 +63,8 @@ export default async function DashboardHomePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="font-display text-xl font-bold tracking-tight">
-          Hola, {displayName}
+        <h2 className="page-title text-3xl">
+          Hola, <span className="text-gradient">{displayName}</span>
         </h2>
         <p className="text-sm capitalize text-muted-foreground">{todayLabel}</p>
       </div>
@@ -105,8 +107,8 @@ export default async function DashboardHomePage() {
           <CardTitle className="text-base">Metas del mes</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <GoalBar label="Meta A" goal={GOALS.metaA} current={utilidadMes} />
-          <GoalBar label="Meta B" goal={GOALS.metaB} current={utilidadMes} />
+          <GoalBar label="Meta A" goal={Number(settings.meta_a)} current={utilidadMes} />
+          <GoalBar label="Meta B" goal={Number(settings.meta_b)} current={utilidadMes} />
         </CardContent>
       </Card>
 

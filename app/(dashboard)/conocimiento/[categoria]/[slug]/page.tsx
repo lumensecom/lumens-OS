@@ -36,7 +36,7 @@ export default async function ArticuloPage({
           </Button>
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="font-display text-xl font-bold tracking-tight">
+              <h2 className="page-title">
                 {article.title}
               </h2>
               {article.is_pinned && <Pin className="h-4 w-4 text-primary" />}

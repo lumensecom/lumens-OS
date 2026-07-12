@@ -48,7 +48,7 @@ export default async function ResearchDetallePage({
           </Button>
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="font-display text-xl font-bold tracking-tight">
+              <h2 className="page-title">
                 {item.name}
               </h2>
               <span className={cn("rounded-full px-2.5 py-0.5 font-mono text-sm font-bold", scoreColor(total))}>

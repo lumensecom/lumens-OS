@@ -39,7 +39,7 @@ export default async function BuscarPage({
           </Link>
         </Button>
         <div>
-          <h2 className="font-display text-xl font-bold tracking-tight">Buscar</h2>
+          <h2 className="page-title">Buscar</h2>
           {q && (
             <p className="text-sm text-muted-foreground">
               {(results ?? []).length} resultado(s) para “{q}”

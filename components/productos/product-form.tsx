@@ -30,6 +30,7 @@ type Props = {
 const EMPTY: ProductInput = {
   name: "", slug: "", status: "testing",
   selling_price: 0, compared_price: undefined, cost_dropi: 0, shipping_cost: 0,
+  fulfillment_cost: 0, cpa_real: undefined, admin_cost: 2000, price_rule_pct: 50,
   landing_url: "", shopify_product_id: "", dropi_product_id: "",
   description: "", main_image_url: null, gallery: [],
   best_angle: "", target_audience: "",
@@ -44,8 +45,9 @@ export function ProductForm({ productId, defaultValues }: Props) {
     defaultValues: { ...EMPTY, ...defaultValues },
   })
 
-  const [selling, cost, shipping] = form.watch([
+  const [selling, cost, shipping, fulfillment, cpaReal, admin, rulePct] = form.watch([
     "selling_price", "cost_dropi", "shipping_cost",
+    "fulfillment_cost", "cpa_real", "admin_cost", "price_rule_pct",
   ])
 
   function onSubmit(values: ProductInput) {
@@ -131,8 +133,12 @@ export function ProductForm({ productId, defaultValues }: Props) {
               {([
                 ["selling_price", "Precio de venta"],
                 ["compared_price", "Precio tachado"],
-                ["cost_dropi", "Costo Dropi"],
-                ["shipping_cost", "Costo de envío"],
+                ["cost_dropi", "Costo del producto"],
+                ["shipping_cost", "Flete / envío"],
+                ["fulfillment_cost", "Fulfillment"],
+                ["cpa_real", "Publicidad (CPA)"],
+                ["admin_cost", "Costo admin"],
+                ["price_rule_pct", "Regla precio (%)"],
               ] as const).map(([name, label]) => (
                 <FormField key={name} control={form.control} name={name} render={({ field }) => (
                   <FormItem>
@@ -146,7 +152,15 @@ export function ProductForm({ productId, defaultValues }: Props) {
                 )} />
               ))}
             </div>
-            <PricingCalculator selling={Number(selling)} cost={Number(cost)} shipping={Number(shipping)} />
+            <PricingCalculator
+              selling={Number(selling)}
+              cost={Number(cost)}
+              shipping={Number(shipping)}
+              fulfillment={Number(fulfillment)}
+              cpaReal={cpaReal == null || cpaReal === undefined ? 0 : Number(cpaReal)}
+              admin={Number(admin)}
+              rulePct={Number(rulePct)}
+            />
           </CardContent>
         </Card>
 

@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 import { cn } from "@/lib/utils"
-import { APP_NAME, NAV_MAIN, NAV_SOON, type NavItem } from "@/lib/constants"
+import { APP_NAME, NAV_MAIN, NAV_SOON, NAV_SYSTEM, type NavItem } from "@/lib/constants"
 import { Separator } from "@/components/ui/separator"
 import type { Profile } from "@/lib/types"
 
@@ -74,6 +74,17 @@ export function SidebarNav({ profile }: { profile: Profile | null }) {
         {NAV_SOON.map((item) => (
           <NavLink key={item.href} item={item} active={false} />
         ))}
+
+        <div className="mt-auto">
+          <Separator className="my-2" />
+          {NAV_SYSTEM.map((item) => (
+            <NavLink
+              key={item.href}
+              item={item}
+              active={isActive(pathname, item.href)}
+            />
+          ))}
+        </div>
       </nav>
 
       <div className="flex items-center gap-2 rounded-md border bg-card px-3 py-2">

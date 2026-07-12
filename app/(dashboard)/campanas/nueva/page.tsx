@@ -21,7 +21,7 @@ export default async function NuevaCampanaPage() {
           </Link>
         </Button>
         <div>
-          <h2 className="font-display text-xl font-bold tracking-tight">
+          <h2 className="page-title">
             Nueva campaña
           </h2>
           <p className="text-sm text-muted-foreground">

@@ -71,7 +71,7 @@ export default async function ProductoDetallePage({
           </Button>
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="font-display text-xl font-bold tracking-tight">
+              <h2 className="page-title">
                 {product.name}
               </h2>
               <StatusBadge status={product.status ?? "testing"} />
@@ -96,7 +96,7 @@ export default async function ProductoDetallePage({
         <StatCard
           title="Margen bruto"
           value={formatCOP(Number(product.margin ?? 0))}
-          hint={`${formatCOP(Number(product.selling_price ?? 0))} venta − ${formatCOP(Number(product.cost_dropi ?? 0) + Number(product.shipping_cost ?? 0))} costos`}
+          hint={`${formatCOP(Number(product.selling_price ?? 0))} venta − ${formatCOP(Number(product.cogs ?? 0))} COGS`}
           icon={Wallet}
           accent={Number(product.margin ?? 0) > 0 ? "green" : "red"}
         />
@@ -107,10 +107,11 @@ export default async function ProductoDetallePage({
           accent="purple"
         />
         <StatCard
-          title="CPA máx. rentable"
-          value={formatCOP(Number(product.cpa_max_rentable ?? 0))}
+          title="Utilidad estimada"
+          value={formatCOP(Number(product.net_utility ?? 0))}
+          hint={`${formatPercent(Number(product.net_utility_percentage ?? 0))} · margen − pauta − admin`}
           icon={TargetIcon}
-          accent="yellow"
+          accent={Number(product.net_utility ?? 0) > 0 ? "yellow" : "red"}
         />
         <StatCard
           title="Ingresos históricos"
@@ -120,6 +121,41 @@ export default async function ProductoDetallePage({
           accent="blue"
         />
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Costeo completo</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm sm:grid-cols-3 lg:grid-cols-6">
+            {([
+              ["Precio de venta", formatCOP(Number(product.selling_price ?? 0))],
+              ["Costo del producto", formatCOP(Number(product.cost_dropi ?? 0))],
+              ["Fulfillment", formatCOP(Number(product.fulfillment_cost ?? 0))],
+              ["Flete", formatCOP(Number(product.shipping_cost ?? 0))],
+              ["COGS", formatCOP(Number(product.cogs ?? 0))],
+              ["CPA máx. rentable", formatCOP(Number(product.cpa_max_rentable ?? 0))],
+              ["Publicidad (CPA)", product.cpa_real != null ? formatCOP(Number(product.cpa_real)) : "—"],
+              ["Costo admin", formatCOP(Number(product.admin_cost ?? 0))],
+              ["Utilidad", formatCOP(Number(product.net_utility ?? 0))],
+              ["% utilidad", formatPercent(Number(product.net_utility_percentage ?? 0))],
+              [`Regla de precio`, `${Number(product.price_rule_pct ?? 50)}%`],
+              ["Venta mínima", product.min_selling_price != null ? formatCOP(Number(product.min_selling_price)) : "—"],
+            ] as const).map(([label, value]) => (
+              <div key={label}>
+                <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</p>
+                <p className="font-mono font-medium tabular-nums">{value}</p>
+              </div>
+            ))}
+          </div>
+          {Number(product.selling_price ?? 0) < Number(product.min_selling_price ?? 0) && (
+            <p className="mt-3 rounded-lg bg-lumens-red/10 px-3 py-2 text-xs font-medium text-lumens-red">
+              ⚠ El precio actual está por debajo de la venta mínima según la regla del{" "}
+              {Number(product.price_rule_pct ?? 50)}% — revisa el precio o negocia el costo.
+            </p>
+          )}
+        </CardContent>
+      </Card>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>

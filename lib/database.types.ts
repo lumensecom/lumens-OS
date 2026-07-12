@@ -665,19 +665,23 @@ export type Database = {
       }
       products: {
         Row: {
+          admin_cost: number
           best_angle: string | null
           best_cpa: number | null
           best_roas: number | null
           compared_price: number | null
           cost_dropi: number
+          cpa_real: number | null
           created_at: string | null
           description: string | null
           dropi_product_id: string | null
+          fulfillment_cost: number
           gallery: Json | null
           id: string
           landing_url: string | null
           main_image_url: string | null
           name: string
+          price_rule_pct: number
           selling_price: number
           shipping_cost: number
           shopify_product_id: string | null
@@ -688,19 +692,23 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          admin_cost?: number
           best_angle?: string | null
           best_cpa?: number | null
           best_roas?: number | null
           compared_price?: number | null
           cost_dropi?: number
+          cpa_real?: number | null
           created_at?: string | null
           description?: string | null
           dropi_product_id?: string | null
+          fulfillment_cost?: number
           gallery?: Json | null
           id?: string
           landing_url?: string | null
           main_image_url?: string | null
           name: string
+          price_rule_pct?: number
           selling_price: number
           shipping_cost?: number
           shopify_product_id?: string | null
@@ -711,19 +719,23 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          admin_cost?: number
           best_angle?: string | null
           best_cpa?: number | null
           best_roas?: number | null
           compared_price?: number | null
           cost_dropi?: number
+          cpa_real?: number | null
           created_at?: string | null
           description?: string | null
           dropi_product_id?: string | null
+          fulfillment_cost?: number
           gallery?: Json | null
           id?: string
           landing_url?: string | null
           main_image_url?: string | null
           name?: string
+          price_rule_pct?: number
           selling_price?: number
           shipping_cost?: number
           shopify_product_id?: string | null
@@ -953,26 +965,67 @@ export type Database = {
           },
         ]
       }
+      settings: {
+        Row: {
+          ai_brand_context: string | null
+          default_admin_cost: number
+          default_price_rule_pct: number
+          default_shipping_cost: number
+          id: number
+          meta_a: number
+          meta_b: number
+          updated_at: string | null
+        }
+        Insert: {
+          ai_brand_context?: string | null
+          default_admin_cost?: number
+          default_price_rule_pct?: number
+          default_shipping_cost?: number
+          id?: number
+          meta_a?: number
+          meta_b?: number
+          updated_at?: string | null
+        }
+        Update: {
+          ai_brand_context?: string | null
+          default_admin_cost?: number
+          default_price_rule_pct?: number
+          default_shipping_cost?: number
+          id?: number
+          meta_a?: number
+          meta_b?: number
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       products_with_margin: {
         Row: {
+          admin_cost: number | null
           best_angle: string | null
           best_cpa: number | null
           best_roas: number | null
+          cogs: number | null
           compared_price: number | null
           cost_dropi: number | null
           cpa_max_rentable: number | null
+          cpa_real: number | null
           created_at: string | null
           description: string | null
           dropi_product_id: string | null
+          fulfillment_cost: number | null
           gallery: Json | null
           id: string | null
           landing_url: string | null
           main_image_url: string | null
           margin: number | null
           margin_percentage: number | null
+          min_selling_price: number | null
           name: string | null
+          net_utility: number | null
+          net_utility_percentage: number | null
+          price_rule_pct: number | null
           selling_price: number | null
           shipping_cost: number | null
           shopify_product_id: string | null

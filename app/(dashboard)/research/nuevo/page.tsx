@@ -14,7 +14,7 @@ export default function NuevoResearchPage() {
           </Link>
         </Button>
         <div>
-          <h2 className="font-display text-xl font-bold tracking-tight">
+          <h2 className="page-title">
             Nuevo candidato
           </h2>
           <p className="text-sm text-muted-foreground">

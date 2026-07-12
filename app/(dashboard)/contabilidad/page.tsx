@@ -1,6 +1,7 @@
 import { ArrowUpCircle, ArrowDownCircle, Scale, ShoppingBag } from "lucide-react"
 
-import { GOALS, EXPENSE_CATEGORY_LABELS } from "@/lib/constants"
+import { EXPENSE_CATEGORY_LABELS } from "@/lib/constants"
+import { fetchSettings } from "@/lib/settings-queries"
 import { formatCOP } from "@/lib/format"
 import {
   computeTotals,
@@ -26,7 +27,10 @@ export default async function ContabilidadResumenPage({
 }) {
   const mes = firstParam(searchParams.mes)
   const { month, start, end, days } = resolveMonth(mes)
-  const { revenue, expenses } = await fetchEntries(start, end)
+  const [{ revenue, expenses }, settings] = await Promise.all([
+    fetchEntries(start, end),
+    fetchSettings(),
+  ])
 
   const totals = computeTotals(revenue, expenses)
   const daily = buildDailySeries(days, revenue, expenses)
@@ -82,8 +86,8 @@ export default async function ContabilidadResumenPage({
           <CardTitle className="text-base">Metas del mes</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <MetaBar label="Meta A" goal={GOALS.metaA} current={totals.utilidad} />
-          <MetaBar label="Meta B" goal={GOALS.metaB} current={totals.utilidad} />
+          <MetaBar label="Meta A" goal={Number(settings.meta_a)} current={totals.utilidad} />
+          <MetaBar label="Meta B" goal={Number(settings.meta_b)} current={totals.utilidad} />
         </CardContent>
       </Card>
 

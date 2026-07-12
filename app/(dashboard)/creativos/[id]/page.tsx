@@ -54,7 +54,7 @@ export default async function CreativoDetallePage({
           </Button>
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="font-display text-xl font-bold tracking-tight">
+              <h2 className="page-title">
                 {creative.name}
               </h2>
               <Badge variant="secondary">
