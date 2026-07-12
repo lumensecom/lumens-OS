@@ -8,22 +8,24 @@ import { ImagePlus, Loader2, X, ArrowUp, ArrowDown } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 
-async function uploadToProducts(file: File): Promise<string> {
+async function uploadImage(file: File, bucket: string): Promise<string> {
   const supabase = createClient()
   const ext = file.name.split(".").pop() ?? "jpg"
   const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
-  const { error } = await supabase.storage.from("products").upload(path, file)
+  const { error } = await supabase.storage.from(bucket).upload(path, file)
   if (error) throw new Error(error.message)
-  return supabase.storage.from("products").getPublicUrl(path).data.publicUrl
+  return supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl
 }
 
-/** Subida de la imagen principal del producto (bucket público `products`). */
+/** Subida de imagen principal a un bucket público (default `products`). */
 export function MainImageUpload({
   value,
   onChange,
+  bucket = "products",
 }: {
   value: string | null
   onChange: (url: string | null) => void
+  bucket?: string
 }) {
   const [busy, setBusy] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -31,7 +33,7 @@ export function MainImageUpload({
   async function onFile(file: File) {
     setBusy(true)
     try {
-      onChange(await uploadToProducts(file))
+      onChange(await uploadImage(file, bucket))
       toast.success("Imagen subida")
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Error subiendo imagen")
@@ -81,9 +83,11 @@ export function MainImageUpload({
 export function GalleryUpload({
   value,
   onChange,
+  bucket = "products",
 }: {
   value: string[]
   onChange: (urls: string[]) => void
+  bucket?: string
 }) {
   const [busy, setBusy] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -93,7 +97,7 @@ export function GalleryUpload({
     try {
       const urls: string[] = []
       for (const file of Array.from(files).slice(0, 8)) {
-        urls.push(await uploadToProducts(file))
+        urls.push(await uploadImage(file, bucket))
       }
       onChange([...value, ...urls])
       toast.success(`${urls.length} imagen(es) subida(s)`)

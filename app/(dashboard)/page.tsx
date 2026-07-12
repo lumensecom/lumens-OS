@@ -67,7 +67,7 @@ export default async function DashboardHomePage() {
         <p className="text-sm capitalize text-muted-foreground">{todayLabel}</p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="stagger grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Utilidad hoy"
           value={formatCOP(utilidadHoy)}

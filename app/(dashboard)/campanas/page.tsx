@@ -53,7 +53,7 @@ export default async function CampanasPage({
           description="Crea tu primera campaña y registra sus métricas diarias, o súbelas desde un CSV de Meta/TikTok Ads Manager."
         />
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="stagger grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {campaigns.map((c) => (
             <CampaignCard key={c.id} campaign={c} />
           ))}

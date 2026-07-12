@@ -28,9 +28,9 @@ function NavLink({ item, active }: { item: NavItem; active: boolean }) {
   )
 
   const className = cn(
-    "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-all duration-200",
+    "relative flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-all duration-200",
     active
-      ? "bg-primary/15 font-semibold text-foreground shadow-sm"
+      ? "bg-primary/15 font-semibold text-foreground shadow-sm before:absolute before:left-0 before:top-1/2 before:h-5 before:w-1 before:-translate-y-1/2 before:rounded-r-full before:bg-primary"
       : "text-muted-foreground hover:translate-x-0.5 hover:bg-muted hover:text-foreground",
     item.soon && "pointer-events-none opacity-60",
   )

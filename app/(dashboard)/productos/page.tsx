@@ -58,7 +58,7 @@ export default async function ProductosPage({
           description="Crea tu primer producto con su costeo para activar la calculadora de margen."
         />
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="stagger grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {(products ?? []).map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}

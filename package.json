@@ -12,6 +12,7 @@
     "node": "20.x"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.111.0",
     "@hookform/resolvers": "^5.4.0",
     "@radix-ui/react-avatar": "^1.2.1",
     "@radix-ui/react-dialog": "^1.1.18",
