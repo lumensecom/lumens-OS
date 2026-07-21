@@ -1,6 +1,7 @@
 import {
   LayoutDashboard,
   Wallet,
+  FileSpreadsheet,
   TrendingUp,
   Package,
   BookOpen,
@@ -38,12 +39,15 @@ export type NavItem = {
   href: string
   icon: LucideIcon
   soon?: boolean
+  /** Tinte permanente del ícono (marca visualmente el módulo). */
+  accent?: "yellow"
 }
 
 /** Navegación principal del sidebar. */
 export const NAV_MAIN: NavItem[] = [
   { label: "Dashboard", href: "/", icon: LayoutDashboard },
   { label: "Contabilidad", href: "/contabilidad", icon: Wallet },
+  { label: "Análisis Dropi", href: "/analisis-dropi", icon: FileSpreadsheet, accent: "yellow" },
   { label: "Campañas", href: "/campanas", icon: TrendingUp },
   { label: "Productos", href: "/productos", icon: Package },
   { label: "Conocimiento", href: "/conocimiento", icon: BookOpen },

@@ -17,7 +17,12 @@ function NavLink({ item, active }: { item: NavItem; active: boolean }) {
   const Icon = item.icon
   const content = (
     <>
-      <Icon className="h-4 w-4 shrink-0" />
+      <Icon
+        className={cn(
+          "h-4 w-4 shrink-0",
+          item.accent === "yellow" && !active && "text-primary",
+        )}
+      />
       <span className="flex-1">{item.label}</span>
       {item.soon && (
         <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
