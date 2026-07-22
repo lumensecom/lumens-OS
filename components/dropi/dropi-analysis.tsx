@@ -1,16 +1,18 @@
 "use client"
 
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { FileSpreadsheet, ClipboardList, ListChecks } from "lucide-react"
+import { FileSpreadsheet, ClipboardList, ListChecks, MessageSquare } from "lucide-react"
 
 import {
   BUCKET_LABELS, type AdSpend, type DropiDataset, type DropiOrder,
 } from "@/lib/dropi"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Card, CardContent } from "@/components/ui/card"
 import { DropiUploader } from "@/components/dropi/uploader"
 import { SummaryTab } from "@/components/dropi/summary-tab"
 import { PendingTab } from "@/components/dropi/pending-tab"
 import { DetailTab } from "@/components/dropi/detail-tab"
+import { MessagesTab } from "@/components/dropi/messages-tab"
 
 const STORAGE_KEY = "lumens.dropi.v1"
 
@@ -67,24 +69,16 @@ export function DropiAnalysis() {
     return <div className="h-40 animate-pulse rounded-2xl bg-muted/40" />
   }
 
-  if (!state) {
-    return (
-      <div className="space-y-6">
-        <div>
-          <h2 className="page-title">Análisis Dropi</h2>
-          <p className="text-sm text-muted-foreground">
-            Sube el reporte de Dropi y obtén KPIs reales, utilidad neta y tu lista de llamadas.
-          </p>
-        </div>
-        <div className="py-8">
-          <DropiUploader onLoaded={handleLoaded} />
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div className="space-y-4">
+      <div>
+        <h2 className="page-title">Análisis Dropi</h2>
+        <p className="text-sm text-muted-foreground">
+          Sube el reporte para ver KPIs y utilidad neta, o genera mensajes de WhatsApp pegando el
+          listado directo de Dropi.
+        </p>
+      </div>
+
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="flex-wrap">
           <TabsTrigger value="resumen" className="gap-1.5">
@@ -104,25 +98,67 @@ export function DropiAnalysis() {
             <ClipboardList className="h-4 w-4" />
             Detalle completo
           </TabsTrigger>
+          <TabsTrigger value="mensajes" className="gap-1.5">
+            <MessageSquare className="h-4 w-4" />
+            Generador de mensajes
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="resumen" className="mt-4">
-          <SummaryTab
-            dataset={state.dataset}
-            ads={state.ads}
-            onAdsChange={handleAds}
-            onReplace={handleLoaded}
-            onExport={() => exportCsv(state.dataset.orders)}
-          />
+          {state ? (
+            <SummaryTab
+              dataset={state.dataset}
+              ads={state.ads}
+              onAdsChange={handleAds}
+              onReplace={handleLoaded}
+              onExport={() => exportCsv(state.dataset.orders)}
+            />
+          ) : (
+            <div className="py-8">
+              <DropiUploader onLoaded={handleLoaded} />
+            </div>
+          )}
         </TabsContent>
+
         <TabsContent value="pendientes" className="mt-4">
-          <PendingTab orders={state.dataset.orders} />
+          {state ? (
+            <PendingTab orders={state.dataset.orders} />
+          ) : (
+            <NeedsUpload onLoaded={handleLoaded} />
+          )}
         </TabsContent>
+
         <TabsContent value="detalle" className="mt-4">
-          <DetailTab orders={state.dataset.orders} />
+          {state ? (
+            <DetailTab orders={state.dataset.orders} />
+          ) : (
+            <NeedsUpload onLoaded={handleLoaded} />
+          )}
+        </TabsContent>
+
+        {/* El generador no depende del Excel: funciona con texto pegado. */}
+        <TabsContent value="mensajes" className="mt-4">
+          <MessagesTab />
         </TabsContent>
       </Tabs>
     </div>
+  )
+}
+
+function NeedsUpload({
+  onLoaded,
+}: {
+  onLoaded: (dataset: DropiDataset, fileName: string) => void
+}) {
+  return (
+    <Card>
+      <CardContent className="space-y-4 py-10">
+        <p className="text-center text-sm text-muted-foreground">
+          Esta vista necesita el reporte de Dropi cargado.
+        </p>
+        <DropiUploader onLoaded={onLoaded} />
+      </CardContent>
+    </Card>
   )
 }
 
