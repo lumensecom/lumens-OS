@@ -52,6 +52,12 @@ export default async function ConfiguracionPage() {
       badge: "DROPI_WEBHOOK_SECRET",
     },
     {
+      name: "Dapta (Llamadas IA · Juliana)",
+      detail: "Envía pedidos al flujo de voz desde /llamadas",
+      configured: Boolean(process.env.DAPTA_FLOW_WEBHOOK_URL),
+      badge: "DAPTA_FLOW_WEBHOOK_URL",
+    },
+    {
       name: "Shopify",
       detail: "Webhook de pedidos (Fase 2)",
       configured: false,
