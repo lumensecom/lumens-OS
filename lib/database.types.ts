@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      call_results: {
+        Row: {
+          agent_id: string | null
+          called_at: string | null
+          created_at: string | null
+          customer_name: string | null
+          duration_seconds: number | null
+          id: string
+          order_id: string | null
+          outcome: string | null
+          phone: string | null
+          raw: Json | null
+          success: boolean | null
+          summary: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          called_at?: string | null
+          created_at?: string | null
+          customer_name?: string | null
+          duration_seconds?: number | null
+          id?: string
+          order_id?: string | null
+          outcome?: string | null
+          phone?: string | null
+          raw?: Json | null
+          success?: boolean | null
+          summary?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          called_at?: string | null
+          created_at?: string | null
+          customer_name?: string | null
+          duration_seconds?: number | null
+          id?: string
+          order_id?: string | null
+          outcome?: string | null
+          phone?: string | null
+          raw?: Json | null
+          success?: boolean | null
+          summary?: string | null
+        }
+        Relationships: []
+      }
       campaign_metrics: {
         Row: {
           campaign_id: string | null

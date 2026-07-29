@@ -19,6 +19,7 @@ export type Creative = Tables<"creatives">
 export type Order = Tables<"orders">
 export type Customer = Tables<"customers">
 export type Settings = Tables<"settings">
+export type CallResult = Tables<"call_results">
 
 // Aliases de enums.
 export type UserRole = Enums<"user_role">

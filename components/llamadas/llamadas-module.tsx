@@ -1,9 +1,13 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import { useRouter } from "next/navigation"
 import { toast } from "sonner"
+import { format, parseISO } from "date-fns"
+import { es } from "date-fns/locale"
 import {
-  ClipboardPaste, FileQuestion, Loader2, PhoneCall, PhoneOff, Trash2, Info,
+  ClipboardPaste, FileQuestion, Loader2, PhoneCall, PhoneOff, RefreshCw,
+  Trash2, Info, CheckCircle2, XCircle, CalendarClock, PhoneMissed,
 } from "lucide-react"
 
 import { parsePastedOrders, toTitleCase, FORMAT_EXAMPLE } from "@/lib/dropi-messages"
@@ -22,11 +26,59 @@ import {
 
 type CallResult = { order_id: string; phone: string; ok: boolean; error?: string }
 
-export function LlamadasModule({ configured }: { configured: boolean }) {
+type StoredResult = {
+  order_id: string | null
+  outcome: string | null
+  success: boolean | null
+  summary: string | null
+  called_at: string | null
+  customer_name: string | null
+  phone: string | null
+}
+
+const OUTCOME_META: Record<string, { label: string; cls: string; Icon: typeof CheckCircle2 }> = {
+  confirmado: { label: "Confirmado", cls: "text-lumens-green", Icon: CheckCircle2 },
+  cancelado: { label: "Cancelado", cls: "text-lumens-red", Icon: XCircle },
+  reprogramado: { label: "Reprogramado", cls: "text-blue-500", Icon: CalendarClock },
+  no_contesta: { label: "No contestó", cls: "text-muted-foreground", Icon: PhoneMissed },
+}
+
+function OutcomeBadge({ outcome }: { outcome: string | null }) {
+  if (!outcome) return <span className="text-xs text-muted-foreground">—</span>
+  const meta = OUTCOME_META[outcome] ?? {
+    label: outcome,
+    cls: "text-muted-foreground",
+    Icon: PhoneCall,
+  }
+  const { label, cls, Icon } = meta
+  return (
+    <span className={cn("inline-flex items-center gap-1 text-xs font-medium", cls)}>
+      <Icon className="h-3 w-3" /> {label}
+    </span>
+  )
+}
+
+export function LlamadasModule({
+  configured,
+  recentResults = [],
+}: {
+  configured: boolean
+  recentResults?: StoredResult[]
+}) {
+  const router = useRouter()
   const [text, setText] = useState("")
   const [selected, setSelected] = useState<Set<number>>(new Set())
   const [sending, setSending] = useState(false)
   const [results, setResults] = useState<Record<string, CallResult>>({})
+
+  // Mapa de resultados guardados por order_id (el más reciente gana).
+  const resultsByOrder = useMemo(() => {
+    const map: Record<string, StoredResult> = {}
+    for (const r of recentResults) {
+      if (r.order_id && !map[r.order_id]) map[r.order_id] = r
+    }
+    return map
+  }, [recentResults])
 
   // Solo pedidos con teléfono válido son llamables.
   const orders = useMemo(
@@ -204,7 +256,8 @@ export function LlamadasModule({ configured }: { configured: boolean }) {
                   <TableHead>Producto</TableHead>
                   <TableHead>Teléfono</TableHead>
                   <TableHead>Orden</TableHead>
-                  <TableHead className="text-right">Estado</TableHead>
+                  <TableHead>Resultado</TableHead>
+                  <TableHead className="text-right">Envío</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -234,6 +287,9 @@ export function LlamadasModule({ configured }: { configured: boolean }) {
                         {normalizePhone(o.phone)}
                       </TableCell>
                       <TableCell className="font-mono text-xs">{o.orderId || "—"}</TableCell>
+                      <TableCell>
+                        <OutcomeBadge outcome={o.orderId ? resultsByOrder[o.orderId]?.outcome ?? null : null} />
+                      </TableCell>
                       <TableCell className="text-right">
                         {result ? (
                           result.ok ? (
@@ -257,6 +313,68 @@ export function LlamadasModule({ configured }: { configured: boolean }) {
           </CardContent>
         </Card>
       )}
+
+      {/* Resultados recientes (de la base, vía webhook de retorno de Juliana) */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between gap-2">
+          <div>
+            <h3 className="page-title text-xl">Resultados recientes</h3>
+            <p className="text-sm text-muted-foreground">
+              Lo que Juliana dejó registrado al terminar cada llamada
+            </p>
+          </div>
+          <Button type="button" variant="outline" size="sm" onClick={() => router.refresh()}>
+            <RefreshCw className="mr-1 h-4 w-4" />
+            Actualizar
+          </Button>
+        </div>
+
+        {recentResults.length === 0 ? (
+          <Card>
+            <CardContent className="py-10 text-center text-sm text-muted-foreground">
+              Aún no llegan resultados. Cuando Juliana termine una llamada, aparecerán aquí
+              (requiere el webhook de retorno configurado en Dapta).
+            </CardContent>
+          </Card>
+        ) : (
+          <Card>
+            <CardContent className="overflow-x-auto p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/60 hover:bg-muted/60">
+                    <TableHead>Fecha</TableHead>
+                    <TableHead>Cliente</TableHead>
+                    <TableHead>Orden</TableHead>
+                    <TableHead>Resultado</TableHead>
+                    <TableHead>Resumen</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {recentResults.map((r, i) => (
+                    <TableRow key={`${r.order_id ?? "sin"}-${i}`}>
+                      <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
+                        {r.called_at
+                          ? format(parseISO(r.called_at), "d MMM HH:mm", { locale: es })
+                          : "—"}
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        <span className="block max-w-[160px] truncate">{r.customer_name || r.phone || "—"}</span>
+                      </TableCell>
+                      <TableCell className="font-mono text-xs">{r.order_id || "—"}</TableCell>
+                      <TableCell><OutcomeBadge outcome={r.outcome} /></TableCell>
+                      <TableCell>
+                        <span className="block max-w-[320px] truncate text-sm text-muted-foreground">
+                          {r.summary || "—"}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   )
 }
