@@ -71,50 +71,49 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "JSON inválido" }, { status: 400 })
   }
 
-  // order_id llega como variable dinámica del pedido (varias rutas posibles).
+  // Dapta anida todo bajo `call` (y duplica en `data`). Resolvemos el objeto
+  // de la llamada y de ahí extraemos, con fallback a la raíz por si cambia.
+  const b = (body ?? {}) as Record<string, unknown>
+  const root = (b.call ?? b.data ?? b) as Record<string, unknown>
+
+  // order_id llega como variable dinámica del pedido.
   const orderId = str(
-    pick(body, [
-      "order_id",
-      "variables.order_id",
-      "dynamic_variables.order_id",
-      "data.order_id",
-      "call.retell_llm_dynamic_variables.order_id",
-      "metadata.order_id",
-    ]),
+    pick(root, ["dynamic_variables.order_id", "variables.order_id", "order_id", "metadata.order_id"]),
   )
 
-  const outcomeRaw = pick(body, [
+  const outcomeRaw = pick(root, [
+    "call_analysis.custom_analysis_data.resultado",
+    "analysis.custom_analysis_data.resultado",
     "resultado",
     "outcome",
-    "analysis.resultado",
-    "call_analysis.custom_analysis_data.resultado",
-    "post_call_analysis.resultado",
-    "data.resultado",
   ])
 
-  const success = pick(body, [
+  const success = pick(root, [
     "call_analysis.call_successful",
     "call_successful",
     "success",
-    "analysis.call_successful",
   ])
 
   const summary = str(
-    pick(body, [
+    pick(root, [
+      "call_analysis.custom_analysis_data.resumen",
       "call_analysis.call_summary",
-      "call_summary",
       "resumen",
       "summary",
-      "analysis.summary",
     ]),
   )
 
-  const phone = str(pick(body, ["phone", "to_number", "variables.phone", "customer_phone"]))
+  const phone = str(pick(root, ["to_number", "phone", "dynamic_variables.phone", "customer_phone"]))
   const customerName = str(
-    pick(body, ["customer_name", "variables.customer_name", "nombre"]),
+    pick(root, ["dynamic_variables.customer_name", "customer_name", "variables.customer_name", "nombre"]),
   )
-  const duration = pick(body, ["duration_seconds", "call_duration_seconds", "duration"])
-  const agentId = str(pick(body, ["agent_id", "agent.id"]))
+  const duration = pick(root, [
+    "total_duration_seconds",
+    "duration_seconds",
+    "call_duration_seconds",
+    "duration",
+  ])
+  const agentId = str(pick(root, ["agent_id", "agent.id"]))
 
   const supabase = createAdminClient()
   const { error } = await supabase.from("call_results").insert({
