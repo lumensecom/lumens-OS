@@ -16,8 +16,11 @@ export const maxDuration = 60
  *  - DAPTA_WEBHOOK_SECRET (opcional): si el flujo valida un header compartido.
  */
 const requestSchema = z.object({
-  orders: z.array(daptaCallPayloadSchema).min(1).max(200),
+  orders: z.array(daptaCallPayloadSchema).min(1).max(1000),
 })
+
+/** Cuántas invocaciones al webhook se disparan en paralelo por tanda. */
+const BATCH_SIZE = 20
 
 export async function POST(request: NextRequest) {
   // Solo usuarios autenticados de LUMENS OS.
@@ -52,33 +55,38 @@ export async function POST(request: NextRequest) {
   const headers: Record<string, string> = { "Content-Type": "application/json" }
   if (secret) headers["x-webhook-secret"] = secret
 
-  // Dispara un request por pedido (el flujo hace una llamada por invocación).
-  const results = await Promise.all(
-    parsed.data.orders.map(async (order) => {
-      try {
-        const res = await fetch(webhookUrl, {
-          method: "POST",
-          headers,
-          body: JSON.stringify(order),
-        })
-        return {
-          order_id: order.order_id,
-          phone: order.phone,
-          ok: res.ok,
-          status: res.status,
-          error: res.ok ? undefined : `HTTP ${res.status}`,
-        }
-      } catch (err) {
-        return {
-          order_id: order.order_id,
-          phone: order.phone,
-          ok: false,
-          status: 0,
-          error: (err as Error).message || "Fallo de red",
-        }
+  const fireOne = async (order: (typeof parsed.data.orders)[number]) => {
+    try {
+      const res = await fetch(webhookUrl, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(order),
+      })
+      return {
+        order_id: order.order_id,
+        phone: order.phone,
+        ok: res.ok,
+        status: res.status,
+        error: res.ok ? undefined : `HTTP ${res.status}`,
       }
-    }),
-  )
+    } catch (err) {
+      return {
+        order_id: order.order_id,
+        phone: order.phone,
+        ok: false,
+        status: 0,
+        error: (err as Error).message || "Fallo de red",
+      }
+    }
+  }
+
+  // Dispara en tandas (un request por pedido = una llamada) para no abrir
+  // cientos de conexiones a la vez con listas grandes.
+  const results: Awaited<ReturnType<typeof fireOne>>[] = []
+  for (let i = 0; i < parsed.data.orders.length; i += BATCH_SIZE) {
+    const batch = parsed.data.orders.slice(i, i + BATCH_SIZE)
+    results.push(...(await Promise.all(batch.map(fireOne))))
+  }
 
   const queued = results.filter((r) => r.ok).length
   return NextResponse.json({ queued, total: results.length, results })
