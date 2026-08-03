@@ -39,7 +39,7 @@ export function Topbar({ profile }: { profile: Profile | null }) {
     profile?.full_name || profile?.email?.split("@")[0] || "Usuario"
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b bg-background/95 px-4 backdrop-blur">
+    <header className="glass sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border/70 px-4">
       {/* Menú móvil */}
       <Sheet>
         <SheetTrigger asChild>
@@ -57,7 +57,7 @@ export function Topbar({ profile }: { profile: Profile | null }) {
         </SheetContent>
       </Sheet>
 
-      <h1 className="font-display text-base font-bold tracking-tight">
+      <h1 className="font-display text-base font-bold tracking-tight md:text-lg">
         {title}
       </h1>
 

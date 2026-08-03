@@ -19,7 +19,7 @@ function NavLink({ item, active }: { item: NavItem; active: boolean }) {
     <>
       <Icon
         className={cn(
-          "h-4 w-4 shrink-0",
+          "h-[18px] w-[18px] shrink-0 transition-transform duration-200 group-hover:scale-110",
           item.accent === "yellow" && !active && "text-primary",
         )}
       />
@@ -33,10 +33,10 @@ function NavLink({ item, active }: { item: NavItem; active: boolean }) {
   )
 
   const className = cn(
-    "relative flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-all duration-200",
+    "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
     active
-      ? "bg-primary/15 font-semibold text-foreground shadow-sm before:absolute before:left-0 before:top-1/2 before:h-5 before:w-1 before:-translate-y-1/2 before:rounded-r-full before:bg-primary"
-      : "text-muted-foreground hover:translate-x-0.5 hover:bg-muted hover:text-foreground",
+      ? "bg-primary/15 font-semibold text-foreground shadow-[inset_0_1px_0_0_rgb(255_255_255/0.4)] before:absolute before:left-0 before:top-1/2 before:h-6 before:w-1 before:-translate-y-1/2 before:rounded-r-full before:bg-primary before:shadow-[0_0_10px_0_rgb(245_197_24/0.7)]"
+      : "text-muted-foreground hover:translate-x-0.5 hover:bg-muted/70 hover:text-foreground",
     item.soon && "pointer-events-none opacity-60",
   )
 
@@ -59,7 +59,10 @@ export function SidebarNav({ profile }: { profile: Profile | null }) {
 
   return (
     <div className="flex h-full flex-col gap-4 p-4">
-      <div className="px-2 py-2">
+      <div className="flex items-center gap-2.5 px-2 py-2">
+        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[hsl(46_96%_58%)] to-[hsl(43_92%_50%)] font-display text-lg font-extrabold text-[hsl(0_0%_10%)] shadow-[0_4px_14px_-3px_rgb(245_197_24/0.6)]">
+          L
+        </span>
         <span className="font-display text-lg font-extrabold tracking-tight">
           {APP_NAME}
         </span>
