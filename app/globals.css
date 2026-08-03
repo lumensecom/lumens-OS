@@ -165,6 +165,59 @@
   }
 }
 
+/* Entrada de la vista al cambiar de ruta / montar */
+.page-enter {
+  animation: lumens-rise 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Elevación al pasar el mouse (cards, filas, chips accionables) */
+.hover-lift {
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 34px -14px rgb(17 17 17 / 0.28);
+}
+
+/* Barra de acción flotante */
+@keyframes lumens-pop {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.float-bar {
+  animation: lumens-pop 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Glass (barras/paneles translúcidos con blur) */
+.glass {
+  background: hsl(var(--card) / 0.72);
+  backdrop-filter: saturate(1.4) blur(14px);
+  -webkit-backdrop-filter: saturate(1.4) blur(14px);
+}
+
+/* Chip de filtro pill */
+.chip {
+  @apply inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium transition-all;
+}
+.chip-active {
+  @apply border-primary bg-primary/15 text-foreground shadow-sm;
+}
+.chip-idle {
+  @apply border-transparent bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground;
+}
+
+/* Realce pulsante sutil para llamados de atención */
+@keyframes lumens-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(245 197 24 / 0.0); }
+  50% { box-shadow: 0 0 0 6px rgb(245 197 24 / 0.12); }
+}
+.pulse-glow { animation: lumens-glow 2.4s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter, .float-bar, .pulse-glow { animation: none; }
+  .hover-lift { transition: none; }
+}
+
 /* Selección de texto en amarillo LUMENS */
 ::selection {
   background: rgb(245 197 24 / 0.35);
