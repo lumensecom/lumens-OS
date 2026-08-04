@@ -193,7 +193,11 @@ export async function POST(request: NextRequest) {
     if (error instanceof OpenAI.APIError) {
       if (error.status === 429) {
         return NextResponse.json(
-          { error: "Límite gratis alcanzado, intenta en un minuto" },
+          {
+            error: hasImages
+              ? "El modelo de imágenes gratis (Gemma 4) está saturado o llegaste al tope diario. Reintenta en un minuto; las tareas de texto siguen libres."
+              : "Límite del tier gratis alcanzado (20/min o el tope diario). Intenta en un minuto.",
+          },
           { status: 429 },
         )
       }
