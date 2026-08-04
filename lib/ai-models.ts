@@ -1,57 +1,58 @@
 import type { AiTask } from "@/lib/ai"
 
 /**
- * Configuración de modelos de IA para el AI Studio.
+ * Configuración de modelos del AI Studio.
  *
- * Usamos NVIDIA NIM (build.nvidia.com), que es compatible con la API de OpenAI.
- * Una sola API key (NVIDIA_API_KEY) da acceso a todos estos modelos gratis.
+ * Proveedor: OpenRouter (compatible con OpenAI). Una sola API key
+ * (OPENROUTER_API_KEY, empieza con `sk-or-...`) da acceso a TODOS los modelos.
+ * Usamos modelos gratis con sufijo `:free`.
  *
- * ⚠️ Si algún ID falla, verifícalo en build.nvidia.com: abre el modelo, pulsa
- *    "View Code" y copia el string exacto del campo "model". Cámbialo aquí.
+ * ⚠️ La lista de modelos gratis rota. Si un ID falla ("model not found"),
+ *    verifícalo en openrouter.ai/models (filtro precio $0) y actualízalo aquí.
  */
-export const NIM_BASE_URL = "https://integrate.api.nvidia.com/v1"
+export const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 
-/** IDs exactos de los modelos en NVIDIA NIM. */
-export const NIM_MODELS = {
+/** Modelos gratis de OpenRouter (verificados). */
+export const OR_MODELS = {
   /** Razonamiento fuerte y copy en español (550B MoE). Solo texto. */
-  nemotron: "nvidia/nemotron-3-ultra-550b-a55b",
-  /** El mejor en código: ideal para Liquid de Shopify. Solo texto. */
-  deepseek: "deepseek-ai/deepseek-v4-pro",
-  /** Único multimodal: lee imágenes. Se usa cuando adjuntas fotos. */
-  gemma: "google/gemma-4-31b-it",
+  nemotron: "nvidia/nemotron-3-ultra-550b-a55b:free",
+  /** Especialista en código: ideal para Liquid de Shopify. Solo texto. */
+  code: "cohere/north-mini-code:free",
+  /** Multimodal: lee imágenes. Se usa cuando adjuntas fotos. */
+  vision: "google/gemma-4-31b-it:free",
 } as const
 
-export type NimModelKey = keyof typeof NIM_MODELS
+export type OrModelKey = keyof typeof OR_MODELS
 
 /** Etiqueta legible para cada modelo (para un futuro selector en la UI). */
-export const NIM_MODEL_LABELS: Record<NimModelKey, string> = {
+export const OR_MODEL_LABELS: Record<OrModelKey, string> = {
   nemotron: "Nemotron 3 Ultra (razonamiento)",
-  deepseek: "DeepSeek V4 Pro (código)",
-  gemma: "Gemma 4 (multimodal)",
+  code: "North Mini Code (código)",
+  vision: "Gemma 4 (multimodal)",
 }
 
 /** Modelo por defecto según la tarea del AI Studio. */
-export const MODEL_BY_TASK: Record<AiTask, NimModelKey> = {
+export const MODEL_BY_TASK: Record<AiTask, OrModelKey> = {
   libre: "nemotron",
   hooks: "nemotron",
   script: "nemotron",
   landing: "nemotron",
-  liquid: "deepseek",
-  imagen: "gemma",
+  liquid: "code",
+  imagen: "vision",
 }
 
 /** Único modelo que ve imágenes: se fuerza cuando el mensaje trae fotos. */
-export const VISION_MODEL: NimModelKey = "gemma"
+export const VISION_MODEL: OrModelKey = "vision"
 
 /**
- * Resuelve qué modelo usar. Si hay imágenes, gana el modelo multimodal
+ * Resuelve qué modelo usar. Si hay imágenes gana el modelo multimodal
  * (los demás son ciegos); si no, se respeta el override o el default de la tarea.
  */
 export function resolveModel(
   task: AiTask,
   hasImages: boolean,
-  override?: NimModelKey,
-): { key: NimModelKey; id: string } {
-  const key: NimModelKey = hasImages ? VISION_MODEL : override ?? MODEL_BY_TASK[task]
-  return { key, id: NIM_MODELS[key] }
+  override?: OrModelKey,
+): { key: OrModelKey; id: string } {
+  const key: OrModelKey = hasImages ? VISION_MODEL : override ?? MODEL_BY_TASK[task]
+  return { key, id: OR_MODELS[key] }
 }

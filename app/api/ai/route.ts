@@ -5,18 +5,19 @@ import { z } from "zod"
 import { createClient } from "@/lib/supabase/server"
 import { AI_TASKS, type AiTask } from "@/lib/ai"
 import {
-  NIM_BASE_URL,
-  NIM_MODELS,
+  OPENROUTER_BASE_URL,
+  OR_MODELS,
   resolveModel,
-  type NimModelKey,
+  type OrModelKey,
 } from "@/lib/ai-models"
 
 export const runtime = "nodejs"
 export const maxDuration = 60
 
 /**
- * AI Studio — corre sobre NVIDIA NIM (build.nvidia.com), compatible con la API
- * de OpenAI. Requiere NVIDIA_API_KEY en las env vars.
+ * AI Studio — corre sobre OpenRouter (openrouter.ai), compatible con la API
+ * de OpenAI. Requiere OPENROUTER_API_KEY en las env vars (una sola key da
+ * acceso a todos los modelos gratis).
  *
  * Recibe la conversación completa (con imágenes en base64) y responde en
  * streaming (texto plano). El modelo se elige según la tarea, y si hay
@@ -38,7 +39,7 @@ const requestSchema = z.object({
   task: z.enum(["libre", "hooks", "script", "landing", "liquid", "imagen"]).default("libre"),
   messages: z.array(messageSchema).min(1).max(24),
   /** Override opcional del modelo (para un selector en la UI). */
-  model: z.enum(Object.keys(NIM_MODELS) as [NimModelKey, ...NimModelKey[]]).optional(),
+  model: z.enum(Object.keys(OR_MODELS) as [OrModelKey, ...OrModelKey[]]).optional(),
 })
 
 const BASE_SYSTEM = `Eres el asistente creativo de LUMENS, un ecommerce de pago contra
@@ -79,9 +80,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 })
   }
 
-  if (!process.env.NVIDIA_API_KEY) {
+  if (!process.env.OPENROUTER_API_KEY) {
     return NextResponse.json(
-      { error: "AI no configurada todavía (falta NVIDIA_API_KEY)" },
+      { error: "AI no configurada todavía (falta OPENROUTER_API_KEY)" },
       { status: 503 },
     )
   }
@@ -144,8 +145,13 @@ export async function POST(request: NextRequest) {
   ]
 
   const client = new OpenAI({
-    apiKey: process.env.NVIDIA_API_KEY,
-    baseURL: NIM_BASE_URL,
+    apiKey: process.env.OPENROUTER_API_KEY,
+    baseURL: OPENROUTER_BASE_URL,
+    defaultHeaders: {
+      // Opcionales: para aparecer en el ranking de OpenRouter.
+      "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL ?? "https://lumensos.vercel.app",
+      "X-Title": "LUMENS OS",
+    },
   })
 
   try {
@@ -193,7 +199,7 @@ export async function POST(request: NextRequest) {
       }
       if (error.status === 401) {
         return NextResponse.json(
-          { error: "NVIDIA_API_KEY inválida o sin permisos" },
+          { error: "OPENROUTER_API_KEY inválida o sin permisos" },
           { status: 502 },
         )
       }
