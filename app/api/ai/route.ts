@@ -1,24 +1,27 @@
 import { NextResponse, type NextRequest } from "next/server"
-import Anthropic from "@anthropic-ai/sdk"
+import OpenAI from "openai"
 import { z } from "zod"
 
 import { createClient } from "@/lib/supabase/server"
 import { AI_TASKS, type AiTask } from "@/lib/ai"
+import {
+  NIM_BASE_URL,
+  NIM_MODELS,
+  resolveModel,
+  type NimModelKey,
+} from "@/lib/ai-models"
 
 export const runtime = "nodejs"
 export const maxDuration = 60
 
 /**
- * AI Studio (Claude) — requiere ANTHROPIC_API_KEY en las env vars.
+ * AI Studio — corre sobre NVIDIA NIM (build.nvidia.com), compatible con la API
+ * de OpenAI. Requiere NVIDIA_API_KEY en las env vars.
  *
- * Recibe la conversación completa (con imágenes en base64) y responde
- * en streaming (texto plano). Cada tarea ajusta el prompt del sistema:
- *  - libre:   chat con contexto LUMENS
- *  - hooks:   ideas de hooks para un producto/ángulo
- *  - script:  guion de video ad estilo PCE Colombia
- *  - landing: estructura + copy de landing PCE (basada en imágenes si hay)
- *  - liquid:  sección Liquid de Shopify lista para pegar
- *  - imagen:  análisis de imágenes → ángulos, hooks y prompts creativos
+ * Recibe la conversación completa (con imágenes en base64) y responde en
+ * streaming (texto plano). El modelo se elige según la tarea, y si hay
+ * imágenes se fuerza el modelo multimodal (Gemma 4). Cada tarea ajusta el
+ * prompt del sistema (ver AI_TASKS).
  */
 const imageSchema = z.object({
   media_type: z.enum(["image/jpeg", "image/png", "image/webp", "image/gif"]),
@@ -34,6 +37,8 @@ const messageSchema = z.object({
 const requestSchema = z.object({
   task: z.enum(["libre", "hooks", "script", "landing", "liquid", "imagen"]).default("libre"),
   messages: z.array(messageSchema).min(1).max(24),
+  /** Override opcional del modelo (para un selector en la UI). */
+  model: z.enum(Object.keys(NIM_MODELS) as [NimModelKey, ...NimModelKey[]]).optional(),
 })
 
 const BASE_SYSTEM = `Eres el asistente creativo de LUMENS, un ecommerce de pago contra
@@ -56,7 +61,9 @@ Cuando generes código Liquid para Shopify: una sección completa y auto-conteni
 ({% schema %} con settings para todos los textos, imágenes y colores; CSS dentro
 de <style> con clases prefijadas para no chocar con el tema; mobile-first; sin
 librerías externas; formulario de COD que apunta a /cart/add o el form action
-que el usuario indique).`
+que el usuario indique).
+
+Responde solo con la respuesta final, sin mostrar tu razonamiento paso a paso.`
 
 function taskInstruction(task: AiTask): string {
   return AI_TASKS.find((t) => t.id === task)?.instruction ?? ""
@@ -72,9 +79,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 })
   }
 
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!process.env.NVIDIA_API_KEY) {
     return NextResponse.json(
-      { error: "AI no configurada todavía (falta ANTHROPIC_API_KEY)" },
+      { error: "AI no configurada todavía (falta NVIDIA_API_KEY)" },
       { status: 503 },
     )
   }
@@ -90,7 +97,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Datos inválidos" }, { status: 422 })
   }
 
-  const { task, messages } = parsed.data
+  const { task, messages, model } = parsed.data
 
   // Contexto de marca editable desde Configuración.
   const { data: settings } = await supabase
@@ -103,44 +110,69 @@ export async function POST(request: NextRequest) {
     : BASE_SYSTEM
 
   const instruction = taskInstruction(task)
-  const apiMessages: Anthropic.MessageParam[] = messages.map((m, i) => {
-    const blocks: Anthropic.ContentBlockParam[] = (m.images ?? []).map((img) => ({
-      type: "image" as const,
-      source: { type: "base64" as const, media_type: img.media_type, data: img.data },
-    }))
-    // La instrucción de la tarea se antepone solo al primer mensaje del usuario.
-    const text =
-      i === 0 && m.role === "user" && instruction
-        ? `${instruction}\n\n${m.content}`.trim()
-        : m.content
-    blocks.push({ type: "text", text: text || "(sin texto)" })
-    return { role: m.role, content: blocks }
+  const hasImages = messages.some((m) => (m.images?.length ?? 0) > 0)
+  const { id: modelId } = resolveModel(task, hasImages, model)
+
+  // Mapea la conversación al formato OpenAI (multimodal cuando hay imágenes).
+  const chatMessages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
+    { role: "system", content: system },
+    ...messages.map((m, i) => {
+      // La instrucción de la tarea se antepone solo al primer mensaje del usuario.
+      const text =
+        i === 0 && m.role === "user" && instruction
+          ? `${instruction}\n\n${m.content}`.trim()
+          : m.content
+      const safeText = text || "(sin texto)"
+
+      if (m.images?.length) {
+        return {
+          role: m.role,
+          content: [
+            { type: "text" as const, text: safeText },
+            ...m.images.map((img) => ({
+              type: "image_url" as const,
+              image_url: { url: `data:${img.media_type};base64,${img.data}` },
+            })),
+          ],
+        } as OpenAI.Chat.Completions.ChatCompletionMessageParam
+      }
+      return {
+        role: m.role,
+        content: safeText,
+      } as OpenAI.Chat.Completions.ChatCompletionMessageParam
+    }),
+  ]
+
+  const client = new OpenAI({
+    apiKey: process.env.NVIDIA_API_KEY,
+    baseURL: NIM_BASE_URL,
   })
 
-  const anthropic = new Anthropic()
-
   try {
-    const stream = anthropic.messages.stream({
-      model: "claude-opus-4-8",
-      max_tokens: 8192,
-      thinking: { type: "adaptive" },
-      system,
-      messages: apiMessages,
+    const stream = await client.chat.completions.create({
+      model: modelId,
+      messages: chatMessages,
+      max_tokens: 4096,
+      temperature: 0.6,
+      top_p: 0.95,
+      stream: true,
     })
 
     const encoder = new TextEncoder()
     const readable = new ReadableStream<Uint8Array>({
       async start(controller) {
-        stream.on("text", (text) => controller.enqueue(encoder.encode(text)))
         try {
-          await stream.finalMessage()
+          for await (const chunk of stream) {
+            const delta = chunk.choices[0]?.delta?.content
+            if (delta) controller.enqueue(encoder.encode(delta))
+          }
           controller.close()
         } catch (err) {
           controller.error(err)
         }
       },
       cancel() {
-        stream.abort()
+        stream.controller.abort()
       },
     })
 
@@ -148,18 +180,25 @@ export async function POST(request: NextRequest) {
       headers: {
         "Content-Type": "text/plain; charset=utf-8",
         "Cache-Control": "no-store",
+        "X-Model": modelId,
       },
     })
   } catch (error) {
-    if (error instanceof Anthropic.RateLimitError) {
+    if (error instanceof OpenAI.APIError) {
+      if (error.status === 429) {
+        return NextResponse.json(
+          { error: "Límite gratis alcanzado, intenta en un minuto" },
+          { status: 429 },
+        )
+      }
+      if (error.status === 401) {
+        return NextResponse.json(
+          { error: "NVIDIA_API_KEY inválida o sin permisos" },
+          { status: 502 },
+        )
+      }
       return NextResponse.json(
-        { error: "Límite de uso de AI alcanzado, intenta en un minuto" },
-        { status: 429 },
-      )
-    }
-    if (error instanceof Anthropic.APIError) {
-      return NextResponse.json(
-        { error: `Error de AI (${error.status})` },
+        { error: `Error de AI (${error.status ?? "?"})` },
         { status: 502 },
       )
     }
