@@ -3,7 +3,7 @@ import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { Sidebar } from "@/components/layout/sidebar"
 import { Topbar } from "@/components/layout/topbar"
-import { PageTransition } from "@/components/layout/page-transition"
+import { DashboardFrame } from "@/components/layout/dashboard-frame"
 
 export default async function DashboardLayout({
   children,
@@ -25,14 +25,8 @@ export default async function DashboardLayout({
     .single()
 
   return (
-    <div className="ambient flex min-h-screen bg-background">
-      <Sidebar profile={profile} />
-      <div className="flex min-w-0 flex-1 flex-col">
-        <Topbar profile={profile} />
-        <main className="flex-1 p-4 md:p-6">
-          <PageTransition>{children}</PageTransition>
-        </main>
-      </div>
-    </div>
+    <DashboardFrame sidebar={<Sidebar profile={profile} />} topbar={<Topbar profile={profile} />}>
+      {children}
+    </DashboardFrame>
   )
 }

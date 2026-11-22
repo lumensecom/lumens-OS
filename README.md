@@ -65,6 +65,8 @@ El **primer** usuario que se registra queda como `owner` automáticamente (trigg
 
 ## Torre de agentes
 
+[Descargar LUMENS OS Local](downloads/LUMENS-OS-Local.zip). Para arrancar la demo en Mac, abre Docker Desktop, extrae el ZIP y ejecuta `bash abrir-lumens.sh` desde la carpeta extraída.
+
 La torre del propietario agrupa oficinas, rutinas, Product Lab y aprobaciones. El [manual de la torre](docs/torre.md) cubre el despliegue, el programador en Supabase y las pruebas.
 
 ## Scripts

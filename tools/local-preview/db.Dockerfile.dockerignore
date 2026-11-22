@@ -1,0 +1,9 @@
+**
+!supabase/
+!supabase/migrations/
+!supabase/migrations/**
+!tools/
+!tools/local-preview/
+!tools/local-preview/init.sh
+!tools/local-preview/init.sql
+!tools/local-preview/seed.sql

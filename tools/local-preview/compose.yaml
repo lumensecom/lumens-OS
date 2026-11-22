@@ -1,0 +1,72 @@
+name: lumens-tower-preview
+
+services:
+  keys:
+    image: node:24-bookworm-slim
+    command:
+      - node
+      - -e
+      - |
+        const fs = require("node:fs");
+        const path = "/run/lumens-preview/jwt";
+        if (!fs.existsSync(path)) {
+          fs.writeFileSync(path, require("node:crypto").randomBytes(48).toString("hex"), { mode: 0o444, flag: "wx" });
+        }
+    volumes:
+      - preview-key:/run/lumens-preview
+    network_mode: none
+
+  db:
+    build:
+      context: ../..
+      dockerfile: tools/local-preview/db.Dockerfile
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - preview-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "psql", "-h", "127.0.0.1", "-U", "postgres", "-Atqc", "select 1 from public.tower_agents limit 1"]
+      interval: 3s
+      timeout: 3s
+      retries: 25
+
+  rest:
+    build:
+      context: .
+      dockerfile: rest.Dockerfile
+    command: ["/bin/postgrest", "/lumens-postgrest.conf"]
+    volumes:
+      - preview-key:/run/lumens-preview:ro
+    depends_on:
+      db:
+        condition: service_healthy
+      keys:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "/bin/postgrest", "--ready", "/lumens-postgrest.conf"]
+      interval: 3s
+      timeout: 3s
+      retries: 25
+
+  app:
+    build:
+      context: ../..
+      dockerfile: tools/local-preview/app.Dockerfile
+    ports:
+      - "127.0.0.1:${LUMENS_PREVIEW_PORT:-3000}:3000"
+    volumes:
+      - preview-key:/run/lumens-preview:ro
+    depends_on:
+      keys:
+        condition: service_completed_successfully
+      rest:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/__health').then(r => { if (!r.ok) process.exit(1) }).catch(() => process.exit(1))"]
+      interval: 3s
+      timeout: 3s
+      retries: 25
+
+volumes:
+  preview-key:
+  preview-db:

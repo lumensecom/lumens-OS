@@ -26,3 +26,9 @@ El dueño entra a `/torre`. El panel anterior queda en `/resumen`. En la torre s
 5. Revisa una vista privada de Shopify con precios, packs, variantes, carga móvil y checkout. Registra la prueba en el Lobby para aprobar esa versión. Los dos archivos descargables se habilitan con la aprobación. La publicación se realiza en Shopify por separado.
 
 La automatización de producción de guiones y edición de video requiere habilitar el flujo creativo, los proveedores de medios y el material aprobado. El trabajo de la torre no crea campañas, cambia precios ni contacta clientes.
+
+## Vista de operación
+
+La pantalla `/torre` muestra el edificio interactivo, con oficinas seleccionables, iluminación de día o noche, zoom y pantalla completa. La bitácora, los estados y los contadores consultan la base con la sesión del dueño cada cinco segundos mientras la pestaña está visible. Una ejecución manual sincroniza la vista al terminar. Si la conexión se interrumpe, la pantalla conserva la última lectura y muestra «Reconectando».
+
+La demo local está separada de la operación. Cuando el servidor de prueba se inicia con `LUMENS_LOCAL_PREVIEW=1`, la pantalla muestra «Demo local» para identificar sus datos de prueba.
