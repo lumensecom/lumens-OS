@@ -270,6 +270,7 @@ export function TowerConsole({ initial, localPreview }: { initial: TowerSnapshot
                     {feedback?.agentCode === selected.code && <p role={feedback.ok ? "status" : "alert"} className={styles.feedback} data-ok={feedback.ok}>{feedback.message}</p>}
                   </div>
                   <Link className={styles.panelLink} href={`/torre/agentes/${selected.code}`}>Ver ficha y bitácora <ArrowRight size={15} aria-hidden="true" /></Link>
+                  {selected.code === "6A" && <Link className={styles.panelLink} href="/torre/juliana">Abrir bandeja de WhatsApp <ArrowRight size={15} aria-hidden="true" /></Link>}
                 </>
               ) : <p className={styles.mission}>Selecciona una oficina.</p>}
             </section>

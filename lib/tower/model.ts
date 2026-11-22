@@ -87,7 +87,12 @@ export type StageChange = {
 
 type ReadOnlyTable<Row> = { Row: Row; Insert: never; Update: never; Relationships: [] }
 
+export type JulianaStatus = "review" | "sending" | "submitted" | "unknown" | "confirmed" | "human"
+
 export type TowerTables = {
+  tower_juliana_orders: ReadOnlyTable<{
+    order_id: string; contact: Json; status: JulianaStatus; updated_at: string
+  }>
   tower_agents: ReadOnlyTable<Agent>
   tower_routines: ReadOnlyTable<Routine>
   tower_runs: ReadOnlyTable<Run>
@@ -102,6 +107,12 @@ export type TowerTables = {
 type Rpc<Args, Returns> = { Args: Args; Returns: Returns }
 
 export type TowerFunctions = {
+  tower_receive_juliana_order: Rpc<{
+    order_id: string; order_created_at: string; order_quantity: number | null
+    order_currency: string | null; order_total_cop: number | null; contact: Json
+  }, boolean>
+  tower_claim_juliana: Rpc<{ target_order: string }, Json>
+  tower_finish_juliana: Rpc<{ target_order: string; attempt: string; next_status: JulianaStatus }, boolean>
   tower_receive_shopify_order: Rpc<{
     order_id: string; order_created_at: string; order_quantity: number | null
     order_currency: string | null; order_total_cop: number | null

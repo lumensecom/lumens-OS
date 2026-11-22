@@ -32,3 +32,7 @@ La automatización de producción de guiones y edición de video requiere habili
 La pantalla `/torre` muestra el edificio interactivo, con oficinas seleccionables, iluminación de día o noche, zoom y pantalla completa. La bitácora, los estados y los contadores consultan la base con la sesión del dueño cada cinco segundos mientras la pestaña está visible. Una ejecución manual sincroniza la vista al terminar. Si la conexión se interrumpe, la pantalla conserva la última lectura y muestra «Reconectando».
 
 La demo local está separada de la operación. Cuando el servidor de prueba se inicia con `LUMENS_LOCAL_PREVIEW=1`, la pantalla muestra «Demo local» para identificar sus datos de prueba.
+
+## Confirmación por WhatsApp
+
+La bandeja [Juliana](juliana.md) muestra los pedidos nuevos de Shopify y espera la autorización del dueño antes de enviarlos al flujo de Dapta.

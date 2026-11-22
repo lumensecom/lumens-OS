@@ -2,13 +2,14 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Building2, CalendarClock, FlaskConical, Inbox } from "lucide-react"
+import { Building2, CalendarClock, FlaskConical, Inbox, MessageCircle } from "lucide-react"
 
 export const towerNavigation = [
   { href: "/torre", label: "Edificio", Icon: Building2 },
   { href: "/torre/lobby", label: "Lobby", Icon: Inbox },
   { href: "/torre/product-lab", label: "Product Lab", Icon: FlaskConical },
   { href: "/torre/rutinas", label: "Rutinas", Icon: CalendarClock },
+  { href: "/torre/juliana", label: "Juliana", Icon: MessageCircle },
 ]
 
 export function TowerFrame({ children }: { children: React.ReactNode }) {

@@ -2,6 +2,7 @@ import { createHmac, timingSafeEqual } from "node:crypto"
 import { NextResponse, type NextRequest } from "next/server"
 import { z } from "zod"
 
+import { catalogProductUrl, getJulianaOrder, shopifyContact } from "@/lib/tower/juliana"
 import { createAdminClient } from "@/lib/supabase/admin"
 
 export const runtime = "nodejs"
@@ -55,12 +56,29 @@ export async function POST(request: NextRequest) {
   const total = order.currency === "COP" && /^\d+(?:\.0+)?$/.test(order.total_price ?? "")
     ? Number(order.total_price) : null
 
-  const { error } = await createAdminClient().rpc("tower_receive_shopify_order", {
+  const admin = createAdminClient()
+  const contact = shopifyContact.safeParse(payload)
+  const payable = total !== null && Number.isSafeInteger(total) ? total : null
+  const links = new Map<number, string>()
+  if (contact.success && payable !== null) {
+    const ids = Array.from(new Set(contact.data.line_items?.flatMap((item) => item.product_id ? [item.product_id] : []) ?? []))
+    if (ids.length > 0 && ids.length <= 30) {
+      const { data } = await admin.from("products").select("shopify_product_id,landing_url")
+        .in("shopify_product_id", ids.flatMap((id) => [String(id), `gid://shopify/Product/${id}`]))
+      for (const entry of data ?? []) {
+        const url = catalogProductUrl(entry.landing_url)
+        if (url) links.set(Number(entry.shopify_product_id?.split("/").at(-1)), url)
+      }
+    }
+  }
+  const confirmation = contact.success && payable !== null ? getJulianaOrder(contact.data, payable, links) : null
+  const { error } = await admin.rpc("tower_receive_juliana_order", {
     order_id: order.admin_graphql_api_id,
     order_created_at: order.created_at,
-    order_quantity: quantity,
+    order_quantity: confirmation ? confirmation.products.reduce((total, item) => total + item.quantity, 0) : quantity,
     order_currency: order.currency ?? null,
-    order_total_cop: Number.isSafeInteger(total) ? total : null,
+    order_total_cop: payable,
+    contact: confirmation,
   })
   if (error) {
     console.error("Shopify order intake failed", error.code)
