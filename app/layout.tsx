@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Syne, DM_Sans, DM_Mono } from "next/font/google"
+import localFont from "next/font/local"
 import { NuqsAdapter } from "nuqs/adapters/next/app"
 import { cn } from "@/lib/utils"
 import { Toaster } from "@/components/ui/sonner"
@@ -7,22 +7,27 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { APP_NAME, APP_DESCRIPTION } from "@/lib/constants"
 import "./globals.css"
 
-const syne = Syne({
-  subsets: ["latin"],
-  weight: ["700", "800"],
+const syne = localFont({
+  src: "./fonts/syne.ttf",
+  weight: "700 800",
   variable: "--font-syne",
+  display: "swap",
 })
 
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
+const dmSans = localFont({
+  src: "./fonts/dm-sans.ttf",
+  weight: "400 700",
   variable: "--font-dm-sans",
+  display: "swap",
 })
 
-const dmMono = DM_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
+const dmMono = localFont({
+  src: [
+    { path: "./fonts/dm-mono-400.ttf", weight: "400" },
+    { path: "./fonts/dm-mono-500.ttf", weight: "500" },
+  ],
   variable: "--font-dm-mono",
+  display: "swap",
 })
 
 export const metadata: Metadata = {

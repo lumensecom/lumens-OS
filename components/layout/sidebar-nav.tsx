@@ -69,7 +69,7 @@ export function SidebarNav({ profile }: { profile: Profile | null }) {
       </div>
 
       <nav className="flex flex-1 flex-col gap-1">
-        {NAV_MAIN.map((item) => (
+        {NAV_MAIN.filter((item) => !item.ownerOnly || profile?.role === "owner").map((item) => (
           <NavLink
             key={item.href}
             item={item}

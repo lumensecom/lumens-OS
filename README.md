@@ -8,7 +8,7 @@ Herramienta operativa privada — no es un producto SaaS.
 - **Next.js 14** (App Router) + **TypeScript** (strict)
 - **Tailwind CSS v3** + **shadcn/ui** (estilo new-york, Radix)
 - **Supabase** (Postgres + Auth + Storage + RLS)
-- **pnpm** · Node **20.x** · Deploy en **Vercel**
+- **pnpm** · Node **24.x** · Deploy en **Vercel**
 
 ## Estado
 
@@ -22,7 +22,7 @@ Módulos por construir: Contabilidad y Campañas (Sprint 2), Productos y Conocim
 ## Desarrollo local
 
 ```bash
-pnpm install
+pnpm install --frozen-lockfile
 cp .env.example .env.local   # y completa los valores
 pnpm dev
 ```
@@ -62,6 +62,10 @@ El **primer** usuario que se registra queda como `owner` automáticamente (trigg
 > Nota: si Supabase Auth tiene activada la confirmación de correo, el primer registro
 > pedirá confirmar el email. Para uso interno puedes desactivarla en
 > **Authentication → Providers → Email → Confirm email**.
+
+## Torre de agentes
+
+La torre del propietario agrupa oficinas, rutinas, Product Lab y aprobaciones. El [manual de la torre](docs/torre.md) cubre el despliegue, el programador en Supabase y las pruebas.
 
 ## Scripts
 

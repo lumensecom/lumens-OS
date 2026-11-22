@@ -1,0 +1,661 @@
+{%- comment -%}
+  ═══ CHALECO MOLDEADOR · CUERPO DE LA PÁGINA (versión visual) ═══
+  Fotos y videos ya cargados desde Shopify. Si quieres cambiar uno, pega el nuevo enlace entre las comillas.
+  Si un espacio queda vacío, no aparece en la página.
+{%- endcomment -%}
+{%- assign cdn = 'https://cdn.shopify.com/s/files/1/0671/0598/0521/files/' -%}
+{%- assign vcdn = 'https://cdn.shopify.com/videos/c/o/v/' -%}
+
+{%- comment -%} VIDEOS {%- endcomment -%}
+{%- assign vid_sentado = vcdn | append: '15e2c80afabd46b6a7b69d2a056668ac.mp4' -%}{%- comment -%} Sin chaleco / con chaleco sentado {%- endcomment -%}
+{%- assign vid_poner   = vcdn | append: '95ceae8a41d4486d9d4c3eaee030c5d9.mp4' -%}{%- comment -%} Se lo pone: ganchos y cremallera {%- endcomment -%}
+{%- assign vid_360     = vcdn | append: 'c57b54273d0a4625bb0b6cfb42245311.mp4' -%}{%- comment -%} Chaleco girando 360° {%- endcomment -%}
+{%- assign vid_boton   = vcdn | append: '3bf9da749c934e5f907fe021e19b43c3.mp4' -%}{%- comment -%} Se abotona la camisa frente al espejo {%- endcomment -%}
+
+{%- comment -%} FOTOS · PASOS {%- endcomment -%}
+{%- assign img_paso1 = cdn | append: 'Fastening_a_Charcoal_Waist_Vest-1.webp?v=1794783826' -%}
+{%- assign img_paso2 = cdn | append: 'Adjusting_a_Black_Compression_Vest-2.webp?v=1794783825' -%}
+{%- assign img_paso3 = cdn | append: 'Man_Buttoning_Shirt_by_the_Mirror-3.webp?v=1794783825' -%}
+
+{%- comment -%} FOTOS · OTRAS {%- endcomment -%}
+{%- assign img_regalo = cdn | append: 'Festive_Family_Gathering_Under_Warm_Lights-1.webp?v=1794783825' -%}
+{%- assign img_cierre = cdn | append: 'Confident_Bathroom_Mirror_Portrait-6.webp?v=1794783825' -%}
+{%- assign img_como   = '' -%}{%- comment -%} Opcional: chaleco con flechas abdomen / pecho / espalda {%- endcomment -%}
+{%- assign img_tallas = '' -%}{%- comment -%} Opcional: tabla de tallas del proveedor (va encima de los packs) {%- endcomment -%}
+
+{%- comment -%} Tira «En cualquier plan». Una URL por línea. Mientras sean fotos ilustrativas, deja ilustrativas = true. {%- endcomment -%}
+{%- capture casa_fotos -%}
+https://cdn.shopify.com/s/files/1/0671/0598/0521/files/Romantic_Dinner_Among_Greenery-2.webp?v=1794783825
+https://cdn.shopify.com/s/files/1/0671/0598/0521/files/Joyful_Wedding_Dance_Floor-5.webp?v=1794783825
+https://cdn.shopify.com/s/files/1/0671/0598/0521/files/Modern_Entryway_Welcome-3.webp?v=1794783825
+https://cdn.shopify.com/s/files/1/0671/0598/0521/files/Festive_Family_Gathering_Under_Warm_Lights-1.webp?v=1794783825
+https://cdn.shopify.com/s/files/1/0671/0598/0521/files/Confident_Bathroom_Mirror_Portrait-6.webp?v=1794783825
+{%- endcapture -%}
+{%- assign ilustrativas = true -%}
+
+{%- comment -%}
+  ═══ RESEÑAS REALES ═══ (solo de clientes entregados; una por línea)
+  Nombre|Ciudad|Estrellas 1-5|Título corto|Texto|URL de foto (opcional)
+{%- endcomment -%}
+{%- capture resenas -%}
+{%- endcapture -%}
+
+{%- assign casa = casa_fotos | strip | newline_to_br | split: '<br />' -%}
+{%- assign hay_casa = false -%}{%- for u in casa -%}{%- assign uu = u | strip -%}{%- if uu != '' -%}{%- assign hay_casa = true -%}{%- endif -%}{%- endfor -%}
+{%- assign filas = resenas | strip | newline_to_br | split: '<br />' -%}
+{%- assign rn = 0 -%}{%- assign rsuma = 0 -%}
+{%- for fila in filas -%}{%- assign c = fila | strip | split: '|' -%}{%- if c.size >= 5 -%}{%- assign rn = rn | plus: 1 -%}{%- assign rsuma = rsuma | plus: c[2] -%}{%- endif -%}{%- endfor -%}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+.lm{--ac:#0E2A47;--ac-dk:#061626;--ac-rgb:14,42,71;--soft:#EAF0F6;--line:#cfd6e0;--card:#f7f8fa;--ink:#141a22;--muted:#56606c;--star:#e0a32b;--ok:#2d9e5c;--price:#0E7490}
+.lm,.lm *{box-sizing:border-box}
+.lm{font-family:Manrope,-apple-system,BlinkMacSystemFont,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.lm img{max-width:100%}
+.lm-w{max-width:860px;margin:0 auto;padding:0 18px}
+.lm-sec{padding:38px 0}
+.lm-sec.tinte{background:var(--soft)}
+.lm-sec.oscuro{background:var(--ac-dk);color:#fff}
+.lm-ac{color:var(--ac);font-style:normal}
+.oscuro .lm-ac{color:#7dd3fc}
+.lm-ante{margin:0 0 8px;text-align:center;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ac-dk)}
+.oscuro .lm-ante{color:#9fb3c8}
+.lm-h2{margin:0 0 6px;text-align:center;font-size:24px;line-height:1.2;font-weight:800;letter-spacing:-.01em}
+.lm-sub{margin:0 auto 20px;max-width:520px;text-align:center;font-size:15px;color:var(--muted)}
+.oscuro .lm-sub{color:#c3cfdb}
+.lm-cta{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;cursor:pointer;
+ background:var(--ac);color:#fff;border-radius:999px;padding:17px 20px;font:800 16px/1.1 Manrope,sans-serif;letter-spacing:.02em;text-transform:uppercase;
+ box-shadow:0 10px 24px rgba(var(--ac-rgb),.32);animation:lmLate 2.8s infinite;transition:transform .12s,background .2s;text-align:center;margin-top:20px}
+.lm-cta:hover{background:var(--ac-dk)}.lm-cta:active{transform:scale(.98)}
+.oscuro .lm-cta{background:#fff;color:var(--ac-dk)}
+.lm-cta svg{width:21px;height:21px;flex-shrink:0}
+@keyframes lmLate{0%,100%{box-shadow:0 10px 24px rgba(var(--ac-rgb),.32),0 0 0 0 rgba(var(--ac-rgb),.35)}60%{box-shadow:0 10px 24px rgba(var(--ac-rgb),.32),0 0 0 12px rgba(var(--ac-rgb),0)}}
+@media (prefers-reduced-motion:reduce){.lm-cta{animation:none}}
+.lm-sellos{display:flex;justify-content:center;flex-wrap:wrap;gap:6px 14px;margin:12px 0 0;font-size:11.5px;font-weight:700}
+.lm-sellos span{display:inline-flex;align-items:center;gap:5px}.lm-sellos svg{width:15px;height:15px;color:var(--ac)}
+.lm-card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 6px 16px -8px rgba(16,24,40,.12)}
+.lm-est{color:var(--star);letter-spacing:1px}.lm-est i{color:#d9d4dc;font-style:normal}
+.lm-ver{display:inline-flex;align-items:center;gap:4px;background:#e7f6ee;color:var(--ok);font-size:10.5px;font-weight:800;padding:3px 8px;border-radius:99px}
+.lm-ver svg{width:11px;height:11px}
+@keyframes lmMover{to{transform:translate3d(-50%,0,0)}}
+.lm-img{display:block;width:100%;height:auto;border-radius:18px;margin:18px 0 0}
+.lm-aviso{margin:8px 0 0;text-align:center;font-size:11px;color:var(--muted)}
+.oscuro .lm-aviso{color:#9fb3c8}
+/* Video */
+.lm-vid{position:relative;margin:0 auto;width:100%;max-width:330px;aspect-ratio:9/16;border-radius:20px;overflow:hidden;background:#0b1622;box-shadow:0 18px 40px -18px rgba(6,22,38,.55)}
+.lm-vid video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.lm-vid figcaption{position:absolute;left:10px;right:10px;bottom:10px;padding:8px 10px;border-radius:12px;background:rgba(6,22,38,.72);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#fff;font-size:12.5px;font-weight:800;line-height:1.25;text-align:center}
+.lm-vid .pl{position:absolute;top:10px;left:10px;display:inline-flex;align-items:center;gap:5px;background:#fff;color:var(--ac-dk);font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border-radius:99px}
+.lm-vid .pl::before{content:"";width:6px;height:6px;border-radius:50%;background:#e23b3b}
+@media(min-width:768px){.lm-h2{font-size:30px}.lm-sec{padding:54px 0}}
+
+/* 1 · CONFIANZA + TIRA */
+.lm-social{padding:28px 0 32px;background:var(--soft);overflow:hidden}
+.lm-confia{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 26px}
+.lm-confia div{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 11px;font-size:12.5px;font-weight:700;line-height:1.25}
+.lm-confia svg{width:22px;height:22px;color:var(--ac);flex-shrink:0}
+.lm-tira{width:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent)}
+.lm-pista{display:flex;gap:12px;width:max-content;animation:lmMover 45s linear infinite}
+.lm-tira:hover .lm-pista,.lm-tira:active .lm-pista{animation-play-state:paused}
+@media (prefers-reduced-motion:reduce){.lm-pista{animation:none}}
+.lm-foto{margin:0;flex:0 0 auto;width:220px;aspect-ratio:4/5;border-radius:18px;overflow:hidden;background:#dde5f0;box-shadow:0 10px 22px -12px rgba(16,24,40,.45);border:3px solid #fff}
+.lm-foto img{width:100%;height:100%;object-fit:cover;display:block}
+.lm-resbar{display:flex;align-items:center;justify-content:center;gap:8px;margin:22px 0 12px;font-size:14px;color:var(--muted)}
+.lm-resbar b{font-size:20px;color:var(--ink)}
+.lm-revs{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 18px 10px;scrollbar-width:none}.lm-revs::-webkit-scrollbar{display:none}
+.lm-rev{flex:0 0 80%;max-width:330px;scroll-snap-align:center;overflow:hidden;background:#fff;border:1px solid var(--line);border-radius:16px}
+.lm-rev img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block}
+.lm-rev div{padding:14px 16px 16px}.lm-rev h4{margin:6px 0 6px;font-size:15px;line-height:1.3;color:var(--ac-dk)}
+.lm-rev p{margin:0 0 10px;font-size:13.5px;color:var(--muted)}
+.lm-rev small{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12.5px;font-weight:800}
+
+/* 2 · ¿TE PASA? */
+.lm-pas ul{list-style:none;margin:16px auto 22px;padding:0;max-width:440px}
+.lm-pas li{display:flex;gap:10px;align-items:center;margin-bottom:8px;padding:11px 14px;background:#fff;border:1px solid var(--line);border-radius:12px;font-size:14.5px;font-weight:700}
+.lm-pas li svg{width:18px;height:18px;color:#d64545;flex-shrink:0}
+.lm-flecha{margin:0 0 14px;text-align:center;font-size:13px;font-weight:800;color:var(--ac)}
+
+/* Cinta */
+.lm-chips{overflow:hidden;background:var(--ac-dk);padding:11px 0}
+.lm-chips .t{display:flex;width:max-content;animation:lmMover 34s linear infinite}
+.lm-chips span{display:inline-flex;align-items:center;gap:6px;padding:0 14px;font-size:12.5px;font-weight:700;color:#e6edf5;white-space:nowrap}
+.lm-chips svg{width:14px;height:14px;color:#7dd3fc}
+
+/* 3 · MÍRALO EN ACCIÓN */
+.lm-vids{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 18px 12px;margin:0 -18px;scrollbar-width:none}
+.lm-vids::-webkit-scrollbar{display:none}
+.lm-vids .lm-vid{flex:0 0 64%;max-width:260px;scroll-snap-align:center;margin:0}
+.lm-desliza{margin:2px 0 0;text-align:center;font-size:11.5px;font-weight:700;color:var(--muted)}
+
+/* 4 · BENEFICIOS */
+.lm-bgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px}
+.lm-b{padding:16px 12px;text-align:center;background:#fff}
+.lm-b i{font-style:normal;display:flex;align-items:center;justify-content:center;width:54px;height:54px;margin:0 auto 8px;border-radius:16px;background:var(--soft);font-size:27px}
+.lm-b b{display:block;font-size:14.5px;line-height:1.25;margin-bottom:3px}
+.lm-b p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.4}
+
+/* 5 · CÓMO FUNCIONA */
+.lm-zonas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:18px}
+.lm-zona{padding:14px 8px;text-align:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);border-radius:16px}
+.lm-zona .n{width:34px;height:34px;margin:0 auto;border-radius:50%;background:#7dd3fc;color:var(--ac-dk);font-weight:800;display:flex;align-items:center;justify-content:center}
+.lm-zona b{display:block;font-size:14px;margin:8px 0 2px;color:#fff}
+.lm-zona p{margin:0;font-size:11.5px;color:#c3cfdb;line-height:1.35}
+
+/* 6 · ASÍ SE USA */
+.lm-pasos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:18px}
+.lm-paso{position:relative;margin:0;border-radius:16px;overflow:hidden;background:#dde5f0;aspect-ratio:3/4;box-shadow:0 10px 22px -14px rgba(16,24,40,.5)}
+.lm-paso img{width:100%;height:100%;object-fit:cover;display:block}
+.lm-paso b{position:absolute;top:8px;left:8px;width:28px;height:28px;border-radius:50%;background:var(--ac);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;box-shadow:0 0 0 3px #fff}
+.lm-paso figcaption{position:absolute;left:0;right:0;bottom:0;padding:22px 8px 9px;background:linear-gradient(transparent,rgba(6,22,38,.88));color:#fff;font-size:12px;font-weight:800;line-height:1.25;text-align:center}
+
+/* 7 · COMPARATIVA */
+.lm-vs{display:grid;grid-template-columns:1.25fr 1fr 1fr;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#fff;margin-top:18px}
+.lm-vs>div{padding:12px 10px;border-top:1px solid var(--line);font-size:13px;display:flex;align-items:center}
+.lm-vs .hd{border-top:0;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);justify-content:center;text-align:center;background:var(--soft)}
+.lm-vs .hd.nos{background:var(--ac);color:#fff}
+.lm-vs .f{font-weight:700}
+.lm-vs .s,.lm-vs .x{justify-content:center}
+.lm-vs .s.nos{background:#f2f7fc}
+.lm-vs svg{width:22px;height:22px}
+.lm-vs .s svg{color:var(--ok)}.lm-vs .x svg{color:#c43c3c}
+
+/* 8 · GARANTÍA */
+.lm-gt{text-align:center;padding:28px 20px;background:#fff}
+.lm-gt-sello{position:relative;width:108px;height:108px;margin:0 auto 14px;border-radius:50%;background:var(--ac);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;box-shadow:0 8px 18px rgba(var(--ac-rgb),.3)}
+.lm-gt-sello::before{content:"";position:absolute;inset:6px;border:1.5px dashed rgba(255,255,255,.6);border-radius:50%}
+.lm-gt-sello small{font-size:9px;font-weight:800;letter-spacing:.14em}.lm-gt-sello b{font-size:35px;font-weight:800;margin:2px 0}
+.lm-gt h3{margin:0 0 8px;font-size:21px;line-height:1.25}.lm-gt>p{margin:0 auto 14px;max-width:440px;font-size:14.5px;color:var(--muted)}
+.lm-gt ul{list-style:none;padding:0;margin:0 auto;max-width:360px;text-align:left}
+.lm-gt li{display:flex;gap:8px;align-items:center;font-size:13.5px;font-weight:700;margin-bottom:7px}.lm-gt li svg{width:17px;height:17px;color:var(--ok);flex-shrink:0}
+
+/* 9 · REGALO */
+.lm-regalo{position:relative;border-radius:20px;overflow:hidden;min-height:340px;display:flex;align-items:flex-end;background:var(--ink);color:#fff}
+.lm-regalo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.lm-regalo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,22,38,0) 25%,rgba(6,22,38,.92) 78%)}
+.lm-regalo div{position:relative;z-index:1;padding:22px 20px}
+.lm-regalo small{display:inline-block;background:var(--star);color:#111;font-size:11px;font-weight:800;padding:5px 12px;border-radius:99px;margin-bottom:10px}
+.lm-regalo b{display:block;font-size:21px;line-height:1.2;margin-bottom:6px}.lm-regalo p{margin:0;color:#dbe3ec;font-size:14px}
+
+/* 10 · PACKS */
+#lmLanding .lm-planes{display:grid;gap:10px;margin:18px 0 0}
+#lmLanding .lm-of{position:relative;display:flex;align-items:center;gap:12px;padding:15px 14px;background:#fff;border:1.5px dashed var(--line);border-radius:14px;cursor:pointer;transition:border-color .2s,background .2s,box-shadow .2s}
+#lmLanding .lm-of.on{border:2px solid var(--ac);box-shadow:0 6px 18px -6px rgba(var(--ac-rgb),.24)}
+#lmLanding .lm-of .rd{width:20px;height:20px;border:2px solid #c3cad4;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+#lmLanding .lm-of.on .rd{border-color:var(--ac)}#lmLanding .lm-of.on .rd::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--ac)}
+#lmLanding .lm-of .qn{flex:1;min-width:0}#lmLanding .lm-of .qn b{display:block;font-size:16px}#lmLanding .lm-of .qn small{font-size:12px;color:var(--muted)}
+#lmLanding .lm-of .cu{text-align:right}#lmLanding .lm-of .cu b{display:block;font-size:19px;font-weight:800;color:var(--price)}#lmLanding .lm-of .cu s{font-size:12px;color:#9aa3ad}
+#lmLanding .lm-of .tag{position:absolute;top:-11px;right:14px;background:#111827;color:#fff;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:6px}
+#lmLanding .lm-of .tag.best{background:#B7791F}
+#lmLanding .lm-of.top{margin-top:8px}
+
+/* 11 · FICHA Y DUDAS */
+.lm-det{border-top:1px solid var(--line)}
+.lm-det details{border-bottom:1px solid var(--line)}
+.lm-det summary{list-style:none;display:flex;align-items:center;gap:10px;padding:16px 2px;font-size:15px;font-weight:800;cursor:pointer}
+.lm-det summary::-webkit-details-marker{display:none}
+.lm-det summary svg{width:20px;height:20px;color:var(--ac);flex-shrink:0}
+.lm-det summary::after{content:"";margin-left:auto;width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .2s}
+.lm-det details[open] summary::after{transform:rotate(-135deg)}
+.lm-det .cu{padding:0 2px 16px 30px;font-size:14px;color:var(--muted);white-space:pre-line}
+.lm-faq details{border-bottom:1px solid var(--line)}
+.lm-faq summary{list-style:none;display:flex;justify-content:space-between;gap:12px;padding:15px 0;font-size:16px;font-weight:800;line-height:1.3;cursor:pointer}
+.lm-faq summary::-webkit-details-marker{display:none}
+.lm-faq summary::after{content:"+";color:var(--ac);font-size:26px;font-weight:700;line-height:.9}
+.lm-faq details[open] summary::after{content:"−"}
+.lm-faq p{margin:0 0 16px;font-size:14px;color:var(--muted)}
+.lm-ayuda{margin:20px 0 0;padding:16px;text-align:center;border-radius:14px;background:var(--soft);font-size:14px}
+.lm-ayuda a{display:inline-flex;align-items:center;gap:7px;margin-top:8px;background:#25D366;color:#fff!important;text-decoration:none;font-size:13px;font-weight:800;padding:10px 16px;border-radius:99px}
+.lm-ayuda a svg{width:16px;height:16px}
+.lm-legal{margin:18px 0 0;font-size:11.5px;color:var(--muted);line-height:1.55}
+
+/* 12 · CIERRE */
+.lm-cierre{text-align:center}
+.lm-cierre-img{display:block;width:100%;max-width:420px;aspect-ratio:4/5;object-fit:cover;margin:0 auto 20px;border-radius:20px;box-shadow:0 18px 40px -20px rgba(6,22,38,.55)}
+.lm-pie{background:var(--ac-dk);color:#fff;padding:36px 0 96px;width:100vw;position:relative;left:50%;margin-left:-50vw}
+.lm-pie-nav{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 22px;padding:18px 0;border-top:1px solid rgba(255,255,255,.15);border-bottom:1px solid rgba(255,255,255,.15)}
+.lm-pie-nav a{color:rgba(255,255,255,.85);text-decoration:none;font-size:13px}
+.lm-pie-bot{display:flex;flex-direction:column;align-items:center;gap:10px;padding-top:18px;font-size:12px;color:rgba(255,255,255,.65);text-align:center}
+.lm-pie-bot strong{font-size:22px;letter-spacing:-.03em;color:#fff}
+.lm-pie-pagos{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}.lm-pie-pagos span{font-size:10px;font-weight:800;color:#fff;border:1px solid rgba(255,255,255,.25);padding:4px 8px;border-radius:6px}
+@media(max-width:520px){.lm-vs{grid-template-columns:1.4fr .8fr .8fr}.lm-vs>div{font-size:12.5px;padding:11px 8px}}
+@media(min-width:768px){.lm-confia{grid-template-columns:repeat(4,minmax(0,1fr))}.lm-revs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.lm-rev{max-width:none}
+ .lm-foto{width:260px}.lm-bgrid{grid-template-columns:repeat(4,minmax(0,1fr))}.lm-vids{justify-content:center;overflow:visible;margin:0}.lm-vids .lm-vid{flex:0 0 31%}.lm-desliza{display:none}
+ .lm-pasos{gap:14px}.lm-paso figcaption{font-size:14px}.lm-regalo{min-height:420px}}
+</style>
+
+<div class="lm" id="lmLanding">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="lmi0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/></symbol><symbol id="lmi1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></symbol><symbol id="lmi2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></symbol><symbol id="lmi3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/></symbol><symbol id="lmi4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.6 12.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.1L21 8H6"/></symbol><symbol id="lmi5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol><symbol id="lmi6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></symbol><symbol id="lmi7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/></symbol></svg>
+
+  <!-- ═══ 1 · CONFIANZA + EN CUALQUIER PLAN ═══ -->
+  <section class="lm-social">
+    <div class="lm-w">
+      <div class="lm-confia">
+        <div><svg aria-hidden="true"><use href="#lmi0"/></svg>Pagas cuando te llega</div>
+        <div><svg aria-hidden="true"><use href="#lmi1"/></svg>Envío gratis en 3 a 5 días</div>
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12z"/></svg>Talla confirmada por WhatsApp</div>
+        <div><svg aria-hidden="true"><use href="#lmi2"/></svg>Cambio de talla en 30 días</div>
+      </div>
+      <p class="lm-ante">En la cena, en la fiesta, en la foto</p>
+      <h2 class="lm-h2">El cambio que nadie ve, <em class="lm-ac">pero todos notan</em></h2>
+      <p class="lm-sub" style="margin-bottom:16px">Va debajo de la ropa. Por fuera solo se ve la camisa lisa.</p>
+    </div>
+
+    {%- if hay_casa -%}
+    <div class="lm-tira" aria-label="El chaleco debajo de la ropa en distintos planes">
+      <div class="lm-pista">
+        {%- for i in (1..2) -%}
+          {%- for u in casa -%}
+            {%- assign u = u | strip -%}
+            {%- if u != '' -%}
+              <figure class="lm-foto"{% if i == 2 %} aria-hidden="true"{% endif %}><img src="{{ u }}" alt="Hombre con camisa lisa usando el chaleco debajo" loading="lazy" width="440" height="550"></figure>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endfor -%}
+      </div>
+    </div>
+    {%- if ilustrativas -%}<p class="lm-aviso">Imágenes ilustrativas.</p>{%- endif -%}
+    {%- endif -%}
+
+    {%- if rn > 0 -%}
+      {%- assign rp = rsuma | times: 10 | divided_by: rn -%}
+      {%- assign re = rp | divided_by: 10 -%}{%- assign rd = rp | modulo: 10 -%}
+      <div class="lm-w">
+        <p class="lm-resbar"><span class="lm-est">★★★★★</span><b>{{ re }},{{ rd }}</b>de 5 · {{ rn }} {% if rn == 1 %}opinión{% else %}opiniones{% endif %} de clientes</p>
+      </div>
+      <div class="lm-revs">
+        {%- for fila in filas -%}
+          {%- assign c = fila | strip | split: '|' -%}
+          {%- if c.size >= 5 -%}
+            {%- assign e = c[2] | strip | plus: 0 -%}
+            <article class="lm-rev">
+              {%- if c[5] and c[5] != '' -%}<img src="{{ c[5] | strip }}" alt="Foto de {{ c[0] | strip | escape }}" loading="lazy">{%- endif -%}
+              <div>
+                <p class="lm-est" style="margin:0">{% for s in (1..5) %}{% if s <= e %}★{% else %}<i>★</i>{% endif %}{% endfor %}</p>
+                <h4>“{{ c[3] | strip | escape }}”</h4>
+                <p>{{ c[4] | strip | escape }}</p>
+                <small>{{ c[0] | strip | escape }} · {{ c[1] | strip | escape }} <span class="lm-ver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Compra verificada</span></small>
+              </div>
+            </article>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </section>
+
+  <!-- ═══ 2 · ¿TE PASA? + VIDEO SIN / CON ═══ -->
+  <section class="lm-sec">
+    <div class="lm-w">
+      <div class="lm-pas">
+        <p class="lm-ante">¿Te pasa?</p>
+        <h2 class="lm-h2">Te pones la camisa que te gusta y vuelves al clóset por <em class="lm-ac">una más ancha</em></h2>
+        <ul>
+          <li><svg aria-hidden="true"><use href="#lmi3"/></svg><span>Te jalas la camisa cada vez que te sientas</span></li>
+          <li><svg aria-hidden="true"><use href="#lmi3"/></svg><span>Los botones quedan tirantes en el pecho</span></li>
+          <li><svg aria-hidden="true"><use href="#lmi3"/></svg><span>Prefieres tomar la foto que salir en ella</span></li>
+        </ul>
+        <p class="lm-flecha">Mira la misma camisa, sentado ↓</p>
+        {%- if vid_sentado != '' -%}
+        <figure class="lm-vid">
+          <video muted loop playsinline preload="none" data-src="{{ vid_sentado }}" aria-label="La misma camisa sin chaleco y con chaleco, sentado"></video>
+          <figcaption>Sin chaleco vs. con chaleco debajo</figcaption>
+        </figure>
+        <p class="lm-aviso">Imagen ilustrativa · efecto mientras lo usas.</p>
+        {%- endif -%}
+        <button type="button" class="lm-cta" data-q="sel">
+          <svg aria-hidden="true"><use href="#lmi4"/></svg>
+          <span>Quiero mi chaleco</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <div class="lm-chips">
+    <div class="t">
+      {%- for i in (1..2) -%}
+      <span><svg aria-hidden="true"><use href="#lmi5"/></svg>Debajo de la camisa</span>
+      <span><svg aria-hidden="true"><use href="#lmi5"/></svg>3 niveles de ganchos</span>
+      <span><svg aria-hidden="true"><use href="#lmi5"/></svg>Cremallera frontal</span>
+      <span><svg aria-hidden="true"><use href="#lmi5"/></svg>Negro, blanco y beige</span>
+      <span><svg aria-hidden="true"><use href="#lmi5"/></svg>Tallas S a 3XL</span>
+      <span><svg aria-hidden="true"><use href="#lmi5"/></svg>Pago contra entrega</span>
+      <span><svg aria-hidden="true"><use href="#lmi5"/></svg>Envío gratis</span>
+      {%- endfor -%}
+    </div>
+  </div>
+
+  <!-- ═══ 3 · MÍRALO EN ACCIÓN ═══ -->
+  <section class="lm-sec tinte">
+    <div class="lm-w">
+      <p class="lm-ante">Míralo en acción</p>
+      <h2 class="lm-h2">Te lo pones, te abotonas <em class="lm-ac">y sales</em></h2>
+      <p class="lm-sub">Así se ve de cerca, puesto y debajo de la camisa.</p>
+      <div class="lm-vids">
+        {%- if vid_poner != '' -%}<figure class="lm-vid"><span class="pl">Video</span><video muted loop playsinline preload="none" data-src="{{ vid_poner }}" aria-label="Cómo se pone el chaleco"></video><figcaption>Ganchos y cremallera: listo</figcaption></figure>{%- endif -%}
+        {%- if vid_360 != '' -%}<figure class="lm-vid"><span class="pl">Video</span><video muted loop playsinline preload="none" data-src="{{ vid_360 }}" aria-label="El chaleco visto por todos lados"></video><figcaption>Míralo por todos lados</figcaption></figure>{%- endif -%}
+        {%- if vid_boton != '' -%}<figure class="lm-vid"><span class="pl">Video</span><video muted loop playsinline preload="none" data-src="{{ vid_boton }}" aria-label="Abotonando la camisa con el chaleco debajo"></video><figcaption>La camisa abotona sin tirar</figcaption></figure>{%- endif -%}
+      </div>
+      <p class="lm-desliza">Desliza para ver más →</p>
+    </div>
+  </section>
+
+  <!-- ═══ 4 · BENEFICIOS ═══ -->
+  <section class="lm-sec">
+    <div class="lm-w">
+      <p class="lm-ante">Beneficios</p>
+      <h2 class="lm-h2">Lo notas <em class="lm-ac">desde que te lo pones</em></h2>
+      <div class="lm-bgrid">
+        <div class="lm-b lm-card"><i>👔</i><b>La camisa cae lisa</b><p>No se pega ni se marca al sentarte</p></div>
+        <div class="lm-b lm-card"><i>💪</i><b>Pecho más firme</b><p>Se acaban los botones tirantes</p></div>
+        <div class="lm-b lm-card"><i>🧍</i><b>Más derecho</b><p>Soporte en la espalda todo el día</p></div>
+        <div class="lm-b lm-card"><i>🕶️</i><b>Nadie lo nota</b><p>Delgado y pegado al cuerpo</p></div>
+      </div>
+      <p class="lm-aviso" style="margin-top:12px">Compresión mientras lo usas. No reemplaza el ejercicio ni la alimentación.</p>
+    </div>
+  </section>
+
+  <!-- ═══ 5 · CÓMO FUNCIONA ═══ -->
+  <section class="lm-sec oscuro">
+    <div class="lm-w">
+      <p class="lm-ante">Cómo funciona</p>
+      <h2 class="lm-h2">Compresión en <em class="lm-ac">3 zonas</em></h2>
+      {%- if img_como != '' -%}<img class="lm-img" src="{{ img_como }}" alt="Zonas de compresión del chaleco: abdomen, pecho y espalda" loading="lazy" width="1000" height="1000">{%- endif -%}
+      <div class="lm-zonas">
+        <div class="lm-zona"><span class="n">1</span><b>Abdomen</b><p>Ganchos de 3 niveles</p></div>
+        <div class="lm-zona"><span class="n">2</span><b>Pecho</b><p>Plano bajo la camiseta</p></div>
+        <div class="lm-zona"><span class="n">3</span><b>Espalda</b><p>Te ayuda a no encorvarte</p></div>
+      </div>
+      <button type="button" class="lm-cta" data-q="sel">
+        <svg aria-hidden="true"><use href="#lmi4"/></svg>
+        <span>Pedir y pagar al recibir</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ═══ 6 · ASÍ SE USA ═══ -->
+  <section class="lm-sec">
+    <div class="lm-w">
+      <p class="lm-ante">Así se usa</p>
+      <h2 class="lm-h2">Listo en <em class="lm-ac">30 segundos</em></h2>
+      <div class="lm-pasos">
+        <figure class="lm-paso">{%- if img_paso1 != '' -%}<img src="{{ img_paso1 }}" alt="Cerrando los ganchos del chaleco" loading="lazy" width="600" height="800">{%- endif -%}<b>1</b><figcaption>Cierra los ganchos</figcaption></figure>
+        <figure class="lm-paso">{%- if img_paso2 != '' -%}<img src="{{ img_paso2 }}" alt="Ajustando el chaleco de compresión" loading="lazy" width="600" height="800">{%- endif -%}<b>2</b><figcaption>Ajusta y sube la cremallera</figcaption></figure>
+        <figure class="lm-paso">{%- if img_paso3 != '' -%}<img src="{{ img_paso3 }}" alt="Abotonando la camisa frente al espejo" loading="lazy" width="600" height="800">{%- endif -%}<b>3</b><figcaption>Camisa encima y sales</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 7 · ¿POR QUÉ ESTE CHALECO? ═══ -->
+  <section class="lm-sec tinte">
+    <div class="lm-w">
+      <p class="lm-ante">¿Por qué este chaleco?</p>
+      <h2 class="lm-h2">No es otra <em class="lm-ac">camisa ancha</em></h2>
+      <div class="lm-vs">
+        <div class="hd"></div><div class="hd nos">Chaleco LUMENS</div><div class="hd">Camisa ancha</div>
+        <div class="f">Se ve plano bajo la ropa</div><div class="s nos"><svg aria-hidden="true"><use href="#lmi6"/></svg></div><div class="x"><svg aria-hidden="true"><use href="#lmi7"/></svg></div>
+        <div class="f">Usas la camisa que te gusta</div><div class="s nos"><svg aria-hidden="true"><use href="#lmi6"/></svg></div><div class="x"><svg aria-hidden="true"><use href="#lmi7"/></svg></div>
+        <div class="f">Comprime pecho y abdomen</div><div class="s nos"><svg aria-hidden="true"><use href="#lmi6"/></svg></div><div class="x"><svg aria-hidden="true"><use href="#lmi7"/></svg></div>
+        <div class="f">Te sostiene la espalda</div><div class="s nos"><svg aria-hidden="true"><use href="#lmi6"/></svg></div><div class="x"><svg aria-hidden="true"><use href="#lmi7"/></svg></div>
+        <div class="f">Nadie nota que lo llevas</div><div class="s nos"><svg aria-hidden="true"><use href="#lmi6"/></svg></div><div class="s"><svg aria-hidden="true"><use href="#lmi6"/></svg></div>
+      </div>
+      <button type="button" class="lm-cta" data-q="sel">
+        <svg aria-hidden="true"><use href="#lmi4"/></svg>
+        <span>Quiero el mío</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ═══ 8 · GARANTÍA ═══ -->
+  <section class="lm-sec">
+    <div class="lm-w">
+      <div class="lm-gt lm-card">
+        <div class="lm-gt-sello"><small>CAMBIO</small><b>30</b><small>DÍAS</small></div>
+        <h3>Si no te queda, te lo cambiamos</h3>
+        <p>Te confirmamos la talla por WhatsApp antes de enviarlo. Si aun así no te queda, te lo cambiamos en los primeros 30 días.</p>
+        <ul>
+          <li><svg aria-hidden="true"><use href="#lmi5"/></svg>Pagas en efectivo o Nequi al recibir</li>
+          <li><svg aria-hidden="true"><use href="#lmi5"/></svg>Envío gratis a toda Colombia</li>
+          <li><svg aria-hidden="true"><use href="#lmi5"/></svg>Empaque discreto: no dice qué hay adentro</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 9 · REGALO ═══ -->
+  <section class="lm-sec" style="padding-top:0">
+    <div class="lm-w">
+      <div class="lm-regalo">
+        {%- if img_regalo != '' -%}<img src="{{ img_regalo }}" alt="Reunión familiar" loading="lazy" width="900" height="900">{%- endif -%}
+        <div>
+          <small>🎁 Buen regalo</small>
+          <b>Para tu esposo, tu novio o tu papá</b>
+          <p>Lo pides tú, le llega a su casa y lo pagan al recibir.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 10 · PACKS ═══ -->
+  <section class="lm-sec tinte" id="lmPacks">
+    <div class="lm-w">
+      <p class="lm-ante">Elige tu pack</p>
+      <h2 class="lm-h2">La mayoría pide <em class="lm-ac">2</em></h2>
+      <p class="lm-sub" style="margin-bottom:0">Uno puesto mientras el otro se lava.</p>
+      {%- if img_tallas != '' -%}<img class="lm-img" src="{{ img_tallas }}" alt="Guía de tallas del chaleco moldeador" loading="lazy" width="1000" height="1000">{%- endif -%}
+      <div class="lm-planes">
+        <div class="lm-of" data-plan="1" role="button" tabindex="0" aria-pressed="false">
+          <span class="rd"></span>
+          <span class="qn"><b>1 chaleco</b><small>Para probarlo</small></span>
+          <span class="cu"><b>$99.900</b><s>$159.900</s></span>
+        </div>
+        <div class="lm-of top on" data-plan="2" role="button" tabindex="0" aria-pressed="true">
+          <span class="tag">🔥 Más pedido</span>
+          <span class="rd"></span>
+          <span class="qn"><b>2 chalecos</b><small>$74.950 c/u · uno de cambio</small></span>
+          <span class="cu"><b>$149.900</b><s>$199.800</s></span>
+        </div>
+        <div class="lm-of top" data-plan="3" role="button" tabindex="0" aria-pressed="false">
+          <span class="tag best">💎 Mejor precio</span>
+          <span class="rd"></span>
+          <span class="qn"><b>3 chalecos</b><small>$63.300 c/u · los 3 colores</small></span>
+          <span class="cu"><b>$189.900</b><s>$299.700</s></span>
+        </div>
+      </div>
+      <button type="button" class="lm-cta" data-q="sel">
+        <svg aria-hidden="true"><use href="#lmi4"/></svg>
+        <span>Pedir y pagar al recibir</span>
+      </button>
+      <div class="lm-sellos">
+        <span><svg aria-hidden="true"><use href="#lmi0"/></svg>Pago contra entrega</span>
+        <span><svg aria-hidden="true"><use href="#lmi1"/></svg>Envío gratis</span>
+        <span><svg aria-hidden="true"><use href="#lmi2"/></svg>Cambio de talla</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 11 · FICHA ═══ -->
+  <section class="lm-sec">
+    <div class="lm-w">
+      <p class="lm-ante">La ficha</p>
+      <h2 class="lm-h2">Todo del chaleco, <em class="lm-ac">en un solo lugar</em></h2>
+      <div class="lm-det" style="margin-top:18px">
+        <details open>
+          <summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Qué trae</summary>
+          <div class="cu">Chaleco moldeador para hombre, sin mangas
+Ganchos internos de 3 niveles y cremallera frontal
+Tela elástica y transpirable, costuras reforzadas
+Colores: negro, blanco y beige
+Tallas: S, M, L, XL, 2XL y 3XL</div>
+        </details>
+        <details>
+          <summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="10" rx="2"/><path d="M6 7v3M10 7v4M14 7v3M18 7v4"/></svg>Talla</summary>
+          <div class="cu">Después de tu pedido te escribimos por WhatsApp, nos dices tu peso y estatura y te confirmamos la talla antes de enviarlo.
+Si estás entre dos tallas, pide la más grande.</div>
+        </details>
+        <details>
+          <summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg>Uso y lavado</summary>
+          <div class="cu">Empieza con pocas horas al día y ve aumentando. Quítatelo para dormir.
+Lávalo a mano o en ciclo suave con agua fría y sécalo a la sombra.</div>
+        </details>
+        <details>
+          <summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>Precauciones</summary>
+          <div class="cu">Debe quedar firme, no doloroso: si te aprieta, te marca la piel o te falta el aire, usa un nivel más suelto o una talla más.
+Si tienes una condición médica, problemas de circulación o una cirugía reciente, consulta antes con tu médico.</div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 12 · DUDAS ═══ -->
+  <section class="lm-sec tinte">
+    <div class="lm-w">
+      <p class="lm-ante">Preguntas frecuentes</p>
+      <h2 class="lm-h2" style="margin-bottom:12px">Tus dudas, <em class="lm-ac">resueltas</em></h2>
+      <div class="lm-faq">
+        <details><summary>¿Se nota debajo de la ropa?</summary><p>Es delgado y va pegado al cuerpo, así que debajo de una camisa o una polo no se ve. Con camisas blancas o claras, pide el beige o el blanco.</p></details>
+        <details><summary>¿Qué talla pido?</summary><p>Después de tu pedido te escribimos por WhatsApp, nos dices tu peso y estatura y te confirmamos la talla. Si estás entre dos, pide la más grande.</p></details>
+        <details><summary>¿Y si no me queda?</summary><p>Nos escribes en los primeros 30 días y te lo cambiamos por otra talla.</p></details>
+        <details><summary>¿Me va a quitar la barriga?</summary><p>No. Es una prenda de compresión: te ves más plano mientras lo tienes puesto. Al quitártelo, el efecto se va.</p></details>
+        <details><summary>¿Da calor?</summary><p>Algo de calor da, porque va pegado al cuerpo. La tela es transpirable; en clima caliente úsalo en los momentos que más te importan.</p></details>
+        <details><summary>¿Cómo funcionan los paquetes?</summary><p>1 chaleco $99.900, 2 por $149.900 y 3 por $189.900. Pueden ser de colores o tallas distintas: te los confirmamos por WhatsApp.</p></details>
+        <details><summary>¿El paquete dice qué es?</summary><p>No. Llega en un empaque normal, sin nada que diga qué hay adentro.</p></details>
+        <details><summary>¿Cómo pago y cuánto se demora?</summary><p>Haces el pedido sin pagar nada. Te llega en 3 a 5 días hábiles y le pagas al mensajero en efectivo o Nequi.</p></details>
+      </div>
+      <div class="lm-ayuda">
+        <b>¿Tienes otra pregunta?</b><br>Escríbenos y te ayudamos con la talla o con tu pedido.<br>
+        <a href="https://wa.me/573125923915?text=Hola!%20Vengo%20de%20la%20p%C3%A1gina%20del%20Chaleco%20Moldeador%20y%20tengo%20una%20pregunta" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M.06 24l1.69-6.16A11.87 11.87 0 0 1 .16 11.9C.16 5.34 5.5 0 12.05 0a11.82 11.82 0 0 1 8.41 3.49 11.82 11.82 0 0 1 3.48 8.41c0 6.56-5.34 11.9-11.89 11.9a11.9 11.9 0 0 1-5.69-1.45zm6.6-3.8c1.67 1 3.28 1.59 5.39 1.59 5.45 0 9.89-4.43 9.89-9.88A9.88 9.88 0 0 0 12.06 2C6.6 2 2.17 6.43 2.17 11.88c0 2.23.65 3.9 1.75 5.64l-1 3.65z"/></svg>
+          Escribir por WhatsApp
+        </a>
+      </div>
+      <p class="lm-legal">Prenda de compresión. El efecto en la silueta es temporal mientras se usa. No es un dispositivo médico ni reemplaza la actividad física o la consulta médica.</p>
+    </div>
+  </section>
+
+  <!-- ═══ 13 · CIERRE ═══ -->
+  <section class="lm-sec">
+    <div class="lm-w">
+      <div class="lm-cierre">
+        {%- if img_cierre != '' -%}<img class="lm-cierre-img" src="{{ img_cierre }}" alt="Hombre seguro frente al espejo con camisa lisa" loading="lazy" width="800" height="1000">{%- endif -%}
+        <h2 class="lm-h2">Ponte la camisa que te gusta y sal <em class="lm-ac">sin revisarte otra vez</em></h2>
+        <button type="button" class="lm-cta" data-q="sel">
+          <svg aria-hidden="true"><use href="#lmi4"/></svg>
+          <span>Elegir mi paquete</span>
+        </button>
+        <div class="lm-sellos">
+          <span><svg aria-hidden="true"><use href="#lmi0"/></svg>Pago contra entrega</span>
+          <span><svg aria-hidden="true"><use href="#lmi1"/></svg>Envío gratis</span>
+          <span><svg aria-hidden="true"><use href="#lmi2"/></svg>Cambio de talla</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="lm-pie">
+    <div class="lm-w">
+      <nav class="lm-pie-nav">
+        <a href="/policies/refund-policy">Garantía y cambios</a>
+        <a href="/policies/shipping-policy">Envíos</a>
+        <a href="/policies/privacy-policy">Privacidad</a>
+        <a href="/policies/terms-of-service">Términos</a>
+      </nav>
+      <div class="lm-pie-bot">
+        <strong>LUMENS</strong>
+        <span>Los problemas cotidianos merecen soluciones cotidianas.</span>
+        <div class="lm-pie-pagos"><span>EFECTIVO</span><span>NEQUI</span><span>DAVIPLATA</span></div>
+        <span>© {{ "now" | date: "%Y" }} LUMENS Colombia</span>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var root = document.getElementById('lmLanding');
+  if(!root) return;
+
+  // 0. Videos: cargan y se reproducen solo cuando aparecen en pantalla (la página carga rápido).
+  var vids = root.querySelectorAll('video[data-src]');
+  function cargar(v){ if(!v.src){ v.src = v.getAttribute('data-src') + '#t=0.1'; v.load(); } }
+  function play(v){ cargar(v); var p = v.play(); if(p && p.catch) p.catch(function(){}); }
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting){ play(en.target); } else if(en.target.src){ en.target.pause(); } });
+    }, { rootMargin: '200px 0px', threshold: 0.15 });
+    vids.forEach(function(v){ io.observe(v); });
+  } else {
+    vids.forEach(play);
+  }
+
+  // 1. Packs de la landing (1, 2 o 3 chalecos). Por defecto se ve marcado el de 2,
+  //    pero NO toca la cantidad del formulario hasta que la persona elige o pide.
+  var selectedQty = '2';
+  var plans = root.querySelectorAll('.lm-of');
+
+  function syncShopifyQty(qty){
+    document.querySelectorAll('input[name="quantity"]').forEach(function(inp){
+      inp.value = qty;
+      inp.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  }
+
+  function selectPlan(el){
+    plans.forEach(function(p){ p.classList.remove('on'); p.setAttribute('aria-pressed','false'); });
+    el.classList.add('on'); el.setAttribute('aria-pressed','true');
+    selectedQty = el.getAttribute('data-plan') || '2';
+    syncShopifyQty(selectedQty);
+  }
+
+  plans.forEach(function(p){
+    p.addEventListener('click', function(){ selectPlan(p); });
+    p.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); selectPlan(p); }
+    });
+  });
+
+  // 2. Releasit: marca la oferta de la misma posición (0 = 1 chaleco, 1 = 2, 2 = 3).
+  function clickOferta(qty){
+    var pos = String(parseInt(qty, 10) - 1);
+    var todas = document.querySelectorAll('._rsi-quantity-offers-offer-container[data-offer-pos="' + pos + '"]');
+    if(!todas.length) return false;
+    var visibles = [].filter.call(todas, function(o){ return o.offsetParent !== null; });
+    (visibles.length ? visibles : [].slice.call(todas)).forEach(function(o){ o.click(); });
+    return true;
+  }
+  function marcarOferta(qty, n){
+    n = n || 0;
+    if(clickOferta(qty)){
+      setTimeout(function(){ clickOferta(qty); }, 400);
+      setTimeout(function(){ clickOferta(qty); }, 1000);
+      return;
+    }
+    if(n < 50) setTimeout(function(){ marcarOferta(qty, n + 1); }, 100);
+  }
+  function botonReleasit(){
+    return document.querySelector('#product-form-lmn ._rsi-buy-now-button-product, #product-form-lmn ._rsi-buy-now-button, #_rsi-buy-now-button, ._rsi-buy-now-button-product, ._rsi-buy-now-button');
+  }
+
+  // 3. Botones de la landing → abren el formulario de Releasit con el pack elegido
+  root.querySelectorAll('.lm-cta[data-q="sel"]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var qty = selectedQty;
+      syncShopifyQty(qty);
+      var intentos = 0;
+      (function abrir(){
+        var rsi = botonReleasit();
+        if(rsi){
+          clickOferta(qty);
+          rsi.click();
+          marcarOferta(qty, 0);
+        } else if(intentos++ < 30){
+          setTimeout(abrir, 100);
+        } else {
+          var packs = document.getElementById('lmPacks');
+          if(packs) packs.scrollIntoView({ behavior: 'smooth' });
+        }
+      })();
+    });
+  });
+})();
+</script>

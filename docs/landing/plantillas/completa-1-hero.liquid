@@ -1,0 +1,813 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+{%- comment -%}
+  CHALECO MOLDEADOR · HERO
+  PRECIOS · Se escriben siempre como $99.900, sin importar el formato de moneda de la tienda.
+  1 chaleco = precio del producto en Shopify. Si no tiene "Precio de comparación", se usa $159.900.
+  2 y 3 chalecos se fijan aquí abajo (en centavos: 14990000 = $149.900).
+
+  GUÍA DE TALLAS · Copia las medidas de la ficha del proveedor en Dropi, una talla por línea:
+     Talla|Peso|Contorno de abdomen
+  Si la dejas vacía, la guía solo dice que te confirmamos la talla por WhatsApp.
+{%- endcomment -%}
+{%- assign lmn_p2 = 14990000 -%}
+{%- assign lmn_p3 = 18990000 -%}
+{%- capture lmn_tallas -%}
+{%- endcapture -%}
+{%- assign lmn_tabla = lmn_tallas | strip | newline_to_br | split: '<br />' -%}
+
+{%- assign lmn_p1 = product.price -%}
+{%- assign lmn_antes = product.compare_at_price | default: 0 -%}
+{%- if lmn_antes <= lmn_p1 -%}{%- assign lmn_antes = 15990000 -%}{%- endif -%}
+{%- assign lmn_a2 = lmn_p1 | times: 2 -%}
+{%- assign lmn_a3 = lmn_p1 | times: 3 -%}
+{%- assign lmn_ah1 = lmn_antes | minus: lmn_p1 -%}
+{%- assign lmn_pct = lmn_ah1 | times: 100 | divided_by: lmn_antes -%}
+{%- assign lmn_ah2 = lmn_p1 | times: 2 | minus: lmn_p2 -%}
+{%- assign lmn_ah3 = lmn_p1 | times: 3 | minus: lmn_p3 -%}
+{%- assign lmn_u2 = lmn_p2 | divided_by: 2 -%}
+{%- assign lmn_u3 = lmn_p3 | divided_by: 3 -%}
+{%- assign lmn_lista = lmn_p1 | append: ',' | append: lmn_antes | append: ',' | append: lmn_p2 | append: ',' | append: lmn_a2 | append: ',' | append: lmn_p3 | append: ',' | append: lmn_a3 | append: ',' | append: lmn_ah1 | append: ',' | append: lmn_ah2 | append: ',' | append: lmn_ah3 | append: ',' | append: lmn_u2 | append: ',' | append: lmn_u3 | split: ',' -%}
+{%- capture lmn_fmt -%}
+  {%- for v in lmn_lista -%}
+    {%- assign n = v | plus: 0 | divided_by: 100 -%}
+    {%- assign mil = n | divided_by: 1000 -%}
+    {%- assign r = n | modulo: 1000 -%}
+    {%- if mil > 0 -%}
+      {%- if r < 10 -%}{%- assign rr = r | prepend: '00' -%}{%- elsif r < 100 -%}{%- assign rr = r | prepend: '0' -%}{%- else -%}{%- assign rr = r -%}{%- endif -%}
+      ${{ mil }}.{{ rr }}
+    {%- else -%}${{ r }}{%- endif -%}
+    {%- unless forloop.last -%}|{%- endunless -%}
+  {%- endfor -%}
+{%- endcapture -%}
+{%- assign M = lmn_fmt | strip | split: '|' -%}
+
+<!-- BARRA DE ANUNCIOS -->
+<div class="lmn-announcement-bar" role="region" aria-label="Beneficios LUMENS">
+  <div class="lmn-announcement-track">
+    {%- for i in (1..2) -%}
+    <div class="lmn-announcement-group"{% if i == 2 %} aria-hidden="true"{% endif %}>
+      <span>🚚 <strong>ENVÍO GRATIS</strong> a toda Colombia</span>
+      <span class="lmn-ann-sep">•</span>
+      <span>💵 <strong>PAGO CONTRA ENTREGA</strong> · Pagas al recibir</span>
+      <span class="lmn-ann-sep">•</span>
+      <span>🔄 <strong>CAMBIO DE TALLA</strong> en 30 días</span>
+      <span class="lmn-ann-sep">•</span>
+      <span>📦 <strong>EMPAQUE DISCRETO</strong></span>
+      <span class="lmn-ann-sep">•</span>
+    </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+<div class="lmn-product-container">
+
+  <!-- GALERÍA -->
+  <div class="lmn-gallery-col">
+    <div class="lmn-main-image-card">
+      <div class="lmn-seal" aria-hidden="true">
+        <span class="lmn-seal-top">CAMBIO DE</span>
+        <span class="lmn-seal-big">TALLA</span>
+        <span class="lmn-seal-bot">30 DÍAS</span>
+      </div>
+      <div class="lmn-slider-viewport">
+        <div class="lmn-slider-track" id="lmnSliderTrack">
+          {% if product.media.size > 0 %}
+            {% for media in product.media limit: 8 %}
+              <div class="lmn-slide {% if forloop.first %}is-active{% endif %}">
+                <img
+                  src="{{ media | image_url: width: 1000 }}"
+                  alt="{{ media.alt | default: product.title | escape }}"
+                  width="1000"
+                  height="1000"
+                  loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                  {% if forloop.first %}fetchpriority="high"{% endif %}
+                >
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="lmn-slide is-active">
+              {{ 'product-1' | placeholder_svg_tag: 'lmn-placeholder-img' }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if product.media.size > 1 %}
+        <button type="button" class="lmn-arrow-btn lmn-arrow-prev" id="lmnPrevBtn" aria-label="Anterior">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+        <button type="button" class="lmn-arrow-btn lmn-arrow-next" id="lmnNextBtn" aria-label="Siguiente">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      {% endif %}
+    </div>
+
+    {% if product.media.size > 1 %}
+      <div class="lmn-thumbs" id="lmnThumbs">
+        {% for media in product.media limit: 8 %}
+          <button type="button" class="lmn-thumb {% if forloop.first %}is-active{% endif %}" data-index="{{ forloop.index0 }}" aria-label="Imagen {{ forloop.index }}">
+            <img src="{{ media | image_url: width: 160 }}" alt="" width="80" height="80" loading="lazy">
+          </button>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- TEXTO Y COMPRA -->
+  <div class="lmn-copy-col">
+
+    <div class="lmn-top-bar">
+      <span class="lmn-trust-mini"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Pagas al recibir</span>
+      <span class="lmn-trust-mini"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Te confirmamos la talla por WhatsApp</span>
+    </div>
+
+    <div class="lmn-header-group">
+      <h1 class="lmn-heading">
+        Chaleco Moldeador | Ponte la camisa que quieras y
+        <span class="lmn-underline-container">
+          sal sin revisarte
+          <svg class="lmn-curved-underline" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 8 C 30 2, 70 2, 100 8" stroke="#0E2A47" stroke-width="3" fill="transparent" stroke-linecap="round"/></svg>
+        </span>
+      </h1>
+      <p class="lmn-sub">Compresión firme que aplana abdomen y pecho debajo de tu ropa, desde que te lo pones.</p>
+    </div>
+
+    <!-- 4 BENEFICIOS CON ÍCONO -->
+    <div class="lmn-benefits">
+      <div class="lmn-benefit">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 6c-3 6-4 12-2 18s2 12-1 18"/><path d="M32 6c3 6 4 12 2 18s-2 12 1 18"/><path d="M19 24h10"/><path d="M26 21l3 3-3 3"/><path d="M22 21l-3 3 3 3"/></svg>
+        <span>Disimula la barriga</span>
+      </div>
+      <div class="lmn-benefit">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 8c2 4 6 6 14 6s12-2 14-6"/><path d="M12 14c-1 6 1 10 6 11"/><path d="M36 14c1 6-1 10-6 11"/><path d="M18 25c2 2 10 2 12 0"/><path d="M24 30v10"/><path d="M20 36l4 4 4-4"/></svg>
+        <span>Aplana el pecho</span>
+      </div>
+      <div class="lmn-benefit">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="8" r="4"/><path d="M24 12v20"/><path d="M16 18h16"/><path d="M24 32l-6 10"/><path d="M24 32l6 10"/><path d="M38 8v28"/><path d="M35 11l3-3 3 3"/></svg>
+        <span>Te para más derecho</span>
+      </div>
+      <div class="lmn-benefit">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 6l-9 5 3 9 4-2v22h18V18l4 2 3-9-9-5"/><path d="M17 6c1 3 4 5 7 5s6-2 7-5"/><path d="M24 11v29"/></svg>
+        <span>No se nota bajo la ropa</span>
+      </div>
+    </div>
+
+    <!-- GUÍA DE TALLAS -->
+    <details class="lmn-size">
+      <summary>
+        <span>Guía de tallas</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="2"/><path d="M6 7v3M10 7v4M14 7v3M18 7v4"/></svg>
+      </summary>
+      <div class="lmn-size-body">
+        {%- assign lmn_hay_tallas = false -%}
+        {%- for fila in lmn_tabla -%}{%- assign c = fila | strip | split: '|' -%}{%- if c.size >= 2 -%}{%- assign lmn_hay_tallas = true -%}{%- endif -%}{%- endfor -%}
+        {%- if lmn_hay_tallas -%}
+          <table>
+            <thead><tr><th>Talla</th><th>Peso</th><th>Abdomen</th></tr></thead>
+            <tbody>
+              {%- for fila in lmn_tabla -%}
+                {%- assign c = fila | strip | split: '|' -%}
+                {%- if c.size >= 2 -%}<tr><td><b>{{ c[0] | strip }}</b></td><td>{{ c[1] | strip }}</td><td>{{ c[2] | strip }}</td></tr>{%- endif -%}
+              {%- endfor -%}
+            </tbody>
+          </table>
+        {%- endif -%}
+        <p>Tallas <b>S, M, L, XL, 2XL y 3XL</b>. Elige la tuya arriba y, después de tu pedido, te escribimos por WhatsApp con tu peso y estatura para confirmarla <b>antes de enviarlo</b>. Si estás entre dos tallas, pide la más grande. Y si no te queda, te la cambiamos.</p>
+      </div>
+    </details>
+
+    <!-- TALLA Y COLOR (cambia la variante que se envía a Releasit) -->
+    {%- if product.has_only_default_variant == false -%}
+    <div class="lmn-variants" id="lmnVariants">
+      {%- assign lmn_sel = product.selected_or_first_available_variant -%}
+      {%- for option in product.options_with_values -%}
+        {%- assign lmn_on = option.name | downcase -%}
+        <div class="lmn-vgroup" data-pos="{{ forloop.index0 }}">
+          <p class="lmn-vlabel">{% if lmn_on contains 'tall' or lmn_on contains 'size' %}Elige tu talla{% elsif lmn_on contains 'col' %}Elige tu color{% else %}{{ option.name }}{% endif %}: <b class="lmn-vval">{{ lmn_sel.options[forloop.index0] }}</b></p>
+          <div class="lmn-vchips">
+            {%- for value in option.values -%}
+              <button type="button" class="lmn-vchip{% if value == lmn_sel.options[forloop.parentloop.index0] %} is-on{% endif %}" data-val="{{ value | escape }}">{% if lmn_on contains 'col' %}{{ value | capitalize }}{% else %}{{ value }}{% endif %}</button>
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- endfor -%}
+      <script type="application/json" id="lmnVariantData">[{%- for v in product.variants -%}{"id":{{ v.id }},"o":{{ v.options | json }},"ok":{{ v.available | json }}}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}]</script>
+    </div>
+    {%- endif -%}
+
+    <div class="lmn-offer-divider"><span>ELIGE TU PACK · PAGAS AL RECIBIR</span></div>
+
+    <div class="lmn-checkout-wrapper">
+      <form method="post" action="/cart/add" id="product-form-lmn" accept-charset="UTF-8" class="form" enctype="multipart/form-data">
+        <input type="hidden" name="form_type" value="product">
+        <input type="hidden" name="utf8" value="✓">
+        <input type="hidden" name="id" id="lmn-variant-id" value="{{ product.selected_or_first_available_variant.id }}">
+        <input type="hidden" name="quantity" id="lmn-qty" value="1">
+
+        <div class="lmn-bundle-section">
+
+          <!-- OPCIÓN 1 -->
+          <label class="lmn-bundle-option is-selected" data-bundle-index="0" data-qty="1">
+            <div class="lmn-radio-custom"></div>
+            <input type="radio" name="bundle" value="1" checked>
+            <div class="lmn-bundle-content">
+              <div class="lmn-bundle-info">
+                <span class="lmn-bundle-name">1 chaleco</span>
+                <span class="lmn-bundle-shipping">{{ lmn_pct }}% OFF · Para probarlo</span>
+              </div>
+              <div class="lmn-bundle-price">
+                <span class="lmn-price-current">{{ M[0] }}</span>
+                <span class="lmn-price-old">{{ M[1] }}</span>
+              </div>
+            </div>
+          </label>
+
+          <!-- OPCIÓN 2 -->
+          <label class="lmn-bundle-option is-popular" data-bundle-index="1" data-qty="2">
+            <div class="lmn-popular-tag">🔥 MÁS PEDIDO</div>
+            <div class="lmn-radio-custom"></div>
+            <input type="radio" name="bundle" value="2">
+            <div class="lmn-bundle-content">
+              <div class="lmn-bundle-info">
+                <span class="lmn-bundle-name">2 chalecos</span>
+                <span class="lmn-bundle-shipping">{{ M[9] }} c/u · uno de cambio</span>
+              </div>
+              <div class="lmn-bundle-price">
+                <span class="lmn-price-current">{{ M[2] }}</span>
+                <span class="lmn-price-old">{{ M[3] }}</span>
+              </div>
+            </div>
+          </label>
+
+          <!-- OPCIÓN 3 -->
+          <label class="lmn-bundle-option is-best" data-bundle-index="2" data-qty="3">
+            <div class="lmn-best-tag">💎 MEJOR PRECIO</div>
+            <div class="lmn-radio-custom"></div>
+            <input type="radio" name="bundle" value="3">
+            <div class="lmn-bundle-content">
+              <div class="lmn-bundle-info">
+                <span class="lmn-bundle-name">3 chalecos</span>
+                <span class="lmn-bundle-shipping">{{ M[10] }} c/u · los 3 colores</span>
+              </div>
+              <div class="lmn-bundle-price">
+                <span class="lmn-price-current">{{ M[4] }}</span>
+                <span class="lmn-price-old">{{ M[5] }}</span>
+              </div>
+            </div>
+          </label>
+          <p class="lmn-bundle-note">Si pides 2 o 3 y los quieres de tallas o colores distintos, nos lo dices por WhatsApp al confirmar tu pedido.</p>
+        </div>
+
+        <div class="realeasit-btn-wrapper" id="lmnCheckoutFormTarget">
+          <button type="button" class="lmn-main-action-btn lmn-super-cta" id="lmn-fast-buy-btn">
+            <div class="lmn-main-btn-inner-border">
+              <span class="lmn-main-btn-text">¡PEDIR Y PAGAR AL RECIBIR!</span>
+            </div>
+          </button>
+        </div>
+
+        <p class="lmn-aviso" id="lmnAviso">Esta talla o color no está disponible ahora. Elige otra o <a href="https://wa.me/573125923915?text=Hola!%20Quiero%20pedir%20el%20Chaleco%20Moldeador" target="_blank" rel="noopener">pídelo por WhatsApp</a>.</p>
+
+        <div class="lmn-trust-icons-row">
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg> Pago contra entrega</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"></path></svg> Envío gratis</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> Cambio de talla</span>
+        </div>
+      </form>
+    </div>
+
+    <div class="lmn-feature-pills">
+      <div class="lmn-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> 3 niveles de ganchos</div>
+      <div class="lmn-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Cremallera frontal</div>
+      <div class="lmn-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Negro, blanco, beige</div>
+      <div class="lmn-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Tallas S a 3XL</div>
+    </div>
+
+    <div class="lmn-guarantee-box">
+      <div class="lmn-guarantee-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3 4.5 6v6c0 4.5 3.2 7.8 7.5 9 4.3-1.2 7.5-4.5 7.5-9V6z"/><path d="m8.8 12 2.2 2.2 4.4-4.4"/></svg>
+      </div>
+      <div class="lmn-guarantee-text">
+        <strong>Si no te queda, te lo cambiamos.</strong> Tienes 30 días para cambiar la talla o si llega con algún defecto.
+      </div>
+    </div>
+
+    <div class="lmn-shipping-timeline-card" id="lmnTimeline" data-d1="1" data-d2="2" data-e1="3" data-e2="5">
+      <div class="lmn-timeline">
+        <div class="lmn-tl-step">
+          <div class="lmn-tl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg></div>
+          <span class="lmn-tl-title" data-f="hoy">Hoy pides</span>
+          <small class="lmn-tl-sub">Pides sin pagar</small>
+        </div>
+        <div class="lmn-tl-line"></div>
+        <div class="lmn-tl-step">
+          <div class="lmn-tl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg></div>
+          <span class="lmn-tl-title" data-f="desp">1 - 2 días</span>
+          <small class="lmn-tl-sub">Lo despachamos</small>
+        </div>
+        <div class="lmn-tl-line"></div>
+        <div class="lmn-tl-step">
+          <div class="lmn-tl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div>
+          <span class="lmn-tl-title" data-f="entr">3 - 5 días hábiles</span>
+          <small class="lmn-tl-sub">Recibes y pagas</small>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BARRA FIJA INFERIOR (aparece solo después de pasar el botón principal) -->
+<div class="lmn-sticky-bottom-bar" id="lmnStickyBar">
+  <div class="lmn-sticky-container">
+    <div class="lmn-sticky-rating-header">
+      <span><b>{{ M[0] }}</b> · Envío gratis · Pagas al recibir</span>
+    </div>
+    <button type="button" class="lmn-sticky-action-btn" id="lmnStickyTriggerBtn">
+      <div class="lmn-sticky-btn-inner-border">
+        <span class="lmn-sticky-btn-text">¡PEDIR Y PAGAR AL RECIBIR!</span>
+      </div>
+    </button>
+  </div>
+</div>
+
+<style>
+:root {
+  --lmn-brand: #0E2A47;
+  --lmn-brand-dark: #061626;
+  --lmn-brand-light: #EAF0F6;
+  --lmn-brand-rgb: 14, 42, 71;
+  --lmn-price: #0E7490;
+  --lmn-bg-soft: #F8F9FA;
+  --lmn-text-dark: #0F172A;
+  --lmn-text-gray: #475569;
+  --lmn-success: #15803D;
+}
+
+/* BARRA DE ANUNCIOS SUPERIOR */
+.lmn-announcement-bar, .lmn-announcement-bar * { box-sizing: border-box; }
+.lmn-announcement-bar {
+  width: 100%; max-width: 100%; margin: 0 0 6px 0;
+  background: linear-gradient(90deg, var(--lmn-brand-dark) 0%, var(--lmn-brand) 50%, var(--lmn-brand-dark) 100%);
+  color: #FFFFFF; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12.5px; font-weight: 600; letter-spacing: 0.2px;
+  padding: 10px 0; overflow: hidden; position: relative;
+  box-shadow: 0 6px 18px rgba(var(--lmn-brand-rgb), 0.16);
+  border-top: 1px solid rgba(255, 255, 255, 0.12); border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+.lmn-announcement-track { display: flex; width: max-content; animation: lmn-marquee 28s linear infinite; }
+.lmn-announcement-bar:hover .lmn-announcement-track { animation-play-state: paused; }
+.lmn-announcement-group { display: flex; align-items: center; white-space: nowrap; }
+.lmn-announcement-group span { display: inline-flex; align-items: center; gap: 5px; padding: 0 14px; }
+.lmn-announcement-group strong { color: #FDE68A; font-weight: 800; }
+.lmn-ann-sep { color: rgba(255, 255, 255, 0.35); padding: 0 2px !important; }
+@keyframes lmn-marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+/* Ocultar botón nativo inyectado por Releasit dentro del form (el nuestro lo dispara) */
+#product-form-lmn ._rsi-buy-now-button,
+#product-form-lmn ._rsi-buy-now-button-product,
+#product-form-lmn #_rsi-buy-now-button,
+._rsi-buy-now-button-floating {
+  position: absolute !important; width: 1px !important; height: 1px !important; min-height: 0 !important;
+  padding: 0 !important; margin: 0 !important; opacity: 0 !important; overflow: hidden !important; pointer-events: none !important;
+}
+
+.lmn-main-action-btn.is-loading .lmn-main-btn-text,
+.lmn-sticky-action-btn.is-loading .lmn-sticky-btn-text { opacity: .75; }
+
+.lmn-product-container, .lmn-product-container * { box-sizing: border-box; }
+.lmn-product-container {
+  width: 100%; max-width: 1150px; margin: 0 auto; padding: 12px 20px 24px 20px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: start;
+  background-color: var(--lmn-bg-soft); border-radius: 24px; color: var(--lmn-text-dark); overflow-x: clip;
+}
+
+.lmn-gallery-col { width: 100%; max-width: 100%; min-width: 0; position: sticky; top: 24px; }
+.lmn-main-image-card {
+  width: 100%; max-width: 100%; border-radius: 20px; overflow: hidden;
+  box-shadow: 0 10px 30px rgba(var(--lmn-brand-rgb), 0.08); background-color: #FFFFFF;
+  position: relative; border: 1px solid rgba(var(--lmn-brand-rgb), 0.12); aspect-ratio: 1 / 1;
+}
+/* Sello redondo tipo "garantía" en la esquina de la foto */
+.lmn-seal {
+  position: absolute; top: 12px; right: 12px; z-index: 5; width: 78px; height: 78px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.9); outline: 2px dashed rgba(255,255,255,.55); outline-offset: -8px;
+  background: rgba(var(--lmn-brand-rgb), .88); color: #fff;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  font-weight: 800; line-height: 1.05; box-shadow: 0 6px 16px rgba(0,0,0,.18); pointer-events: none;
+}
+.lmn-seal-top, .lmn-seal-bot { font-size: 8.5px; letter-spacing: .6px; }
+.lmn-seal-big { font-size: 16px; letter-spacing: .3px; margin: 2px 0; }
+.lmn-slider-viewport { width: 100%; max-width: 100%; height: 100%; overflow: hidden; }
+.lmn-slider-track { display: flex; width: 100%; height: 100%; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+.lmn-slide { min-width: 100%; width: 100%; flex-shrink: 0; height: 100%; display: flex; align-items: center; justify-content: center; }
+.lmn-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.lmn-placeholder-img { width: 100%; height: 100%; background-color: #E2E8F0; }
+.lmn-arrow-btn {
+  position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px;
+  background: rgba(255, 255, 255, 0.95); border-radius: 50%; border: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12); transition: all 0.2s;
+}
+.lmn-arrow-btn:hover { background: #FFFFFF; transform: translateY(-50%) scale(1.08); }
+.lmn-arrow-btn svg { width: 20px; height: 20px; stroke: var(--lmn-text-dark); }
+.lmn-arrow-prev { left: 10px; }
+.lmn-arrow-next { right: 10px; }
+
+/* Miniaturas debajo de la foto */
+.lmn-thumbs { display: flex; gap: 8px; margin-top: 10px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+.lmn-thumbs::-webkit-scrollbar { display: none; }
+.lmn-thumb { flex: 0 0 auto; width: 62px; height: 62px; padding: 0; border-radius: 10px; overflow: hidden; border: 2px solid transparent; background: #fff; cursor: pointer; opacity: .7; transition: all .2s; }
+.lmn-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.lmn-thumb.is-active { border-color: var(--lmn-brand); opacity: 1; }
+
+.lmn-copy-col { display: flex; flex-direction: column; width: 100%; max-width: 100%; min-width: 0; }
+
+.lmn-top-bar { display: flex; align-items: center; gap: 6px 14px; margin-bottom: 10px; flex-wrap: wrap; }
+.lmn-trust-mini { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; color: var(--lmn-success); }
+.lmn-trust-mini svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+.lmn-header-group { margin-bottom: 14px; max-width: 100%; }
+.lmn-heading { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em; color: var(--lmn-text-dark); margin: 0; word-wrap: break-word; }
+.lmn-underline-container { position: relative; display: inline-block; max-width: 100%; color: var(--lmn-brand); }
+.lmn-curved-underline { position: absolute; bottom: -4px; left: 0; width: 100%; height: 10px; }
+.lmn-sub { margin: 10px 0 0; font-size: 15px; line-height: 1.5; color: var(--lmn-text-gray); font-weight: 500; }
+
+/* 4 beneficios con ícono de línea */
+.lmn-benefits { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 0 0 14px; }
+.lmn-benefit { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-width: 0; }
+.lmn-benefit svg { width: 38px; height: 38px; color: var(--lmn-text-dark); }
+.lmn-benefit span { font-size: 12.5px; font-weight: 600; line-height: 1.3; color: var(--lmn-text-gray); }
+
+/* Guía de tallas */
+.lmn-size { margin: 0 0 16px; }
+.lmn-size summary { list-style: none; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; font-weight: 800; color: var(--lmn-text-dark); text-decoration: underline; text-underline-offset: 3px; }
+.lmn-size summary::-webkit-details-marker { display: none; }
+.lmn-size summary svg { width: 22px; height: 22px; }
+.lmn-size-body { margin-top: 10px; background: #fff; border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px 14px; font-size: 13px; line-height: 1.5; color: var(--lmn-text-gray); }
+.lmn-size-body p { margin: 0; }
+.lmn-size-body b { color: var(--lmn-text-dark); }
+.lmn-size-body table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 12.5px; }
+.lmn-size-body th, .lmn-size-body td { text-align: left; padding: 6px 4px; border-bottom: 1px solid #EEF2F6; }
+.lmn-size-body th { color: var(--lmn-text-dark); font-weight: 800; }
+
+/* Separador de la oferta */
+.lmn-offer-divider { display: flex; align-items: center; gap: 10px; margin: 2px 0 14px; }
+.lmn-offer-divider::before, .lmn-offer-divider::after { content: ""; flex: 1; height: 1.5px; background: #CBD5E1; }
+.lmn-offer-divider span { font-size: 12.5px; font-weight: 800; letter-spacing: .6px; color: var(--lmn-text-dark); white-space: nowrap; }
+
+/* Píldoras compactas en 2 columnas, debajo del botón */
+.lmn-feature-pills { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0 0 16px; }
+.lmn-pill {
+  background: #FFFFFF; border: 1px solid #E2E8F0; padding: 8px 10px; border-radius: 12px;
+  font-size: 12.5px; font-weight: 700; color: var(--lmn-text-dark);
+  display: flex; align-items: center; gap: 6px; min-width: 0; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+}
+.lmn-pill svg { width: 16px; height: 16px; stroke: var(--lmn-brand); flex-shrink: 0; }
+
+.lmn-checkout-wrapper, .lmn-checkout-wrapper form { width: 100%; max-width: 100%; min-width: 0; }
+.lmn-bundle-section { margin-bottom: 16px; width: 100%; max-width: 100%; }
+.lmn-bundle-option {
+  display: flex; align-items: center; width: 100%; max-width: 100%;
+  padding: 14px 14px; border: 1.5px dashed #CBD5E1; border-radius: 12px; margin-bottom: 10px;
+  cursor: pointer; background: #FFFFFF; position: relative; transition: all 0.2s;
+}
+.lmn-bundle-option:hover { border-color: var(--lmn-brand); }
+.lmn-bundle-option input[type="radio"] { display: none; }
+.lmn-radio-custom { width: 22px; height: 22px; border: 2px solid #CBD5E1; border-radius: 50%; margin-right: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.lmn-bundle-option.is-selected { border: 2px solid var(--lmn-brand); border-style: solid; background: var(--lmn-brand-light); }
+.lmn-bundle-option.is-selected .lmn-radio-custom { border-color: var(--lmn-brand); background: #fff; }
+.lmn-bundle-option.is-selected .lmn-radio-custom::after { content: ''; width: 10px; height: 10px; background: var(--lmn-brand); border-radius: 50%; }
+.lmn-bundle-content { display: flex; justify-content: space-between; align-items: center; flex: 1; min-width: 0; gap: 10px; }
+.lmn-bundle-info { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
+.lmn-bundle-name { font-weight: 700; font-size: 17px; color: var(--lmn-text-dark); line-height: 1.2; }
+.lmn-bundle-shipping { font-size: 12px; font-weight: 600; color: var(--lmn-text-gray); line-height: 1.3; }
+.lmn-bundle-price { display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; }
+.lmn-price-current { font-size: 20px; font-weight: 800; line-height: 1; color: var(--lmn-price); letter-spacing: -0.01em; }
+.lmn-price-old { font-size: 12.5px; color: #94A3B8; text-decoration: line-through; font-weight: 600; margin-top: 4px; }
+.lmn-bundle-note { margin: 2px 0 0; font-size: 11.5px; line-height: 1.4; color: var(--lmn-text-gray); }
+
+.lmn-bundle-option.is-popular { margin-top: 18px; }
+.lmn-popular-tag { position: absolute; top: -12px; right: 14px; background: #111827; color: #fff; font-size: 10.5px; font-weight: 800; padding: 4px 10px; border-radius: 6px; letter-spacing: 0.4px; max-width: calc(100% - 28px); }
+.lmn-bundle-option.is-best { margin-top: 18px; }
+.lmn-best-tag { position: absolute; top: -12px; right: 14px; background: #B7791F; color: #fff; font-size: 10.5px; font-weight: 800; padding: 4px 10px; border-radius: 6px; letter-spacing: 0.4px; max-width: calc(100% - 28px); }
+
+.lmn-main-action-btn { width: 100%; max-width: 100%; background-color: var(--lmn-brand); border: none; border-radius: 18px; padding: 4px; cursor: pointer; box-shadow: 0 4px 0 var(--lmn-brand-dark); margin-bottom: 12px; display: block; }
+.lmn-main-action-btn:active { transform: translateY(2px) !important; box-shadow: 0 2px 0 var(--lmn-brand-dark) !important; animation: none; }
+.lmn-main-btn-inner-border { border: 2px solid rgba(255, 255, 255, 0.28); border-radius: 14px; padding: 14px 12px; display: flex; align-items: center; justify-content: center; }
+.lmn-main-btn-text { color: #FFFFFF; font-family: 'Fredoka', sans-serif; font-size: 21px; font-weight: 700; letter-spacing: 0.4px; line-height: 1.15; }
+.lmn-super-cta { position: relative; overflow: hidden; animation: pulse-shadow 2.5s infinite; transition: transform 0.1s ease; }
+.lmn-super-cta::after { content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.28) 50%, rgba(255,255,255,0) 100%); transform: skewX(-20deg); animation: shine 3s infinite; }
+
+.lmn-trust-icons-row { display: flex; justify-content: center; gap: 14px; margin-bottom: 18px; flex-wrap: wrap; }
+.lmn-trust-icons-row span { font-size: 11.5px; font-weight: 700; color: var(--lmn-text-dark); display: flex; align-items: center; gap: 5px; }
+.lmn-trust-icons-row svg { width: 16px; height: 16px; color: var(--lmn-brand); flex-shrink: 0; }
+
+.lmn-guarantee-box { display: flex; gap: 12px; padding: 14px 16px; border: 1.5px solid rgba(var(--lmn-brand-rgb), 0.25); border-radius: 14px; background: var(--lmn-brand-light); margin-bottom: 16px; align-items: center; max-width: 100%; }
+.lmn-guarantee-icon { color: var(--lmn-brand); flex-shrink: 0; }
+.lmn-guarantee-icon svg { width: 26px; height: 26px; }
+.lmn-guarantee-text { font-size: 13.5px; line-height: 1.45; color: var(--lmn-text-dark); min-width: 0; }
+.lmn-guarantee-text strong { color: var(--lmn-brand); font-weight: 800; }
+
+.lmn-shipping-timeline-card { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px; padding: 18px 16px 14px 16px; max-width: 100%; overflow: hidden; }
+.lmn-timeline { display: flex; justify-content: space-between; align-items: flex-start; position: relative; width: 100%; }
+.lmn-tl-step { display: flex; flex-direction: column; align-items: center; gap: 4px; z-index: 2; background: #fff; padding: 0 4px; flex: 1; min-width: 0; text-align: center; }
+.lmn-tl-icon { width: 40px; height: 40px; background: var(--lmn-brand); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 4px; box-shadow: 0 0 0 4px var(--lmn-brand-light); }
+.lmn-tl-icon svg { width: 19px; height: 19px; }
+.lmn-tl-title { font-size: 12px; font-weight: 800; color: var(--lmn-text-dark); line-height: 1.2; }
+.lmn-tl-sub { font-size: 11px; color: var(--lmn-text-gray); font-weight: 600; }
+.lmn-tl-line { flex-grow: 1; height: 2px; background: #E2E8F0; margin: 20px -14px 0 -14px; z-index: 1; }
+
+.lmn-sticky-bottom-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; width: 100%; max-width: 100vw; box-sizing: border-box;
+  background: #FFFFFF; border-top: 1px solid #E2E8F0; box-shadow: 0 -6px 25px rgba(0, 0, 0, 0.08);
+  z-index: 999999; padding: 9px 14px calc(12px + env(safe-area-inset-bottom));
+  transform: translateY(100%); opacity: 0; visibility: hidden; transition: all 0.3s;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.lmn-sticky-bottom-bar.is-visible { transform: translateY(0); opacity: 1; visibility: visible; }
+.lmn-sticky-container { max-width: 500px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.lmn-sticky-rating-header { font-size: 12px; font-weight: 700; color: var(--lmn-text-dark); text-align: center; }
+.lmn-sticky-rating-header b { font-weight: 800; color: var(--lmn-brand); }
+.lmn-sticky-action-btn { width: 100%; background-color: var(--lmn-brand); border: none; border-radius: 16px; padding: 3px; cursor: pointer; box-shadow: 0 4px 0 var(--lmn-brand-dark); }
+.lmn-sticky-action-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--lmn-brand-dark); }
+.lmn-sticky-btn-inner-border { border: 2px solid rgba(255, 255, 255, 0.28); border-radius: 13px; padding: 11px 12px; }
+.lmn-sticky-btn-text { color: #FFFFFF; font-family: 'Fredoka', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 0.4px; }
+
+@keyframes pulse-shadow {
+  0% { box-shadow: 0 0 0 0 rgba(var(--lmn-brand-rgb), 0.4), 0 4px 0 var(--lmn-brand-dark); }
+  70% { box-shadow: 0 0 0 12px rgba(var(--lmn-brand-rgb), 0), 0 4px 0 var(--lmn-brand-dark); }
+  100% { box-shadow: 0 0 0 0 rgba(var(--lmn-brand-rgb), 0), 0 4px 0 var(--lmn-brand-dark); }
+}
+@keyframes shine { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
+@media (prefers-reduced-motion: reduce) { .lmn-super-cta, .lmn-super-cta::after, .lmn-announcement-track { animation: none; } }
+
+/* Aviso si Releasit no abre */
+.lmn-aviso { display: none; margin: -4px 0 12px; padding: 10px 12px; border-radius: 10px; background: #FEF3C7; color: #92400E; font-size: 13px; font-weight: 600; text-align: center; }
+.lmn-aviso a { color: #92400E; font-weight: 800; }
+.lmn-vchip.is-off { cursor: not-allowed; }
+
+/* Selector de talla y color */
+.lmn-variants { margin: 0 0 16px; display: flex; flex-direction: column; gap: 12px; }
+.lmn-vlabel { margin: 0 0 7px; font-size: 13.5px; font-weight: 700; color: var(--lmn-text-gray); }
+.lmn-vlabel b { color: var(--lmn-text-dark); font-weight: 800; text-transform: capitalize; }
+.lmn-vchips { display: flex; flex-wrap: wrap; gap: 8px; }
+.lmn-vchip { min-width: 52px; padding: 9px 14px; border: 1.5px solid #CBD5E1; border-radius: 10px; background: #fff; font: 700 13.5px 'Plus Jakarta Sans', sans-serif; color: var(--lmn-text-dark); cursor: pointer; transition: all .15s; }
+.lmn-vchip:hover { border-color: var(--lmn-brand); }
+.lmn-vchip.is-on { border: 2px solid var(--lmn-brand); background: var(--lmn-brand-light); color: var(--lmn-brand); }
+.lmn-vchip.is-off { opacity: .4; text-decoration: line-through; }
+
+@media (max-width: 900px) {
+  .lmn-announcement-bar { margin-bottom: 6px; font-size: 12px; padding: 9px 0; }
+  .lmn-product-container { grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 8px 14px 16px 14px; border-radius: 16px; }
+  .lmn-gallery-col { position: relative; top: 0; }
+  .lmn-heading { font-size: 26px; }
+  .lmn-tl-title { font-size: 11px; }
+}
+@media (max-width: 480px) {
+  .lmn-heading { font-size: 23px; }
+  .lmn-sub { font-size: 14px; }
+  .lmn-benefits { gap: 6px; }
+  .lmn-benefit svg { width: 32px; height: 32px; }
+  .lmn-benefit span { font-size: 11.5px; }
+  .lmn-bundle-option { padding: 12px; }
+  .lmn-radio-custom { margin-right: 10px; }
+  .lmn-bundle-name { font-size: 16px; }
+  .lmn-price-current { font-size: 18px; }
+  .lmn-main-btn-text { font-size: 18px; }
+  .lmn-sticky-btn-text { font-size: 16px; }
+  .lmn-pill { font-size: 12px; padding: 8px; }
+  .lmn-seal { width: 66px; height: 66px; top: 10px; right: 10px; }
+  .lmn-seal-big { font-size: 14px; }
+  .lmn-seal-top, .lmn-seal-bot { font-size: 7.5px; }
+}
+</style>
+
+<script>
+(function () {
+  function init() {
+    // 1. CARRUSEL + MINIATURAS + SWIPE TÁCTIL
+    var track = document.getElementById('lmnSliderTrack');
+    var slides = document.querySelectorAll('.lmn-slide');
+    var prevBtn = document.getElementById('lmnPrevBtn');
+    var nextBtn = document.getElementById('lmnNextBtn');
+    var thumbs = document.querySelectorAll('.lmn-thumb');
+    var currentIndex = 0;
+    var totalSlides = slides.length;
+
+    if (track && totalSlides > 1) {
+      var goToSlide = function (index) {
+        if (index < 0) index = totalSlides - 1;
+        if (index >= totalSlides) index = 0;
+        currentIndex = index;
+        track.style.transform = 'translateX(-' + (currentIndex * 100) + '%)';
+        thumbs.forEach(function (t, idx) { t.classList.toggle('is-active', idx === currentIndex); });
+        var act = thumbs[currentIndex];
+        if (act && act.parentNode) { act.parentNode.scrollLeft = act.offsetLeft - 40; }
+      };
+      if (prevBtn) prevBtn.addEventListener('click', function () { goToSlide(currentIndex - 1); });
+      if (nextBtn) nextBtn.addEventListener('click', function () { goToSlide(currentIndex + 1); });
+      thumbs.forEach(function (t) {
+        t.addEventListener('click', function () { goToSlide(parseInt(t.getAttribute('data-index'), 10)); });
+      });
+
+      var x0 = null;
+      track.addEventListener('touchstart', function (ev) { x0 = ev.touches[0].clientX; }, { passive: true });
+      track.addEventListener('touchend', function (ev) {
+        if (x0 === null) return;
+        var dx = ev.changedTouches[0].clientX - x0;
+        if (Math.abs(dx) > 40) goToSlide(dx < 0 ? currentIndex + 1 : currentIndex - 1);
+        x0 = null;
+      }, { passive: true });
+    }
+
+    // 2. FECHAS DINÁMICAS DE ENTREGA (SOLO DÍAS HÁBILES)
+    var MES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    function habil(d, k) {
+      d = new Date(d);
+      while (k > 0) {
+        d.setDate(d.getDate() + 1);
+        var w = d.getDay();
+        if (w !== 0 && w !== 6) k--;
+      }
+      return d;
+    }
+    function f(d) { return d.getDate() + ' ' + MES[d.getMonth()]; }
+    function rango(x, y) { return x.getMonth() === y.getMonth() ? x.getDate() + ' - ' + f(y) : f(x) + ' - ' + f(y); }
+
+    var tl = document.getElementById('lmnTimeline');
+    if (tl) {
+      var hoy = new Date(), dd = tl.dataset;
+      var q = function (s) { return tl.querySelector('[data-f="' + s + '"]'); };
+      if (q('hoy')) q('hoy').textContent = 'Hoy, ' + f(hoy);
+      if (q('desp')) q('desp').textContent = rango(habil(hoy, +dd.d1), habil(hoy, +dd.d2));
+      if (q('entr')) q('entr').textContent = rango(habil(hoy, +dd.e1), habil(hoy, +dd.e2));
+    }
+
+    // 3. BUNDLES + SINCRONIZACIÓN CON RELEASIT COD FORM
+    var form = document.getElementById('product-form-lmn');
+    var qtyInput = document.getElementById('lmn-qty');
+    var bundleOptions = document.querySelectorAll('.lmn-bundle-option');
+    var selectedIndex = '0';
+
+    // Marca en Releasit la oferta de la misma posición (0 = 1, 1 = 2, 2 = 3 chalecos).
+    function clickOferta() {
+      var todas = document.querySelectorAll('._rsi-quantity-offers-offer-container[data-offer-pos="' + selectedIndex + '"]');
+      if (!todas.length) return false;
+      var visibles = [].filter.call(todas, function (o) { return o.offsetParent !== null; });
+      (visibles.length ? visibles : [].slice.call(todas)).forEach(function (o) { o.click(); });
+      return true;
+    }
+
+    // Espera a que Releasit pinte sus ofertas y la vuelve a marcar.
+    function marcarOfertaReleasit(intentos) {
+      intentos = intentos || 0;
+      if (clickOferta()) {
+        setTimeout(clickOferta, 400);
+        setTimeout(clickOferta, 1000);
+        return;
+      }
+      if (intentos < 50) {
+        setTimeout(function () { marcarOfertaReleasit(intentos + 1); }, 100);
+      }
+    }
+
+    bundleOptions.forEach(function (option) {
+      option.addEventListener('click', function () {
+        bundleOptions.forEach(function (opt) { opt.classList.remove('is-selected'); });
+        option.classList.add('is-selected');
+        var radio = option.querySelector('input[type="radio"]');
+        if (radio) radio.checked = true;
+
+        selectedIndex = option.getAttribute('data-bundle-index') || '0';
+        if (qtyInput) {
+          qtyInput.value = option.getAttribute('data-qty') || '1';
+          qtyInput.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        var ya = document.querySelector('._rsi-quantity-offers-offer-container[data-offer-pos="' + selectedIndex + '"]');
+        if (ya) ya.click();
+      });
+    });
+
+    // 3B. TALLA Y COLOR → actualiza la variante del formulario (Releasit la toma al abrir)
+    var vbox = document.getElementById('lmnVariants');
+    var vdata = document.getElementById('lmnVariantData');
+    if (vbox && vdata) {
+      var variantes = [];
+      try { variantes = JSON.parse(vdata.textContent); } catch (err) {}
+      var grupos = vbox.querySelectorAll('.lmn-vgroup');
+      var elegidos = [].map.call(grupos, function (g) {
+        var on = g.querySelector('.lmn-vchip.is-on');
+        return on ? on.getAttribute('data-val') : null;
+      });
+      var aplicarVariante = function () {
+        var v = variantes.filter(function (x) {
+          return elegidos.every(function (val, i) { return val === null || x.o[i] === val; });
+        })[0];
+        if (!v) return;
+        document.querySelectorAll('#product-form-lmn [name="id"], form[action*="/cart/add"] [name="id"]').forEach(function (inp) {
+          inp.value = v.id;
+          inp.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+        try {
+          var u = new URL(window.location.href);
+          u.searchParams.set('variant', v.id);
+          window.history.replaceState({}, '', u.toString());
+        } catch (err) {}
+        // Marca como agotadas las combinaciones sin stock
+        grupos.forEach(function (g, gi) {
+          g.querySelectorAll('.lmn-vchip').forEach(function (c) {
+            var prueba = elegidos.slice(); prueba[gi] = c.getAttribute('data-val');
+            var hay = variantes.some(function (x) { return x.ok && prueba.every(function (val, i) { return val === null || x.o[i] === val; }); });
+            c.classList.toggle('is-off', !hay);
+          });
+        });
+      };
+      grupos.forEach(function (g, gi) {
+        g.querySelectorAll('.lmn-vchip').forEach(function (c) {
+          c.addEventListener('click', function () {
+            if (c.classList.contains('is-off')) return;
+            g.querySelectorAll('.lmn-vchip').forEach(function (x) { x.classList.remove('is-on'); });
+            c.classList.add('is-on');
+            elegidos[gi] = c.getAttribute('data-val');
+            var lab = g.querySelector('.lmn-vval'); if (lab) lab.textContent = elegidos[gi];
+            aplicarVariante();
+          });
+        });
+      });
+      aplicarVariante();
+    }
+
+    // 4. DISPARO DE BOTÓN PRINCIPAL Y STICKY
+    var fastBuyBtn = document.getElementById('lmn-fast-buy-btn');
+    var stickyTriggerBtn = document.getElementById('lmnStickyTriggerBtn');
+    var abriendo = false;
+
+    function botonReleasit() {
+      return (form && form.querySelector('._rsi-buy-now-button-product, ._rsi-buy-now-button, #_rsi-buy-now-button')) ||
+             document.querySelector('._rsi-buy-now-button-product, ._rsi-buy-now-button, #_rsi-buy-now-button');
+    }
+
+    function triggerCheckout(e) {
+      if (e) e.preventDefault();
+      if (abriendo) return;
+      abriendo = true;
+      var btn = e && e.currentTarget;
+      if (btn) btn.classList.add('is-loading');
+
+      var intentos = 0;
+      (function intentar() {
+        var rsi = botonReleasit();
+        if (rsi) {
+          clickOferta();
+          rsi.click();
+          marcarOfertaReleasit(0);
+          terminar();
+        } else if (intentos < 30) {
+          intentos++;
+          setTimeout(intentar, 100);
+        } else {
+          terminar();
+          var aviso = document.getElementById('lmnAviso');
+          if (aviso) aviso.style.display = 'block';
+        }
+      })();
+
+      function terminar() {
+        setTimeout(function () {
+          abriendo = false;
+          if (btn) btn.classList.remove('is-loading');
+        }, 600);
+      }
+    }
+
+    if (fastBuyBtn) fastBuyBtn.addEventListener('click', triggerCheckout);
+    if (stickyTriggerBtn) stickyTriggerBtn.addEventListener('click', triggerCheckout);
+
+    // 5. BARRA FIJA: aparece solo cuando ya pasaste el botón principal
+    var stickyBar = document.getElementById('lmnStickyBar');
+    var checkoutArea = document.getElementById('lmnCheckoutFormTarget');
+    if (stickyBar && checkoutArea && 'IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          var pasado = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+          stickyBar.classList.toggle('is-visible', pasado);
+        });
+      }, { threshold: 0 });
+      observer.observe(checkoutArea);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>

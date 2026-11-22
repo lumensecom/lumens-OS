@@ -1,3 +1,5 @@
+import type { Run, TowerFunctions, TowerTables } from "./tower/model"
+
 export type Json =
   | string
   | number
@@ -13,7 +15,7 @@ export type Database = {
     PostgrestVersion: "14.5"
   }
   public: {
-    Tables: {
+    Tables: TowerTables & {
       call_results: {
         Row: {
           agent_id: string | null
@@ -1045,6 +1047,7 @@ export type Database = {
       }
     }
     Views: {
+      tower_latest_runs: { Row: Run; Relationships: [] }
       products_with_margin: {
         Row: {
           admin_cost: number | null
@@ -1083,7 +1086,7 @@ export type Database = {
         Relationships: []
       }
     }
-    Functions: {
+    Functions: TowerFunctions & {
       is_owner: { Args: Record<PropertyKey, never>; Returns: boolean }
     }
     Enums: {

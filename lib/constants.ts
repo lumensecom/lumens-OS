@@ -1,5 +1,6 @@
 import {
   LayoutDashboard,
+  Building2,
   Wallet,
   FileSpreadsheet,
   TrendingUp,
@@ -40,13 +41,15 @@ export type NavItem = {
   href: string
   icon: LucideIcon
   soon?: boolean
+  ownerOnly?: boolean
   /** Tinte permanente del ícono (marca visualmente el módulo). */
   accent?: "yellow"
 }
 
 /** Navegación principal del sidebar. */
 export const NAV_MAIN: NavItem[] = [
-  { label: "Dashboard", href: "/", icon: LayoutDashboard },
+  { label: "Torre de agentes", href: "/torre", icon: Building2, accent: "yellow", ownerOnly: true },
+  { label: "Resumen", href: "/resumen", icon: LayoutDashboard },
   { label: "Contabilidad", href: "/contabilidad", icon: Wallet },
   { label: "Análisis Dropi", href: "/analisis-dropi", icon: FileSpreadsheet, accent: "yellow" },
   { label: "Llamadas IA", href: "/llamadas", icon: PhoneCall, accent: "yellow" },
