@@ -69,6 +69,8 @@ El **primer** usuario que se registra queda como `owner` automáticamente (trigg
 
 La torre del propietario agrupa oficinas, rutinas, Product Lab y aprobaciones. El [manual de la torre](docs/torre.md) cubre el despliegue, el programador en Supabase y las pruebas.
 
+[Producción de landings](docs/produccion.md) reúne el flujo de las 18 oficinas, la suite de pruebas y la entrega de demostración.
+
 ## Scripts
 
 ```bash

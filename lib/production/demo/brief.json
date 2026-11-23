@@ -1,0 +1,14 @@
+{
+  "product": "Pasacables Arena · Demo",
+  "problem": "¿Los cables se te caen detrás del escritorio?",
+  "benefit": "Mantén tus cables al alcance",
+  "facts": ["Cinco ranuras para cables", "Tira de silicona flexible", "Acabado mate color arena"],
+  "steps": ["Ubica el pasacables cerca del borde", "Desliza cada cable en una ranura", "Deja los conectores a mano"],
+  "sources": [{"url":"https://example.invalid/ficha-demo", "market":"CO", "observation":"Ficha ficticia para probar el flujo de producción"}],
+  "category": "general",
+  "prices": [49900, 84900, 114900],
+  "unitCost": 12000,
+  "fulfillment": 12000,
+  "hasImageRights": true,
+  "accent": "#804935"
+}

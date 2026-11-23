@@ -12,7 +12,8 @@ RUN --mount=type=secret,id=lumens_build_ca \
 COPY .eslintrc.json next.config.mjs middleware.ts postcss.config.mjs tailwind.config.ts tsconfig.json ./
 COPY app ./app
 COPY components ./components
-COPY lib ./lib
+COPY --chown=node:node lib ./lib
+COPY --chown=node:node docs/landing/plantillas/simple-*.liquid ./docs/landing/plantillas/
 COPY tools/local-preview/gateway.mjs ./gateway.mjs
 
 ENV LUMENS_LOCAL_PREVIEW=1 \

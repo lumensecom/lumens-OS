@@ -1,4 +1,10 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  experimental: {
+    outputFileTracingIncludes: {
+      "/api/tower/production": ["./docs/landing/plantillas/simple-*.liquid", "./lib/production/demo/*.webp"],
+    },
+  },
+}
 
-export default nextConfig;
+export default nextConfig

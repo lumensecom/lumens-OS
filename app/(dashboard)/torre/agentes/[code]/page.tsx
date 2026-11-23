@@ -1,8 +1,10 @@
+import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { RoutineList } from "@/components/tower/routine-list"
 import { RoutineStatus } from "@/components/tower/status"
 import { RunDetails } from "@/components/tower/run-details"
+import { productionRoster } from "@/lib/production/roster"
 import { formatRunTime } from "@/lib/tower/presentation"
 import { getTowerClient, requireRows } from "@/lib/tower/server"
 
@@ -15,6 +17,7 @@ export default async function AgentPage({ params }: { params: { code: string } }
   if (agentResult.error) throw new Error(agentResult.error.message)
   if (!agentResult.data) notFound()
   const agent = agentResult.data
+  const officeTask = productionRoster.find(([code]) => code === agent.code)?.[2]
   const routines = requireRows(routineResult)
   const codes = routines.map((routine) => routine.code)
   const [latest, logs] = codes.length ? await Promise.all([
@@ -29,6 +32,11 @@ export default async function AgentPage({ params }: { params: { code: string } }
         <h1 className="page-title text-3xl">{agent.name}</h1>
         <p className="mt-1 text-sm text-muted-foreground">{agent.mission}</p>
       </header>
+      {officeTask && <section className="space-y-2 rounded-xl border bg-card p-4">
+        <h2 className="font-display text-lg font-bold">Responsabilidad en producción</h2>
+        <p className="text-sm text-muted-foreground">{officeTask}</p>
+        <Link className="text-sm font-medium underline" href="/torre/produccion">Abrir producción de landings</Link>
+      </section>}
       <section className="space-y-3">
         <h2 className="font-display text-lg font-bold">Rutinas</h2>
         <RoutineList routines={routines} latest={latest} />

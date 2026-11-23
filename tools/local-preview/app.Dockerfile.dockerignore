@@ -17,3 +17,7 @@
 !tools/
 !tools/local-preview/
 !tools/local-preview/gateway.mjs
+!docs/
+!docs/landing/
+!docs/landing/plantillas/
+!docs/landing/plantillas/simple-*.liquid

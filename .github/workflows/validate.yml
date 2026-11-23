@@ -3,7 +3,7 @@ name: Validar LUMENS OS
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, codex/lumens-tower]
 
 permissions:
   contents: read
@@ -23,4 +23,5 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm test:production
       - run: pnpm build
