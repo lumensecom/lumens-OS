@@ -9,3 +9,8 @@ select public.tower_receive_juliana_order(
   'gid://shopify/Order/900000002', now(), 3, 'COP', 169900,
   '{"number":"9002","name":"Cliente demo","phone":"+573000000000","city":"MEDELLÍN","priority":true,"total":169900,"products":[{"title":"Vestido Pádel | Lumens","quantity":3}]}'::jsonb
 );
+
+select to_regprocedure('tower_private.report_morning(text,timestamp with time zone)') is null as needs_morning_reports \gset
+\if :needs_morning_reports
+  \i /preview/0022_tower_morning_reports.sql
+\endif

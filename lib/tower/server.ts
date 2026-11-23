@@ -3,8 +3,8 @@ import { notFound, redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 
 export async function hasTowerSchema(client: ReturnType<typeof createClient>) {
-  const { error } = await client.from("tower_juliana_orders").select("order_id").limit(1)
-  return !error
+  const { data, error } = await client.from("tower_routines").select("code").eq("code", "shift-report-0").limit(1)
+  return !error && Boolean(data?.length)
 }
 
 export const getTowerClient = cache(async () => {

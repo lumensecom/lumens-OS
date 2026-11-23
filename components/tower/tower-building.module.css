@@ -621,3 +621,81 @@
   .building { width: 76%; }
   .roomLabel { gap: 2px; left: 2px; padding-inline: 2px; max-width: calc(100% - 4px); }
 }
+
+/* Camera projection and separate faces keep the façade interactive while it rotates. */
+.stage {
+  perspective: 1100px;
+  perspective-origin: 50% 48%;
+  touch-action: pan-y;
+  user-select: none;
+  cursor: grab;
+}
+
+.building {
+  --half-depth: calc(var(--side-width) / 2);
+  left: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(9deg) rotateY(var(--orbit-angle, -22deg));
+  transition: transform 280ms cubic-bezier(.22,.72,.27,1);
+}
+
+.stage[data-dragging="true"] { cursor: grabbing; }
+.stage[data-dragging="true"] .building { transition: none; }
+
+.front {
+  transform: translateZ(var(--half-depth));
+}
+
+.side {
+  z-index: auto;
+  transform-origin: left top;
+  transform: translateZ(var(--half-depth)) rotateY(90deg);
+  backface-visibility: hidden;
+}
+
+.sideLeft {
+  right: 100%;
+  left: auto;
+  transform-origin: right top;
+  transform: translateZ(var(--half-depth)) rotateY(-90deg);
+}
+
+.roof,
+.plinth {
+  height: var(--side-width);
+  transform-origin: center bottom;
+  transform: translateZ(var(--half-depth)) rotateX(90deg);
+}
+
+.plinth { z-index: auto; bottom: 0; pointer-events: none; }
+.terrace { transform: translateZ(var(--half-depth)); right: 4%; bottom: 100%; pointer-events: none; }
+
+.camera {
+  position: absolute;
+  z-index: 2;
+  bottom: 9px;
+  right: 9px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px;
+  border: 1px solid #b793e644;
+  border-radius: 9px;
+  background: #1a122beb;
+  color: #f0e5fb;
+}
+
+.camera span { padding-inline: 5px; font-size: 11px; color: #d0bedf; }
+.camera button { display: grid; min-width: 31px; min-height: 30px; place-items: center; border-radius: 6px; font-size: 11px; font-weight: 700; }
+.camera button:hover { background: #c5a1fc36; }
+.camera button:disabled { opacity: .36; }
+.office, .lobbyButton { cursor: pointer; }
+.stage[data-dragging="true"] :is(.office, .lobbyButton) { cursor: grabbing; }
+
+@media (prefers-reduced-motion: reduce) {
+  .building { transition: none; }
+}
+
+@container (max-width: 350px) {
+  .camera span { display: none; }
+}

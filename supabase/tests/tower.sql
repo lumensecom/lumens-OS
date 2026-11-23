@@ -12,7 +12,7 @@ update public.profiles set role = 'collaborator' where id = 'f0000000-0000-4000-
 do $$
 begin
   if (select count(*) from public.tower_agents) <> 18 then raise exception 'Expected 18 agents'; end if;
-  if (select count(*) from public.tower_routines) <> 27 then raise exception 'Expected 27 routines'; end if;
+  if (select count(*) from public.tower_routines) <> 45 then raise exception 'Expected 45 routines'; end if;
 end;
 $$;
 
@@ -143,7 +143,17 @@ begin
 
   update public.tower_routines set enabled = false where code = 'delivery-check';
   if tower_private.tick('2026-06-10T14:00:00Z') <> 0 then raise exception 'Disabled routine ran'; end if;
-  if tower_private.tick('2026-06-15T11:00:00Z') <> 3 then raise exception 'Monday schedules were not respected'; end if;
+  if tower_private.tick('2026-06-15T11:00:00Z') <> 0 then raise exception 'An office ran before 07:00 Bogotá'; end if;
+  if tower_private.tick('2026-06-15T12:00:00Z') <> 27 then raise exception 'Expected 9 tasks and 18 office reports at 07:00 Bogotá'; end if;
+  if tower_private.tick('2026-06-15T12:02:00Z') <> 0 then raise exception 'Repeated morning reports'; end if;
+  if (select count(*) from public.tower_runs where routine_code like 'shift-report-%' and scheduled_for = '2026-06-15T12:00:00Z') <> 18 then
+    raise exception 'Expected one morning report per office';
+  end if;
+  if not exists (
+    select 1 from public.tower_runs where routine_code = 'shift-report-1c'
+      and scheduled_for = '2026-06-15T12:00:00Z' and status = 'blocked'
+      and output->>'motivo' = 'Falta un conector de fuentes autorizado.'
+  ) then raise exception 'Morning report did not include the actual operational blocker'; end if;
 end;
 $$;
 

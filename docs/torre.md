@@ -5,7 +5,7 @@ El dueño entra a `/torre`. El panel anterior queda en `/resumen`. En la torre s
 ## Instalación y despliegue
 
 1. Usa Node 24 y ejecuta `pnpm install --frozen-lockfile`.
-2. En un proyecto Supabase de prueba, aplica las migraciones del repositorio. Verifica `0015` a `0020` y la disponibilidad de `pg_cron`. Ejecuta `supabase/tests/tower.sql` con `psql -v ON_ERROR_STOP=1` conectado a esa base de prueba.
+2. En un proyecto Supabase de prueba, aplica las migraciones del repositorio. Verifica `0015` a `0022` y la disponibilidad de `pg_cron`. Ejecuta `supabase/tests/tower.sql` con `psql -v ON_ERROR_STOP=1` conectado a esa base de prueba.
 3. Para producción, desde un entorno autorizado haz `supabase migration list --linked` y `supabase db push --dry-run`. Confirma que el proyecto vinculado es el correcto y que el historial está alineado. Aplica las migraciones pendientes con `supabase db push` antes del despliegue de la app. El repositorio existente despliega `main` en Vercel.
 4. Verifica que Vercel tiene `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY`. Usa `SUPABASE_SERVICE_ROLE_KEY` solo en el servidor. Haz `pnpm build` o arranca el servidor con `pnpm dev`. GitHub Actions reproduce el build en los PR.
 5. Entra como dueño, abre el PH y ejecuta el brief manual. En Supabase verifica el job `lumens-tower-minute` y su historial en `cron.job_run_details`. El job se ejecuta cada minuto y revisa las franjas locales pendientes de los últimos diez minutos. La clave única de rutina y franja evita repetir una ejecución programada.
@@ -38,3 +38,9 @@ La demo local está separada de la operación. Cuando el servidor de prueba se i
 La bandeja [Juliana](juliana.md) muestra los pedidos nuevos de Shopify y espera la autorización del dueño antes de enviarlos al flujo de Dapta.
 
 Si la consulta al esquema de la torre falla tras desplegar la app, el inicio abre Resumen. El enlace de la torre muestra el estado de conexión al dueño hasta que Supabase responda con el esquema actualizado.
+
+## Turno de las 7:00 a. m.
+
+La migración `0022_tower_morning_reports.sql` programa un reporte diario por oficina a las 7:00 a. m. de Bogotá. El job existente `lumens-tower-minute` ejecuta primero las tareas operativas programadas para esa hora y registra después el reporte de cada oficina. Una rutina pendiente de configuración queda reportada como bloqueada. El brief consolidado se mantiene a las 7:30 a. m.
+
+En Supabase, verifica que el proyecto esté vinculado y revisa su historial con `supabase migration list --linked`. Si faltan migraciones de la torre, revisa el plan con `supabase db push --dry-run` y aplica las pendientes con `supabase db push`. Para una instalación de la torre sobre una base previa a la versión de agentes, el bloque de la torre va de `0015` a `0022`, incluida `0018` que registra el job de pg_cron. Usa **Torre → Reportes** para consultar el estado de las 18 oficinas. Desde la ficha de cada agente puedes ejecutar su reporte bajo demanda.

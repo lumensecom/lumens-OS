@@ -6,7 +6,7 @@ import { z } from "zod"
 import { getTowerClient } from "@/lib/tower/server"
 
 type ActionState = { ok: boolean; message: string }
-const routineCode = z.string().regex(/^[a-z][a-z-]{1,60}$/)
+const routineCode = z.string().regex(/^[a-z][a-z0-9-]{1,60}$/)
 const uuid = z.uuid()
 const amount = z.number().int().min(0).max(2_000_000_000)
 const integer = z.string().regex(/^\d+$/).transform(Number).pipe(amount)

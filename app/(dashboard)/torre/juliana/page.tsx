@@ -1,7 +1,7 @@
 import { ArrowUpRight, MessageCircle } from "lucide-react"
 import Link from "next/link"
 
-import { JulianaRefresh } from "@/components/tower/juliana-refresh"
+import { TowerRefresh } from "@/components/tower/tower-refresh"
 import { TowerForm, TowerSubmit } from "@/components/tower/action-form"
 import { formatCOP } from "@/lib/format"
 import { julianaMessages, julianaOrder } from "@/lib/tower/juliana"
@@ -26,7 +26,7 @@ export default async function JulianaPage() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-5">
-      <JulianaRefresh />
+      <TowerRefresh />
       <header className="rounded-2xl border border-violet-400/20 bg-[#1c122c] p-5 text-white sm:p-7">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           <MessageCircle className="h-6 w-6 text-[#f2dda0]" aria-hidden="true" />

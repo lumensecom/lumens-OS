@@ -1,7 +1,7 @@
 "use client"
 
-import type { CSSProperties } from "react"
-import { ArrowUpRight, DoorOpen } from "lucide-react"
+import { useRef, useState, type CSSProperties, type PointerEvent } from "react"
+import { ArrowUpRight, DoorOpen, RotateCcw, RotateCw } from "lucide-react"
 
 import styles from "./tower-building.module.css"
 
@@ -59,12 +59,57 @@ function Workstation({ palette, running }: { palette: string[]; running: boolean
 }
 
 export function TowerBuilding({ floors, selectedCode, onSelect, onLobby, lighting, zoom }: TowerBuildingProps) {
+  const [angle, setAngle] = useState(-22)
+  const [dragging, setDragging] = useState(false)
+  const gesture = useRef<{ x: number; angle: number; moved: boolean; id: number } | null>(null)
+  const preventClick = useRef(false)
+  const rotate = (value: number) => setAngle(Math.max(-35, Math.min(35, value)))
   const lobbyIndex = floors.length
   const floorIndex = floors.findIndex((floor) => floor.offices.some((office) => office.code === selectedCode))
 
+  function startOrbit(event: PointerEvent<HTMLDivElement>) {
+    if (!event.isPrimary || event.button !== 0) return
+    preventClick.current = false
+    gesture.current = { x: event.clientX, angle, moved: false, id: event.pointerId }
+  }
+
+  function moveOrbit(event: PointerEvent<HTMLDivElement>) {
+    const current = gesture.current
+    if (!current || current.id !== event.pointerId) return
+    const distance = event.clientX - current.x
+    if (!current.moved && Math.abs(distance) < 6) return
+    if (!current.moved) {
+      current.moved = true
+      preventClick.current = true
+      setDragging(true)
+      event.currentTarget.setPointerCapture(event.pointerId)
+    }
+    rotate(current.angle + distance * .25)
+  }
+
+  function endOrbit(event: PointerEvent<HTMLDivElement>) {
+    if (gesture.current?.id !== event.pointerId) return
+    gesture.current = null
+    setDragging(false)
+  }
+
   return (
     <div className={styles.viewport} data-lighting={lighting} data-zoom={zoom}>
-      <div className={styles.stage} style={{ "--lift-stop": floorIndex < 0 ? lobbyIndex : floorIndex } as CSSProperties}>
+      <div className={styles.stage}
+        data-dragging={dragging}
+        style={{ "--lift-stop": floorIndex < 0 ? lobbyIndex : floorIndex, "--orbit-angle": `${angle}deg` } as CSSProperties}
+        onPointerDown={startOrbit}
+        onPointerMove={moveOrbit}
+        onPointerUp={endOrbit}
+        onPointerCancel={endOrbit}
+        onLostPointerCapture={endOrbit}
+        onClickCapture={(event) => {
+          if (preventClick.current && event.detail > 0) {
+            event.stopPropagation()
+            preventClick.current = false
+          }
+        }}
+      >
         <div className={styles.sky} aria-hidden="true">
           <span className={styles.stars} />
           <span className={styles.skyglow} />
@@ -85,6 +130,11 @@ export function TowerBuilding({ floors, selectedCode, onSelect, onLobby, lightin
             <span className={styles.liftShaft}>
               <span className={styles.lift} />
             </span>
+          </div>
+          <div className={`${styles.side} ${styles.sideLeft}`} aria-hidden="true">
+            {Array.from({ length: floors.length + 1 }, (_, index) => (
+              <span className={styles.sideFloor} key={index}><span className={styles.sideRail} /></span>
+            ))}
           </div>
           <div className={styles.front}>
             <div className={styles.sign} aria-hidden="true">
@@ -129,6 +179,12 @@ export function TowerBuilding({ floors, selectedCode, onSelect, onLobby, lightin
           </div>
           <div className={styles.plinth} aria-hidden="true" />
         </div>
+      </div>
+      <div className={styles.camera} aria-label="Controles de cámara 3D">
+        <span>Arrastra para girar</span>
+        <button type="button" aria-label="Girar a la izquierda" onClick={() => rotate(angle - 15)} disabled={angle <= -35}><RotateCcw size={15} /></button>
+        <button type="button" aria-label="Restablecer cámara" onClick={() => rotate(-22)}>3D</button>
+        <button type="button" aria-label="Girar a la derecha" onClick={() => rotate(angle + 15)} disabled={angle >= 35}><RotateCw size={15} /></button>
       </div>
     </div>
   )

@@ -36,6 +36,7 @@ services:
     volumes:
       - ./upgrade-juliana.sql:/preview/upgrade-juliana.sql:ro
       - ../../supabase/migrations/0021_tower_juliana_whatsapp.sql:/preview/0021_tower_juliana_whatsapp.sql:ro
+      - ../../supabase/migrations/0022_tower_morning_reports.sql:/preview/0022_tower_morning_reports.sql:ro
     depends_on:
       db:
         condition: service_healthy

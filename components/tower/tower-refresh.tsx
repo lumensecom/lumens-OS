@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 
-export function JulianaRefresh() {
+export function TowerRefresh() {
   const router = useRouter()
   useEffect(() => {
     const refreshVisible = () => { if (!document.hidden) router.refresh() }
