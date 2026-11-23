@@ -1,12 +1,18 @@
 import { cache } from "react"
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
+
+export async function hasTowerSchema(client: ReturnType<typeof createClient>) {
+  const { error } = await client.from("tower_juliana_orders").select("order_id").limit(1)
+  return !error
+}
 
 export const getTowerClient = cache(async () => {
   const client = createClient()
   const owner = await client.rpc("is_owner")
   if (owner.error) throw new Error("No se pudo verificar el acceso a la torre.")
   if (!owner.data) notFound()
+  if (!await hasTowerSchema(client)) redirect("/torre-preparacion")
   return client
 })
 

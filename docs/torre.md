@@ -36,3 +36,5 @@ La demo local está separada de la operación. Cuando el servidor de prueba se i
 ## Confirmación por WhatsApp
 
 La bandeja [Juliana](juliana.md) muestra los pedidos nuevos de Shopify y espera la autorización del dueño antes de enviarlos al flujo de Dapta.
+
+Si la consulta al esquema de la torre falla tras desplegar la app, el inicio abre Resumen. El enlace de la torre muestra el estado de conexión al dueño hasta que Supabase responda con el esquema actualizado.
