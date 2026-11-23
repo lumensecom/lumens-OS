@@ -1,0 +1,513 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+{%- comment -%}
+  VESTIDO PÁDEL · HERO (versión simple)
+  OFERTA · LLEVA 3, PAGA 2
+  1 vestido = precio del producto en Shopify ($89.900). Si no tiene "Precio de comparación", se usa $129.900.
+  2 y 3 vestidos se fijan aquí abajo (en centavos: 14990000 = $149.900).
+  Releasit debe tener las ofertas en este mismo orden: 1 = $89.900 · 2 = $149.900 · 3 = $169.900.
+
+  ESTRELLAS · Si tienes app de reseñas (Judge.me, Shopify Reviews…), salen solas con su nota real.
+  Si no, escribe aquí la nota y el número REAL de opiniones (ej. 4.8 y 23). En 0, no aparecen.
+  El pack de 3 sale marcado por defecto.
+
+  TALLA ÚNICA · El vestido no tiene tallas: solo se elige color. La guía de tallas queda vacía a propósito.
+{%- endcomment -%}
+{%- assign lmn_p2 = 14990000 -%}
+{%- assign lmn_p3 = 16990000 -%}
+{%- assign lmn_nota = 0 -%}{%- comment -%} ← nota REAL, ej. 4.8 {%- endcomment -%}
+{%- assign lmn_opiniones = 0 -%}{%- comment -%} ← número REAL de opiniones, ej. 23 {%- endcomment -%}
+{%- if product.metafields.reviews.rating_count.value > 0 -%}
+  {%- assign lmn_nota = product.metafields.reviews.rating.value.rating -%}
+  {%- assign lmn_opiniones = product.metafields.reviews.rating_count.value -%}
+{%- endif -%}
+{%- capture lmn_tallas -%}
+{%- endcapture -%}
+{%- assign lmn_tabla = lmn_tallas | strip | newline_to_br | split: '<br />' -%}
+
+{%- assign lmn_p1 = product.price -%}
+{%- assign lmn_antes = product.compare_at_price | default: 0 -%}
+{%- if lmn_antes <= lmn_p1 -%}{%- assign lmn_antes = 12990000 -%}{%- endif -%}
+{%- assign lmn_a2 = lmn_p1 | times: 2 -%}
+{%- assign lmn_a3 = lmn_p1 | times: 3 -%}
+{%- assign lmn_ah1 = lmn_antes | minus: lmn_p1 -%}
+{%- assign lmn_pct = lmn_ah1 | times: 100 | divided_by: lmn_antes -%}
+{%- assign lmn_u2 = lmn_p2 | divided_by: 2 -%}
+{%- assign lmn_u3 = lmn_p3 | divided_by: 3 -%}
+{%- assign lmn_d23 = lmn_p3 | minus: lmn_p2 -%}
+{%- assign lmn_lista = lmn_p1 | append: ',' | append: lmn_antes | append: ',' | append: lmn_p2 | append: ',' | append: lmn_a2 | append: ',' | append: lmn_p3 | append: ',' | append: lmn_a3 | append: ',' | append: lmn_u2 | append: ',' | append: lmn_u3 | append: ',' | append: lmn_d23 | split: ',' -%}
+{%- capture lmn_fmt -%}
+  {%- for v in lmn_lista -%}
+    {%- assign n = v | plus: 0 | divided_by: 100 -%}
+    {%- assign mil = n | divided_by: 1000 -%}
+    {%- assign r = n | modulo: 1000 -%}
+    {%- if mil > 0 -%}
+      {%- if r < 10 -%}{%- assign rr = r | prepend: '00' -%}{%- elsif r < 100 -%}{%- assign rr = r | prepend: '0' -%}{%- else -%}{%- assign rr = r -%}{%- endif -%}
+      ${{ mil }}.{{ rr }}
+    {%- else -%}${{ r }}{%- endif -%}
+    {%- unless forloop.last -%}|{%- endunless -%}
+  {%- endfor -%}
+{%- endcapture -%}
+{%- assign M = lmn_fmt | strip | split: '|' -%}
+{%- comment -%} M: 0 p1 · 1 antes · 2 p2 · 3 tachado2 · 4 p3 · 5 tachado3 · 6 c/u de 2 · 7 c/u de 3 · 8 diferencia entre 3 y 2 {%- endcomment -%}
+
+<!-- BARRA DE ANUNCIOS -->
+<div class="lmn-ann" role="region" aria-label="Beneficios">
+  <div class="lmn-ann-track">
+    {%- for i in (1..2) -%}
+    <div class="lmn-ann-g"{% if i == 2 %} aria-hidden="true"{% endif %}>
+      <span>🚚 <b>ENVÍO GRATIS</b> a toda Colombia</span>
+      <span>💵 <b>PAGAS AL RECIBIR</b></span>
+      <span>📏 <b>TALLA ÚNICA</b> · solo eliges color</span>
+      <span>🖤 <b>BLACK NOVEMBER</b></span>
+    </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+<div class="lmn-wrap">
+
+  <!-- GALERÍA -->
+  <div class="lmn-gal">
+    <div class="lmn-main">
+      <span class="lmn-seal" aria-hidden="true"><small>CAMBIO</small>30<small>DÍAS</small></span>
+      <div class="lmn-view">
+        <div class="lmn-track" id="lmnSliderTrack">
+          {%- if product.media.size > 0 -%}
+            {%- for media in product.media limit: 8 -%}
+              <div class="lmn-slide"><img src="{{ media | image_url: width: 1000 }}" alt="{{ media.alt | default: product.title | escape }}" width="1000" height="1000" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"{% if forloop.first %} fetchpriority="high"{% endif %}></div>
+            {%- endfor -%}
+          {%- else -%}
+            <div class="lmn-slide">{{ 'product-1' | placeholder_svg_tag: 'lmn-ph' }}</div>
+          {%- endif -%}
+        </div>
+      </div>
+      {%- if product.media.size > 1 -%}
+        <button type="button" class="lmn-arrow lmn-prev" id="lmnPrevBtn" aria-label="Anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+        <button type="button" class="lmn-arrow lmn-next" id="lmnNextBtn" aria-label="Siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
+      {%- endif -%}
+    </div>
+    {%- if product.media.size > 1 -%}
+      <div class="lmn-thumbs" id="lmnThumbs">
+        {%- for media in product.media limit: 8 -%}
+          <button type="button" class="lmn-thumb{% if forloop.first %} is-active{% endif %}" data-index="{{ forloop.index0 }}" aria-label="Imagen {{ forloop.index }}"><img src="{{ media | image_url: width: 160 }}" alt="" width="64" height="64" loading="lazy"></button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  <!-- TEXTO Y COMPRA -->
+  <div class="lmn-copy">
+
+    {%- if lmn_opiniones > 0 -%}
+      {%- assign lmn_pct_e = lmn_nota | times: 20 -%}
+      <a class="lmn-rate" href="#lmResenas"><span class="lmn-est" style="--p:{{ lmn_pct_e }}%" aria-label="{{ lmn_nota }} de 5"></span><b>{{ lmn_nota | round: 1 | replace: '.', ',' }}</b> · {{ lmn_opiniones }} opiniones</a>
+    {%- endif -%}
+    <p class="lmn-kick">Black November · Vestido Pádel</p>
+    <h1 class="lmn-h1">Te lo pones en un minuto y <em>sales lista para todo el día</em></h1>
+
+    <p class="lmn-sub">Tela rib gruesa y elástica · Con tenis o tacones</p>
+    <!-- TALLA Y COLOR (cambia la variante que se envía a Releasit) -->
+    {%- if product.has_only_default_variant == false -%}
+    <div class="lmn-variants" id="lmnVariants">
+      {%- assign lmn_sel = product.selected_or_first_available_variant -%}
+      {%- for option in product.options_with_values -%}
+        {%- assign lmn_on = option.name | downcase -%}
+        <div class="lmn-vgroup" data-pos="{{ forloop.index0 }}">
+          <p class="lmn-vlabel">{% if lmn_on contains 'tall' or lmn_on contains 'size' %}Talla{% elsif lmn_on contains 'col' %}Color{% else %}{{ option.name }}{% endif %}: <b class="lmn-vval">{{ lmn_sel.options[forloop.index0] }}</b>{%- if lmn_on contains 'col' -%}<span class="lmn-unica">📏 Talla única</span>{%- endif -%}
+            {%- if lmn_on contains 'tall' or lmn_on contains 'size' -%}<button type="button" class="lmn-guia-btn" id="lmnGuiaBtn">📏 Guía de tallas</button>{%- endif -%}</p>
+          <div class="lmn-vchips">
+            {%- for value in option.values -%}
+              <button type="button" class="lmn-vchip{% if value == lmn_sel.options[forloop.parentloop.index0] %} is-on{% endif %}" data-val="{{ value | escape }}">{% if lmn_on contains 'col' %}{%- assign vc = value | downcase -%}{%- assign hx = '#cfcfcf' -%}{%- if vc contains 'negro' -%}{%- assign hx = '#1b1b1b' -%}{%- elsif vc contains 'blanco' -%}{%- assign hx = '#ffffff' -%}{%- elsif vc contains 'beige' -%}{%- assign hx = '#e8d5c0' -%}{%- elsif vc contains 'rosa' -%}{%- assign hx = '#f2c4cf' -%}{%- elsif vc contains 'rojo' -%}{%- assign hx = '#d01f2e' -%}{%- elsif vc contains 'azul' -%}{%- assign hx = '#1f2a55' -%}{%- endif -%}{%- assign vimg = nil -%}{%- for vv in product.variants -%}{%- if vv.options contains value and vv.featured_image -%}{%- assign vimg = vv.featured_image -%}{%- break -%}{%- endif -%}{%- endfor -%}{%- if vimg -%}<img class="lmn-th" src="{{ vimg | image_url: width: 140 }}" alt="" width="70" height="88" loading="lazy">{%- else -%}<i class="lmn-sw" style="background:{{ hx }}"></i>{%- endif -%}{{ value | capitalize }}{% else %}{{ value }}{% endif %}</button>
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- endfor -%}
+      <script type="application/json" id="lmnVariantData">[{%- for v in product.variants -%}{"id":{{ v.id }},"o":{{ v.options | json }},"ok":{{ v.available | json }}}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}]</script>
+    </div>
+    {%- endif -%}
+
+    <div class="lmn-guia" id="lmnGuia" hidden>
+      {%- assign lmn_hay_tallas = false -%}
+      {%- for fila in lmn_tabla -%}{%- assign c = fila | strip | split: '|' -%}{%- if c.size >= 2 -%}{%- assign lmn_hay_tallas = true -%}{%- endif -%}{%- endfor -%}
+      {%- if lmn_hay_tallas -%}
+        <table>
+          <thead><tr><th>Talla</th><th>Equivale a</th><th>Busto</th></tr></thead>
+          <tbody>
+            {%- for fila in lmn_tabla -%}
+              {%- assign c = fila | strip | split: '|' -%}
+              {%- if c.size >= 2 -%}<tr><td><b>{{ c[0] | strip }}</b></td><td>{{ c[1] | strip }}</td><td>{{ c[2] | strip }}</td></tr>{%- endif -%}
+            {%- endfor -%}
+          </tbody>
+        </table>
+      {%- endif -%}
+      <p>Es <b>talla única</b>: la tela rib estira y se adapta. Si normalmente usas L o XL, escríbenos por WhatsApp antes de pedir y te asesoramos.</p>
+    </div>
+
+    <div class="lmn-checkout-wrapper">
+      <form method="post" action="/cart/add" id="product-form-lmn" accept-charset="UTF-8" class="form" enctype="multipart/form-data">
+        <input type="hidden" name="form_type" value="product">
+        <input type="hidden" name="utf8" value="✓">
+        <input type="hidden" name="id" id="lmn-variant-id" value="{{ product.selected_or_first_available_variant.id }}">
+        <input type="hidden" name="quantity" id="lmn-qty" value="3">
+
+        <div class="lmn-bundles">
+          <label class="lmn-bundle-option" data-bundle-index="0" data-qty="1">
+            <span class="lmn-rd"></span><input type="radio" name="bundle" value="1">
+            <span class="lmn-bi"><b>1 vestido</b><small>Para probarlo</small></span>
+            <span class="lmn-bp"><b>{{ M[0] }}</b><s>{{ M[1] }}</s></span>
+          </label>
+          <label class="lmn-bundle-option" data-bundle-index="1" data-qty="2">
+            <span class="lmn-rd"></span><input type="radio" name="bundle" value="2">
+            <span class="lmn-bi"><b>2 vestidos</b><small>{{ M[6] }} c/u</small></span>
+            <span class="lmn-bp"><b>{{ M[2] }}</b><s>{{ M[3] }}</s></span>
+          </label>
+          <label class="lmn-bundle-option lmn-star is-selected" data-bundle-index="2" data-qty="3">
+            <span class="lmn-tag best">🎁 2 + 1 gratis</span>
+            <span class="lmn-rd"></span><input type="radio" name="bundle" value="3" checked>
+            <span class="lmn-bi"><b>3 vestidos</b><small>{{ M[7] }} c/u · combina colores</small></span>
+            <span class="lmn-bp"><b>{{ M[4] }}</b><s>{{ M[5] }}</s></span>
+          </label>
+        </div>
+
+        <div id="lmnCheckoutFormTarget">
+          <button type="button" class="lmn-cta" id="lmn-fast-buy-btn">
+            <span class="lmn-cta-t"><svg class="lmn-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg>PEDIR Y PAGAR AL RECIBIR<svg class="lmn-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            <span class="lmn-cta-s">Envío gratis · Pagas en efectivo cuando llegue</span>
+          </button>
+        </div>
+
+        <p class="lmn-aviso" id="lmnAviso">Este color no está disponible ahora. Elige otro o <a href="https://wa.me/573125923915?text=Hola!%20Quiero%20pedir%20el%20Vestido%20P%C3%A1del" target="_blank" rel="noopener">pídela por WhatsApp</a>.</p>
+      </form>
+    </div>
+
+    <p class="lmn-llega" id="lmnLlega">🚚 Pídelo hoy y te llega en <b>3 a 5 días hábiles</b></p>
+    <div class="lmn-trust"><span>💵 Pagas al recibir</span><span>🚚 Envío gratis</span><span>🛡️ Garantía 30 días</span></div>
+
+  </div>
+</div>
+
+<!-- BARRA FIJA INFERIOR (aparece después de pasar el botón principal) -->
+<div class="lmn-sticky" id="lmnStickyBar">
+  <div class="lmn-sticky-in">
+    <div class="lmn-sticky-l">
+      <span class="lmn-sticky-p"><b id="lmnStickyPrice">{{ M[4] }}</b><s id="lmnStickyOld">{{ M[5] }}</s></span>
+      <span class="lmn-sticky-k" id="lmnStickyPack">3 vestidos · 2 + 1 gratis</span>
+    </div>
+    <button type="button" class="lmn-cta lmn-cta-sm" id="lmnStickyTriggerBtn"><span class="lmn-cta-t">PEDIR AHORA<svg class="lmn-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="lmn-cta-s">Pagas al recibir</span></button>
+  </div>
+</div>
+
+<style>
+:root{--lmn-ac:#2A1A22;--lmn-dk:#1A0F14;--lmn-hi:#D6336C;--lmn-soft:#FBF0F4;--lmn-line:#EBD7DF;--lmn-ink:#121821;--lmn-mut:#5a6470;--lmn-ok:#16a34a;--lmn-price:#B0234F}
+.lmn-ann,.lmn-ann *,.lmn-wrap,.lmn-wrap *,.lmn-sticky,.lmn-sticky *{box-sizing:border-box}
+
+/* Barra de anuncios */
+.lmn-ann{background:var(--lmn-dk);color:#fff;font:600 12px Manrope,sans-serif;padding:9px 0;overflow:hidden}
+.lmn-ann-track{display:flex;width:max-content;animation:lmnMq 26s linear infinite}
+.lmn-ann-g{display:flex;white-space:nowrap}
+.lmn-ann-g span{padding:0 16px}
+.lmn-ann b{color:#FFB3CB;font-weight:800}
+@keyframes lmnMq{to{transform:translateX(-50%)}}
+
+/* Contenedor */
+.lmn-wrap{max-width:1100px;margin:0 auto;padding:14px 18px 22px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start;font-family:Manrope,-apple-system,sans-serif;color:var(--lmn-ink);-webkit-font-smoothing:antialiased;overflow-x:clip}
+
+/* Galería */
+.lmn-gal{min-width:0;position:sticky;top:20px}
+.lmn-main{position:relative;aspect-ratio:1/1;border-radius:20px;overflow:hidden;background:#fff;border:1px solid var(--lmn-line)}
+.lmn-view{width:100%;height:100%;overflow:hidden}
+.lmn-track{display:flex;height:100%;transition:transform .4s cubic-bezier(.16,1,.3,1)}
+.lmn-slide{min-width:100%;height:100%}
+.lmn-slide img,.lmn-ph{width:100%;height:100%;object-fit:cover;display:block}
+.lmn-seal{position:absolute;top:10px;right:10px;z-index:5;width:62px;height:62px;border-radius:50%;background:var(--lmn-ac);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;font-size:20px;line-height:1;box-shadow:0 0 0 3px rgba(255,255,255,.85),0 6px 14px rgba(0,0,0,.2)}
+.lmn-seal small{font-size:7.5px;letter-spacing:.08em}
+.lmn-arrow{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.95);box-shadow:0 4px 12px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:4}
+.lmn-arrow svg{width:19px;height:19px;color:var(--lmn-ink)}
+.lmn-prev{left:10px}.lmn-next{right:10px}
+.lmn-thumbs{display:flex;gap:8px;margin-top:10px;overflow-x:auto;scrollbar-width:none}
+.lmn-thumbs::-webkit-scrollbar{display:none}
+.lmn-thumb{flex:0 0 auto;width:58px;height:58px;padding:0;border-radius:10px;overflow:hidden;border:2px solid transparent;background:#fff;cursor:pointer;opacity:.65}
+.lmn-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.lmn-thumb.is-active{border-color:var(--lmn-hi);opacity:1}
+
+/* Texto */
+.lmn-copy{min-width:0}
+.lmn-kick{margin:0 0 6px;font-size:11.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--lmn-hi)}
+.lmn-h1{margin:0;font-size:29px;line-height:1.15;font-weight:800;letter-spacing:-.02em}
+.lmn-h1 em{font-style:normal;color:var(--lmn-hi)}
+.lmn-bul{list-style:none;padding:0;margin:14px 0 16px}
+.lmn-bul li{display:flex;align-items:center;gap:9px;margin-bottom:7px;font-size:15px;font-weight:600}
+.lmn-bul li::before{content:"✓";flex:0 0 22px;height:22px;border-radius:50%;background:var(--lmn-hi);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center}
+
+/* Variantes */
+.lmn-variants{display:flex;flex-direction:column;gap:12px;margin:0 0 14px}
+.lmn-vlabel{display:flex;align-items:center;gap:6px;margin:0 0 7px;font-size:13.5px;font-weight:700;color:var(--lmn-mut)}
+.lmn-vlabel b{color:var(--lmn-ink);font-weight:800}
+.lmn-guia-btn{margin-left:auto;border:0;background:none;padding:0;font:800 12.5px Manrope,sans-serif;color:var(--lmn-ac);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.lmn-vchips{display:flex;flex-wrap:wrap;gap:8px}
+.lmn-vchip{min-width:52px;padding:9px 14px;border:1.5px solid #cbd5e1;border-radius:10px;background:#fff;font:700 13.5px Manrope,sans-serif;color:var(--lmn-ink);cursor:pointer}
+.lmn-vchip.is-on{border:2px solid var(--lmn-ac);background:var(--lmn-soft);color:var(--lmn-ac)}
+.lmn-vchip.is-off{opacity:.4;text-decoration:line-through;cursor:not-allowed}
+.lmn-vchip{display:inline-flex;align-items:center;gap:7px}
+.lmn-sw{flex:0 0 16px;height:16px;border-radius:50%;border:1px solid rgba(0,0,0,.18);box-shadow:inset 0 0 0 2px #fff}
+.lmn-rate{display:flex;align-items:center;gap:7px;margin:0 0 8px;font-size:13.5px;font-weight:700;color:var(--lmn-mut);text-decoration:none}
+.lmn-rate b{color:var(--lmn-ink);font-weight:800}
+.lmn-est{position:relative;display:inline-block;font-size:17px;letter-spacing:1px;line-height:1;color:#e2d6db}
+.lmn-est::before{content:"★★★★★"}
+.lmn-est::after{content:"★★★★★";position:absolute;left:0;top:0;width:var(--p,100%);overflow:hidden;color:#F5B301}
+.lmn-guia{margin:-4px 0 14px;padding:12px 14px;border-radius:12px;background:#fff;border:1px solid var(--lmn-line);font-size:13px;color:var(--lmn-mut)}
+.lmn-guia p{margin:0}.lmn-guia b{color:var(--lmn-ink)}
+.lmn-guia table{width:100%;border-collapse:collapse;margin-bottom:8px;font-size:12.5px}
+.lmn-guia th,.lmn-guia td{text-align:left;padding:6px 4px;border-bottom:1px solid #f6e9ee}
+
+/* Packs */
+.lmn-bundles{display:grid;gap:10px;margin-bottom:14px}
+.lmn-bundle-option{position:relative;display:flex;align-items:center;gap:12px;padding:14px;border:1.5px dashed var(--lmn-line);border-radius:14px;background:#fff;cursor:pointer;transition:border-color .2s,box-shadow .2s}
+.lmn-bundle-option input{display:none}
+.lmn-bundle-option.is-selected{border:2px solid var(--lmn-ac);background:var(--lmn-soft);box-shadow:0 6px 16px -8px rgba(42,26,34,.35)}
+.lmn-rd{flex:0 0 20px;height:20px;border:2px solid #c3cad4;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff}
+.is-selected .lmn-rd{border-color:var(--lmn-ac)}
+.is-selected .lmn-rd::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--lmn-ac)}
+.lmn-bi{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.lmn-bi b{font-size:16px}
+.lmn-bi small{font-size:12px;color:var(--lmn-mut);font-weight:600}
+.lmn-bp{display:flex;flex-direction:column;align-items:flex-end}
+.lmn-bp b{font-size:19px;font-weight:800;color:var(--lmn-price);line-height:1}
+.lmn-bp s{font-size:12px;color:#9aa3ad;margin-top:3px}
+.lmn-tag{position:absolute;top:-11px;right:14px;background:#111827;color:#fff;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:6px}
+.lmn-tag.best{background:#16a34a}
+.lmn-bundle-option[data-bundle-index="1"]{order:1}.lmn-bundle-option[data-bundle-index="0"]{order:2}.lmn-note{order:3}
+.lmn-star{order:0;margin-bottom:6px;padding:16px 14px;border:2px solid var(--lmn-hi)!important;background:linear-gradient(135deg,#FFF0F5,#fff 60%)!important}
+.lmn-star .lmn-bi b{font-size:18px;color:var(--lmn-ac)}
+.lmn-star .lmn-bp b{font-size:22px}
+.lmn-star.is-selected{box-shadow:0 10px 26px -10px rgba(214,51,108,.55)}
+.lmn-free{display:inline-block;align-self:flex-start;margin-top:4px;padding:3px 8px;border-radius:99px;background:#dcfce7;color:#15803d;font-size:11px;font-weight:800}
+.lmn-offer-banner{margin:0 0 14px;padding:10px 12px;border-radius:12px;background:var(--lmn-ac);color:#fff;text-align:center;font-size:13.5px;font-weight:600}
+.lmn-offer-banner b{color:#FFB3CB;font-weight:800}
+.lmn-note{margin:0;font-size:11.5px;color:var(--lmn-mut)}
+
+/* Botón */
+.lmn-cta{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:100%;border:0;cursor:pointer;background:linear-gradient(135deg,#E8457E 0%,var(--lmn-hi) 45%,#A3164A 100%);color:#fff;border-radius:16px;padding:17px 18px;font-family:Manrope,sans-serif;box-shadow:0 10px 24px rgba(42,26,34,.3);animation:lmnPulse 2.6s infinite;position:relative;overflow:hidden}
+.lmn-cta::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);transform:skewX(-20deg);animation:lmnShine 3.2s infinite}
+.lmn-cta:active{transform:scale(.98)}
+.lmn-cta.is-loading{opacity:.8}
+.lmn-cta-t{display:flex;align-items:center;gap:8px;font-size:17.5px;font-weight:800;letter-spacing:.02em}
+.lmn-cta-s{font-size:11.5px;font-weight:600;color:rgba(255,255,255,.9)}
+.lmn-ic{width:21px;height:21px;flex-shrink:0}
+.lmn-ar{width:19px;height:19px;flex-shrink:0;animation:lmnAr 1.4s ease-in-out infinite}
+@keyframes lmnAr{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+.lmn-unica{margin-left:auto;padding:3px 9px;border-radius:99px;background:var(--lmn-soft);color:var(--lmn-ac);font-size:11.5px;font-weight:800}
+.lmn-sub{margin:8px 0 16px;font-size:14.5px;font-weight:600;color:var(--lmn-mut)}
+.lmn-th{width:34px;height:42px;border-radius:7px;object-fit:cover;flex-shrink:0}
+.lmn-vchip:has(.lmn-th){padding:5px 12px 5px 5px}
+.lmn-trust{display:flex;justify-content:center;flex-wrap:wrap;gap:6px 14px;margin:0;font-size:12px;font-weight:700;color:var(--lmn-mut)}
+@keyframes lmnPulse{0%,100%{box-shadow:0 10px 24px rgba(42,26,34,.3),0 0 0 0 rgba(214,51,108,.45)}60%{box-shadow:0 10px 24px rgba(42,26,34,.3),0 0 0 12px rgba(214,51,108,0)}}
+@keyframes lmnShine{0%{left:-60%}25%,100%{left:160%}}
+@media (prefers-reduced-motion:reduce){.lmn-cta,.lmn-cta::after,.lmn-ann-track{animation:none}}
+
+/* Releasit: ocultar su botón nativo (el nuestro lo dispara) */
+#product-form-lmn ._rsi-buy-now-button,#product-form-lmn ._rsi-buy-now-button-product,#product-form-lmn #_rsi-buy-now-button,._rsi-buy-now-button-floating{position:absolute!important;width:1px!important;height:1px!important;min-height:0!important;padding:0!important;margin:0!important;opacity:0!important;overflow:hidden!important;pointer-events:none!important}
+.lmn-aviso{display:none;margin:10px 0 0;padding:10px 12px;border-radius:10px;background:#FEF3C7;color:#92400E;font-size:13px;font-weight:600;text-align:center}
+.lmn-aviso a{color:#92400E;font-weight:800}
+
+/* Entrega y garantía */
+.lmn-llega{margin:12px 0 8px;text-align:center;font-size:13.5px;font-weight:600;color:var(--lmn-ink)}
+.lmn-llega b{color:var(--lmn-ok)}
+.lmn-gt{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--lmn-soft);border:1px solid var(--lmn-line)}
+.lmn-gt-i{flex:0 0 30px;height:30px;border-radius:50%;background:var(--lmn-ok);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
+.lmn-gt p{margin:0;font-size:13px;line-height:1.45;color:var(--lmn-mut)}
+.lmn-gt p b{color:var(--lmn-ink)}
+
+/* Barra fija */
+.lmn-sticky{position:fixed;left:0;right:0;bottom:0;z-index:999999;background:rgba(255,255,255,.97);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-top:1px solid var(--lmn-line);border-radius:18px 18px 0 0;box-shadow:0 -10px 30px rgba(42,26,34,.16);padding:10px 14px calc(10px + env(safe-area-inset-bottom));transform:translateY(100%);visibility:hidden;transition:transform .3s,visibility .3s;font-family:Manrope,sans-serif}
+.lmn-sticky.is-visible{transform:none;visibility:visible}
+.lmn-sticky-in{max-width:520px;margin:0 auto;display:flex;gap:12px;align-items:center}
+.lmn-sticky-l{flex:0 0 auto;display:flex;flex-direction:column;line-height:1.15}
+.lmn-sticky-p{display:flex;align-items:baseline;gap:6px}
+.lmn-sticky-p b{color:var(--lmn-price);font-size:19px;font-weight:800}
+.lmn-sticky-p s{font-size:12px;color:#a5979d}
+.lmn-sticky-k{font-size:11.5px;font-weight:800;color:var(--lmn-ok)}
+.lmn-cta-sm{flex:1;padding:11px 12px;border-radius:14px}.lmn-cta-sm .lmn-cta-t{font-size:15.5px}.lmn-cta-sm .lmn-cta-s{font-size:10.5px}
+
+@media (max-width:900px){
+  .lmn-wrap{grid-template-columns:minmax(0,1fr);gap:16px;padding:10px 14px 18px}
+  .lmn-gal{position:relative;top:0}
+  .lmn-h1{font-size:25px}
+}
+@media (max-width:420px){.lmn-h1{font-size:23px}.lmn-bul li{font-size:14px}.lmn-bp b{font-size:18px}}
+</style>
+
+<script>
+(function () {
+  function init() {
+    // 1. CARRUSEL + MINIATURAS + SWIPE
+    var track = document.getElementById('lmnSliderTrack');
+    var slides = document.querySelectorAll('.lmn-slide');
+    var prevBtn = document.getElementById('lmnPrevBtn');
+    var nextBtn = document.getElementById('lmnNextBtn');
+    var thumbs = document.querySelectorAll('.lmn-thumb');
+    var currentIndex = 0, totalSlides = slides.length;
+    if (track && totalSlides > 1) {
+      var goToSlide = function (index) {
+        if (index < 0) index = totalSlides - 1;
+        if (index >= totalSlides) index = 0;
+        currentIndex = index;
+        track.style.transform = 'translateX(-' + (currentIndex * 100) + '%)';
+        thumbs.forEach(function (t, idx) { t.classList.toggle('is-active', idx === currentIndex); });
+        var act = thumbs[currentIndex];
+        if (act && act.parentNode) { act.parentNode.scrollLeft = act.offsetLeft - 40; }
+      };
+      if (prevBtn) prevBtn.addEventListener('click', function () { goToSlide(currentIndex - 1); });
+      if (nextBtn) nextBtn.addEventListener('click', function () { goToSlide(currentIndex + 1); });
+      thumbs.forEach(function (t) { t.addEventListener('click', function () { goToSlide(parseInt(t.getAttribute('data-index'), 10)); }); });
+      var x0 = null;
+      track.addEventListener('touchstart', function (ev) { x0 = ev.touches[0].clientX; }, { passive: true });
+      track.addEventListener('touchend', function (ev) {
+        if (x0 === null) return;
+        var dx = ev.changedTouches[0].clientX - x0;
+        if (Math.abs(dx) > 40) goToSlide(dx < 0 ? currentIndex + 1 : currentIndex - 1);
+        x0 = null;
+      }, { passive: true });
+    }
+
+    // 2. FECHA DE ENTREGA (3 a 5 días hábiles)
+    var MES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    function habil(d, k) { d = new Date(d); while (k > 0) { d.setDate(d.getDate() + 1); var w = d.getDay(); if (w !== 0 && w !== 6) k--; } return d; }
+    function f(d) { return d.getDate() + ' de ' + MES[d.getMonth()]; }
+    var llega = document.getElementById('lmnLlega');
+    if (llega) { var hoy = new Date(); llega.innerHTML = '🚚 Pídelo hoy y te llega entre el <b>' + f(habil(hoy, 3)) + ' y el ' + f(habil(hoy, 5)) + '</b>'; }
+
+    // 2B. GUÍA DE TALLAS (abre / cierra)
+    var guiaBtn = document.getElementById('lmnGuiaBtn'), guia = document.getElementById('lmnGuia');
+    if (guiaBtn && guia) guiaBtn.addEventListener('click', function () { guia.hidden = !guia.hidden; });
+
+    // 3. PACKS + SINCRONIZACIÓN CON RELEASIT
+    var form = document.getElementById('product-form-lmn');
+    var qtyInput = document.getElementById('lmn-qty');
+    var bundleOptions = document.querySelectorAll('.lmn-bundle-option');
+    var stickyPrice = document.getElementById('lmnStickyPrice');
+    var stickyPack = document.getElementById('lmnStickyPack');
+    var selectedIndex = '2';
+
+    // Marca en Releasit la oferta de la misma posición (0 = 1, 1 = 2, 2 = 3 vestidos).
+    function clickOferta() {
+      var todas = document.querySelectorAll('._rsi-quantity-offers-offer-container[data-offer-pos="' + selectedIndex + '"]');
+      if (!todas.length) return false;
+      var visibles = [].filter.call(todas, function (o) { return o.offsetParent !== null; });
+      (visibles.length ? visibles : [].slice.call(todas)).forEach(function (o) { o.click(); });
+      return true;
+    }
+    function marcarOfertaReleasit(intentos) {
+      intentos = intentos || 0;
+      if (clickOferta()) { setTimeout(clickOferta, 400); setTimeout(clickOferta, 1000); return; }
+      if (intentos < 50) setTimeout(function () { marcarOfertaReleasit(intentos + 1); }, 100);
+    }
+
+    bundleOptions.forEach(function (option) {
+      option.addEventListener('click', function () {
+        bundleOptions.forEach(function (opt) { opt.classList.remove('is-selected'); });
+        option.classList.add('is-selected');
+        var radio = option.querySelector('input[type="radio"]');
+        if (radio) radio.checked = true;
+        selectedIndex = option.getAttribute('data-bundle-index') || '0';
+        var pb = option.querySelector('.lmn-bp b');
+        if (stickyPrice && pb) stickyPrice.textContent = pb.textContent;
+        var ps = option.querySelector('.lmn-bp s'), so = document.getElementById('lmnStickyOld');
+        if (so && ps) so.textContent = ps.textContent;
+        if (stickyPack) { var q = option.getAttribute('data-qty'); stickyPack.textContent = q === '3' ? '3 vestidos · 2 + 1 gratis' : q + (q === '1' ? ' vestido' : ' vestidos') + ' · envío gratis'; }
+        if (qtyInput) {
+          qtyInput.value = option.getAttribute('data-qty') || '1';
+          qtyInput.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        var ya = document.querySelector('._rsi-quantity-offers-offer-container[data-offer-pos="' + selectedIndex + '"]');
+        if (ya) ya.click();
+      });
+    });
+
+    // 3B. TALLA Y COLOR → actualiza la variante del formulario (Releasit la toma al abrir)
+    var vbox = document.getElementById('lmnVariants');
+    var vdata = document.getElementById('lmnVariantData');
+    if (vbox && vdata) {
+      var variantes = [];
+      try { variantes = JSON.parse(vdata.textContent); } catch (err) {}
+      var grupos = vbox.querySelectorAll('.lmn-vgroup');
+      var elegidos = [].map.call(grupos, function (g) { var on = g.querySelector('.lmn-vchip.is-on'); return on ? on.getAttribute('data-val') : null; });
+      var aplicarVariante = function () {
+        var v = variantes.filter(function (x) { return elegidos.every(function (val, i) { return val === null || x.o[i] === val; }); })[0];
+        if (!v) return;
+        document.querySelectorAll('#product-form-lmn [name="id"], form[action*="/cart/add"] [name="id"]').forEach(function (inp) {
+          inp.value = v.id;
+          inp.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+        try { var u = new URL(window.location.href); u.searchParams.set('variant', v.id); window.history.replaceState({}, '', u.toString()); } catch (err) {}
+        grupos.forEach(function (g, gi) {
+          g.querySelectorAll('.lmn-vchip').forEach(function (c) {
+            var prueba = elegidos.slice(); prueba[gi] = c.getAttribute('data-val');
+            var hay = variantes.some(function (x) { return x.ok && prueba.every(function (val, i) { return val === null || x.o[i] === val; }); });
+            c.classList.toggle('is-off', !hay);
+          });
+        });
+      };
+      grupos.forEach(function (g, gi) {
+        g.querySelectorAll('.lmn-vchip').forEach(function (c) {
+          c.addEventListener('click', function () {
+            if (c.classList.contains('is-off')) return;
+            g.querySelectorAll('.lmn-vchip').forEach(function (x) { x.classList.remove('is-on'); });
+            c.classList.add('is-on');
+            elegidos[gi] = c.getAttribute('data-val');
+            var lab = g.querySelector('.lmn-vval'); if (lab) lab.textContent = elegidos[gi];
+            aplicarVariante();
+            // Al elegir color, la galería salta a la foto de ese color (pon el color en el texto alternativo de cada foto en Shopify)
+            var vv = (elegidos[gi] || '').toLowerCase();
+            if (typeof goToSlide === 'function' && vv) {
+              for (var si = 0; si < slides.length; si++) { var im = slides[si].querySelector('img'); if (im && (im.alt || '').toLowerCase().indexOf(vv) > -1) { goToSlide(si); break; } }
+            }
+          });
+        });
+      });
+      aplicarVariante();
+    }
+
+    // 4. BOTÓN PRINCIPAL Y BARRA FIJA → abren Releasit
+    var fastBuyBtn = document.getElementById('lmn-fast-buy-btn');
+    var stickyTriggerBtn = document.getElementById('lmnStickyTriggerBtn');
+    var abriendo = false;
+    function botonReleasit() {
+      return (form && form.querySelector('._rsi-buy-now-button-product, ._rsi-buy-now-button, #_rsi-buy-now-button')) ||
+             document.querySelector('._rsi-buy-now-button-product, ._rsi-buy-now-button, #_rsi-buy-now-button');
+    }
+    function triggerCheckout(e) {
+      if (e) e.preventDefault();
+      if (abriendo) return;
+      abriendo = true;
+      var btn = e && e.currentTarget;
+      if (btn) btn.classList.add('is-loading');
+      var intentos = 0;
+      (function intentar() {
+        var rsi = botonReleasit();
+        if (rsi) { clickOferta(); rsi.click(); marcarOfertaReleasit(0); terminar(); }
+        else if (intentos < 30) { intentos++; setTimeout(intentar, 100); }
+        else { terminar(); var aviso = document.getElementById('lmnAviso'); if (aviso) aviso.style.display = 'block'; }
+      })();
+      function terminar() { setTimeout(function () { abriendo = false; if (btn) btn.classList.remove('is-loading'); }, 600); }
+    }
+    if (fastBuyBtn) fastBuyBtn.addEventListener('click', triggerCheckout);
+    if (stickyTriggerBtn) stickyTriggerBtn.addEventListener('click', triggerCheckout);
+
+    // 5. BARRA FIJA: aparece cuando ya pasaste el botón principal
+    var stickyBar = document.getElementById('lmnStickyBar');
+    var checkoutArea = document.getElementById('lmnCheckoutFormTarget');
+    if (stickyBar && checkoutArea && 'IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          stickyBar.classList.toggle('is-visible', !entry.isIntersecting && entry.boundingClientRect.top < 0);
+        });
+      }, { threshold: 0 }).observe(checkoutArea);
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+</script>

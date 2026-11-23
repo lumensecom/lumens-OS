@@ -1,0 +1,16 @@
+{
+  "product": "Enterizo Milán",
+  "template": "corta",
+  "problem": "Quieres verte arreglada para una salida sin tener que combinar varias prendas.",
+  "benefit": "Un look de noche en una sola prenda",
+  "audience": "Colombian women looking for a one-piece outfit for dinner or a special occasion",
+  "reference": "Foto frontal y captura de Dropkiller proporcionadas por Juan. Ficha identificada con ID 2309063. Las cifras, variantes y reseñas de referencia no se trataron como verificadas para LUMENS.",
+  "garment": "Black one-piece jumpsuit, floral lace at the high neckline and long sleeves, defined waist and full-length flared trousers. Follow the front reference. Do not add a back closure, extra colors or a textile composition.",
+  "facts": ["Encaje floral negro", "Manga larga y cuello alto", "Pantalón de bota campana", "Diseño de una sola pieza"],
+  "category": "general",
+  "prices": [149900],
+  "hasImageRights": true,
+  "illustrative": true,
+  "accent": "#231B18",
+  "highlight": "#8A5635"
+}

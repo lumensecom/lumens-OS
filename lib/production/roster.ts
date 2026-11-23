@@ -7,7 +7,7 @@ export const productionRoster = [
   ["2B", "Rentabilidad y proveedor", "Comprueba costo unitario, logística y contribución por pack. Deja stock y proveedor pendientes si faltan datos."],
   ["2C", "Cumplimiento", "Verifica autorización de fotos y filtra promesas riesgosas. Escala revisión sanitaria y evidencia insuficiente."],
   ["3A", "Oferta y precio", "Verifica precios, contribución y orden de las ofertas. Destaca el pack de mayor cantidad disponible."],
-  ["3B", "Landing Shopify", "Adapta el hero y el cuerpo de Ionfit, conserva las conexiones de Releasit y prepara la vista previa."],
+  ["3B", "Landing Shopify", "Elige la plantilla corta, explicativa o completa. Adapta dos bloques Liquid, conserva la conexión con Releasit y entrega galería, prompts y control de calidad."],
   ["4A", "Estrategia creativa", "Organiza el ángulo problema → solución y redacta el titular, beneficios y pasos a partir del brief."],
   ["4B", "Prompts visuales", "Entrega las fotos autorizadas y prompts para mantener apariencia, material y colores reales."],
   ["5A", "Borradores de campaña", "Deja un borrador de ángulo, CTA y creatividades para revisión del dueño."],

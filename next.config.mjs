@@ -2,7 +2,8 @@
 const nextConfig = {
   experimental: {
     outputFileTracingIncludes: {
-      "/api/tower/production": ["./docs/landing/plantillas/simple-*.liquid", "./lib/production/demo/*.webp"],
+      "/torre/agentes/\\[code\\]": ["./docs/landing/agente-3b.md"],
+      "/api/tower/production": ["./docs/landing/plantillas/*.liquid", "./lib/production/{demo,milan}/*.webp"],
     },
   },
 }

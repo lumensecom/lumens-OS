@@ -1,0 +1,436 @@
+{%- comment -%}
+  ═══ VESTIDO PÁDEL · CUERPO DE LA PÁGINA (versión simple) ═══
+  Sube fotos y videos a Shopify (Contenido → Archivos) y pega SOLO el nombre del archivo entre las comillas.
+  Si un espacio queda vacío, esa parte no aparece. El nombre de cada prompt está en prompts-vestido-padel.txt.
+{%- endcomment -%}
+{%- assign cdn = 'https://cdn.shopify.com/s/files/1/0671/0598/0521/files/' -%}
+{%- assign vcdn = 'https://cdn.shopify.com/videos/c/o/v/' -%}
+
+{%- assign vid_1 = vcdn | append: '6c937a863d644674b4c600c2933e0785.mp4' -%}{%- comment -%} Video principal (va debajo de la prueba social) {%- endcomment -%}
+{%- assign vid_2 = '' -%}{%- comment -%} V2 · Se lo pone y sale con tenis {%- endcomment -%}
+
+{%- assign img_antes   = cdn | append: 'LUMENS_Vestido_Padel_C9_antes.webp?v=1795322518' -%}{%- comment -%} C9 · ropa de casa {%- endcomment -%}
+{%- assign img_despues = cdn | append: 'LUMENS_Vestido_Padel_C10_despues_1.webp?v=1795322518' -%}{%- comment -%} C10 · misma mujer con el vestido {%- endcomment -%}
+
+{%- assign img_info    = cdn | append: 'Pink_Ribbed_Dress_Infographic.webp?v=1795322518' -%}{%- comment -%} C1 · infografía de la tela {%- endcomment -%}
+{%- assign img_detalle = cdn | append: 'White_Ribbed_Mini_Dress_Details.webp?v=1795322518' -%}{%- comment -%} C2 · detalles: cuello, manga, tela {%- endcomment -%}
+{%- assign img_paso1   = cdn | append: 'ChatGPT_Image_Nov_21_2026_11_23_24_PM-1.webp?v=1795322518' -%}{%- comment -%} C3 {%- endcomment -%}
+{%- assign img_paso2   = cdn | append: 'ChatGPT_Image_Nov_21_2026_11_23_25_PM-2.webp?v=1795322518' -%}{%- comment -%} C4 {%- endcomment -%}
+{%- assign img_paso3   = cdn | append: 'ChatGPT_Image_Nov_21_2026_11_23_26_PM-3.webp?v=1795322518' -%}{%- comment -%} C5 {%- endcomment -%}
+{%- assign img_regalo  = '' -%}{%- comment -%} Sin regalo real: se deja vacío {%- endcomment -%}
+{%- assign img_cierre  = cdn | append: 'Warm_Patio_Dinner_with_Cocktail-6.webp?v=1795322519' -%}{%- comment -%} C6 {%- endcomment -%}
+{%- assign img_tallas  = '' -%}{%- comment -%} G7 · tabla REAL del proveedor (va encima de los packs) {%- endcomment -%}
+
+{%- comment -%} Prueba social · fotos de la tira. Una por línea: URL|Texto corto. Cuando tengas fotos REALES de clientas, cámbialas y pon ilustrativas = false. {%- endcomment -%}
+{%- assign ilustrativas = true -%}
+{%- capture casa_fotos -%}
+https://cdn.shopify.com/s/files/1/0671/0598/0521/files/Sunset_Padel_Player_on_Court-3.webp?v=1795322518|En la cancha
+https://cdn.shopify.com/s/files/1/0671/0598/0521/files/Laughing_Friends_at_a_Sunny_Cafe_Table-1.webp?v=1795322518|Brunch con amigas
+https://cdn.shopify.com/s/files/1/0671/0598/0521/files/Confident_Shopper_in_Modern_Mall-2.webp?v=1795322518|De compras
+https://cdn.shopify.com/s/files/1/0671/0598/0521/files/Stylish_Traveler_at_Airport_Gate_B6-4.webp?v=1795322518|De viaje
+https://cdn.shopify.com/s/files/1/0671/0598/0521/files/Couples_Picnic_Selfie_in_the_Park-5.webp?v=1795322519|Plan en pareja
+https://cdn.shopify.com/s/files/1/0671/0598/0521/files/Warm_Patio_Dinner_with_Cocktail-6.webp?v=1795322519|Noche con tacones
+{%- endcapture -%}
+{%- assign casa = casa_fotos | strip | newline_to_br | split: '<br />' -%}
+
+{%- comment -%}
+  ═══ OPINIONES REALES ═══ Solo de clientas que ya recibieron (capturas de WhatsApp o de la app de reseñas). Una por línea:
+  Nombre|Ciudad|Estrellas 1-5|Título corto|Texto|URL de foto (opcional)
+  Si lo dejas vacío, la sección y las estrellas no aparecen.
+{%- endcomment -%}
+{%- capture resenas -%}
+{%- endcapture -%}
+{%- assign filas = resenas | strip | newline_to_br | split: '<br />' -%}
+{%- assign rn = 0 -%}{%- assign rsuma = 0 -%}
+{%- for fila in filas -%}{%- assign c = fila | strip | split: '|' -%}{%- if c.size >= 5 -%}{%- assign rn = rn | plus: 1 -%}{%- assign rsuma = rsuma | plus: c[2] -%}{%- endif -%}{%- endfor -%}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+.lm{--ac:#2A1A22;--dk:#1A0F14;--hi:#D6336C;--soft:#FBF0F4;--line:#EBD7DF;--ink:#121821;--mut:#5a6470;--ok:#16a34a;--price:#B0234F}
+.lm,.lm *{box-sizing:border-box}
+.lm{font-family:Manrope,-apple-system,BlinkMacSystemFont,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.lm img{max-width:100%;display:block}
+.lm-w{max-width:760px;margin:0 auto;padding:0 18px}
+.lm-sec{padding:36px 0}
+.lm-sec.t{background:var(--soft)}
+.lm-sec.o{background:var(--dk);color:#fff}
+.lm-k{margin:0 0 6px;text-align:center;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--hi)}
+.lm-h{margin:0 0 6px;text-align:center;font-size:25px;line-height:1.18;font-weight:800;letter-spacing:-.01em}
+.lm-h em{font-style:normal;color:var(--hi)}
+.lm-p{margin:0 auto 18px;max-width:480px;text-align:center;font-size:15px;color:var(--mut)}
+.o .lm-p{color:#dcc6cf}
+.lm-nota{margin:8px 0 0;text-align:center;font-size:11px;color:var(--mut)}
+.o .lm-nota{color:#b99ba8}
+.lm-img{width:100%;height:auto;border-radius:18px}
+.lm-cta{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;cursor:pointer;margin-top:20px;
+ background:var(--ac);color:#fff;border-radius:999px;padding:17px 20px;font:800 16px/1.1 Manrope,sans-serif;letter-spacing:.02em;text-transform:uppercase;text-align:center;
+ box-shadow:0 10px 24px rgba(42,26,34,.3);animation:lmPulse 2.8s infinite}
+.lm-cta:active{transform:scale(.98)}
+.o .lm-cta{background:var(--hi)}
+.lm-cta svg{width:21px;height:21px;flex-shrink:0}
+@keyframes lmPulse{0%,100%{box-shadow:0 10px 24px rgba(42,26,34,.3),0 0 0 0 rgba(214,51,108,.4)}60%{box-shadow:0 10px 24px rgba(42,26,34,.3),0 0 0 12px rgba(214,51,108,0)}}
+@media (prefers-reduced-motion:reduce){.lm-cta{animation:none}}
+.lm-sellos{display:flex;justify-content:center;flex-wrap:wrap;gap:6px 14px;margin:12px 0 0;font-size:11.5px;font-weight:700}
+.lm-sellos span::before{content:"✓ ";color:var(--ok)}
+.o .lm-sellos span::before{color:var(--hi)}
+
+/* 1 · VIDEOS */
+.lm-vids{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lm-vid{position:relative;margin:0;aspect-ratio:9/16;border-radius:18px;overflow:hidden;background:#1a0f14;box-shadow:0 14px 30px -16px rgba(0,0,0,.6)}
+.lm-vid video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.lm-vid figcaption{position:absolute;left:8px;right:8px;bottom:8px;padding:7px 8px;border-radius:10px;background:rgba(26,15,20,.72);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#fff;font-size:12px;font-weight:800;text-align:center;line-height:1.2}
+
+/* 2 · ANTES / DESPUÉS */
+.lm-ba{position:relative;max-width:440px;margin:0 auto;aspect-ratio:2/3;border-radius:20px;overflow:hidden;background:#f1e3e8;user-select:none;-webkit-user-select:none;touch-action:pan-y;box-shadow:0 18px 40px -20px rgba(26,15,20,.5)}
+.lm-ba img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.lm-ba .dp{clip-path:inset(0 0 0 50%)}
+.lm-ba .tag{position:absolute;top:12px;padding:5px 11px;border-radius:99px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;z-index:2}
+.lm-ba .ta{left:12px;background:rgba(255,255,255,.92);color:var(--ink)}
+.lm-ba .td{right:12px;background:var(--hi);color:#fff}
+.lm-ba .bar{position:absolute;top:0;bottom:0;left:50%;width:3px;margin-left:-1.5px;background:#fff;z-index:3;pointer-events:none}
+.lm-ba .knob{position:absolute;top:50%;left:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:#fff;color:var(--ac);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;box-shadow:0 4px 14px rgba(0,0,0,.25);z-index:4;pointer-events:none}
+.lm-ba input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;z-index:5;margin:0}
+
+/* 3 · ¿TE PASA? */
+.lm-dolor{list-style:none;margin:14px auto 0;padding:0;max-width:430px}
+.lm-dolor li{display:flex;gap:10px;align-items:center;margin-bottom:8px;padding:12px 14px;background:#fff;border:1px solid var(--line);border-radius:12px;font-size:14.5px;font-weight:700}
+.lm-dolor li::before{content:"✕";flex:0 0 22px;height:22px;border-radius:50%;background:#fde8e8;color:#d64545;font-size:12px;display:flex;align-items:center;justify-content:center}
+.lm-giro{margin:14px auto 0;max-width:430px;padding:14px 16px;border-radius:14px;background:var(--ac);color:#fff;font-size:15px;font-weight:700;text-align:center}
+.lm-giro b{color:#FFB3CB}
+
+/* 4 · TIRA */
+.lm-tira{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent)}
+.lm-pista{display:flex;gap:12px;width:max-content;animation:lmMove 48s linear infinite}
+.lm-tira:active .lm-pista{animation-play-state:paused}
+@keyframes lmMove{to{transform:translate3d(-50%,0,0)}}
+@media (prefers-reduced-motion:reduce){.lm-pista{animation:none}}
+.lm-foto{margin:0;flex:0 0 auto;width:210px;aspect-ratio:4/5;border-radius:18px;overflow:hidden;border:3px solid #fff;box-shadow:0 10px 22px -12px rgba(16,24,40,.45);background:#f1e3e8}
+.lm-foto{position:relative;width:230px}
+.lm-foto img{width:100%;height:100%;object-fit:cover}
+.lm-foto figcaption{position:absolute;left:10px;bottom:10px;padding:5px 11px;border-radius:99px;background:rgba(255,255,255,.94);color:var(--ac);font-size:12px;font-weight:800;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.lm-ps{background:linear-gradient(180deg,#fff 0%,var(--soft) 100%)}
+.lm-ps .lm-revs{margin-top:16px}
+.lm-conf{display:flex;justify-content:space-between;gap:8px;margin-top:20px}
+.lm-conf span{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 6px;border-radius:14px;background:#fff;border:1px solid var(--line);font-size:12px;font-weight:800;color:var(--ac);text-align:center;line-height:1.25}
+.lm-conf i{font-style:normal;font-size:20px;line-height:1}
+.lm-vid1{max-width:340px;margin:16px auto 0}
+
+/* 5 · BENEFICIOS */
+.lm-bl{list-style:none;padding:0;margin:16px auto 0;max-width:430px}
+.lm-bl li{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;font-size:15px}
+.lm-bl li::before{content:"✓";flex:0 0 24px;height:24px;border-radius:50%;background:var(--hi);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.lm-bl b{display:block}
+.lm-bl span{color:var(--mut);font-size:13.5px}
+
+/* 6 · PASOS */
+.lm-pasos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.lm-paso{position:relative;margin:0;border-radius:16px;overflow:hidden;aspect-ratio:3/4;background:#f1e3e8}
+.lm-paso img{width:100%;height:100%;object-fit:cover}
+.lm-paso b{position:absolute;top:8px;left:8px;width:28px;height:28px;border-radius:50%;background:var(--hi);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 0 0 3px #fff}
+.lm-paso figcaption{position:absolute;left:0;right:0;bottom:0;padding:24px 6px 9px;background:linear-gradient(transparent,rgba(26,15,20,.9));color:#fff;font-size:12px;font-weight:800;text-align:center;line-height:1.2}
+
+/* (regalo retirado) */
+.lm-regalo{position:relative;border-radius:20px;overflow:hidden;min-height:330px;display:flex;align-items:flex-end;background:var(--ink);color:#fff}
+.lm-regalo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.lm-regalo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(26,15,20,.92) 80%)}
+.lm-regalo div{position:relative;z-index:1;padding:20px}
+.lm-regalo small{display:inline-block;background:#f5c518;color:#111;font-size:11px;font-weight:800;padding:5px 12px;border-radius:99px;margin-bottom:8px}
+.lm-regalo b{display:block;font-size:20px;line-height:1.2;margin-bottom:4px}
+.lm-regalo p{margin:0;color:#efdfe5;font-size:14px}
+
+/* 8 · PACKS */
+#lmLanding .lm-planes{display:grid;gap:10px;margin:18px 0 0}
+#lmLanding .lm-of{position:relative;display:flex;align-items:center;gap:12px;padding:15px 14px;background:#fff;border:1.5px dashed var(--line);border-radius:14px;cursor:pointer;transition:border-color .2s,box-shadow .2s}
+#lmLanding .lm-of.on{border:2px solid var(--ac);box-shadow:0 6px 18px -6px rgba(42,26,34,.25)}
+#lmLanding .lm-of .rd{width:20px;height:20px;border:2px solid #c3cad4;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+#lmLanding .lm-of.on .rd{border-color:var(--ac)}#lmLanding .lm-of.on .rd::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--ac)}
+#lmLanding .lm-of .qn{flex:1;min-width:0}#lmLanding .lm-of .qn b{display:block;font-size:16px}#lmLanding .lm-of .qn small{font-size:12px;color:var(--mut)}
+#lmLanding .lm-of .cu{text-align:right}#lmLanding .lm-of .cu b{display:block;font-size:19px;font-weight:800;color:var(--price)}#lmLanding .lm-of .cu s{font-size:12px;color:#9aa3ad}
+#lmLanding .lm-of .tag{position:absolute;top:-11px;right:14px;background:#111827;color:#fff;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:6px}
+#lmLanding .lm-of .tag.best{background:#16a34a}
+#lmLanding .lm-of.star{padding:17px 14px;border:2px solid var(--hi);background:linear-gradient(135deg,#FFF0F5,#fff 60%);margin-bottom:6px}
+#lmLanding .lm-of.star.on{box-shadow:0 10px 26px -10px rgba(214,51,108,.55)}
+#lmLanding .lm-of.star .qn b{font-size:18px;color:var(--ac)}
+#lmLanding .lm-of.star .cu b{font-size:22px}
+#lmLanding .lm-of .free{display:inline-block;margin-top:4px;padding:3px 8px;border-radius:99px;background:#dcfce7;color:#15803d;font-size:11px;font-weight:800}
+#lmLanding .lm-of.top{margin-top:8px}
+.lm-gt{display:flex;gap:12px;align-items:center;margin-top:16px;padding:14px 16px;border-radius:14px;background:#fff;border:1.5px solid var(--line)}
+.lm-gt i{font-style:normal;flex:0 0 54px;height:54px;border-radius:50%;background:var(--ac);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;font-size:8px;font-weight:800;letter-spacing:.08em}
+.lm-gt i strong{font-size:19px}
+.lm-gt p{margin:0;font-size:13.5px;color:var(--mut)}.lm-gt p b{color:var(--ink)}
+
+.lm-est{color:#F5B301;letter-spacing:1px}.lm-est i{color:#e2d6db;font-style:normal}
+.lm-resbar{display:flex;align-items:center;justify-content:center;gap:8px;margin:14px 0 12px;font-size:14px;color:var(--mut)}
+.lm-resbar b{font-size:20px;color:var(--ink)}
+.lm-revs{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 18px 10px;scrollbar-width:none}.lm-revs::-webkit-scrollbar{display:none}
+.lm-rev{flex:0 0 80%;max-width:330px;scroll-snap-align:center;overflow:hidden;background:#fff;border:1px solid var(--line);border-radius:16px}
+.lm-rev img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block}
+.lm-rev div{padding:14px 16px 16px}.lm-rev h4{margin:6px 0;font-size:15px;line-height:1.3;color:var(--ac)}
+.lm-rev p{margin:0 0 10px;font-size:13.5px;color:var(--mut)}
+.lm-rev small{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12.5px;font-weight:800}
+.lm-ver{display:inline-flex;align-items:center;gap:3px;color:var(--ok);font-weight:700}.lm-ver svg{width:13px;height:13px}
+
+/* TELA */
+.lm-lin{list-style:none;margin:16px auto 0;padding:0;max-width:440px}
+.lm-lin li{padding:13px 2px;border-bottom:1px solid rgba(255,255,255,.16);font-size:15px;color:#efdfe5}
+.lm-lin li::before{content:"✦ ";color:var(--hi)}
+
+/* 9 · DUDAS */
+.lm-faq details{border-bottom:1px solid var(--line)}
+.lm-faq summary{list-style:none;display:flex;justify-content:space-between;gap:12px;padding:15px 0;font-size:16px;font-weight:800;line-height:1.3;cursor:pointer}
+.lm-faq summary::-webkit-details-marker{display:none}
+.lm-faq summary::after{content:"+";color:var(--hi);font-size:26px;font-weight:700;line-height:.9}
+.lm-faq details[open] summary::after{content:"−"}
+.lm-faq p{margin:0 0 16px;font-size:14px;color:var(--mut)}
+.lm-wa{display:flex;align-items:center;justify-content:center;gap:8px;margin:20px auto 0;max-width:300px;background:#25D366;color:#fff!important;text-decoration:none;font-size:14px;font-weight:800;padding:12px 16px;border-radius:99px}
+.lm-wa svg{width:18px;height:18px}
+.lm-legal{margin:18px 0 0;font-size:11.5px;color:var(--mut);line-height:1.55}
+
+/* 10 · CIERRE */
+.lm-cierre-img{width:100%;max-width:400px;aspect-ratio:3/4;object-fit:cover;margin:0 auto 20px;border-radius:20px;box-shadow:0 18px 40px -20px rgba(0,0,0,.6)}
+.lm-pie{background:var(--dk);color:#fff;padding:30px 0 96px;width:100vw;position:relative;left:50%;margin-left:-50vw;text-align:center}
+.lm-pie nav{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 22px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.15)}
+.lm-pie a{color:rgba(255,255,255,.85);text-decoration:none;font-size:13px}
+.lm-pie p{margin:14px 0 0;font-size:12px;color:rgba(255,255,255,.6)}
+.lm-pie strong{display:block;margin-top:14px;font-size:22px;letter-spacing:-.03em}
+@media(min-width:768px){.lm-h{font-size:31px}.lm-sec{padding:52px 0}.lm-vids{max-width:560px;margin:0 auto}.lm-foto{width:250px}.lm-pasos{gap:14px}.lm-paso figcaption{font-size:14px}}
+</style>
+
+<div class="lm" id="lmLanding">
+
+  <!-- ═══ 1 · PRUEBA SOCIAL: ELLAS YA LO USAN ═══ -->
+  <section class="lm-sec lm-ps" id="lmResenas" style="overflow:hidden">
+    <div class="lm-w">
+      <p class="lm-k">Así lo usan ellas</p>
+      <h2 class="lm-h">Un vestido para <em>todos tus planes</em></h2>
+      {%- if rn > 0 -%}
+        {%- assign rp = rsuma | times: 10 | divided_by: rn -%}
+        {%- assign re = rp | divided_by: 10 -%}{%- assign rd = rp | modulo: 10 -%}
+        <p class="lm-resbar"><span class="lm-est">★★★★★</span><b>{{ re }},{{ rd }}</b>de 5 · {{ rn }} {% if rn == 1 %}opinión{% else %}opiniones{% endif %} de clientas</p>
+      {%- else -%}
+        <p class="lm-p">Con tenis para el día, con sandalias o tacones para la noche.</p>
+      {%- endif -%}
+    </div>
+    {%- if casa_fotos != '' -%}
+    <div class="lm-tira" aria-label="Mujeres usando el Vestido Pádel en distintos planes">
+      <div class="lm-pista">
+        {%- for i in (1..2) -%}
+          {%- for u in casa -%}
+            {%- assign p = u | strip | split: '|' -%}
+            {%- if p[0] and p[0] != '' -%}<figure class="lm-foto"{% if i == 2 %} aria-hidden="true"{% endif %}><img src="{{ p[0] | strip }}" alt="{{ p[1] | default: 'Mujer con el Vestido Pádel' | strip | escape }}" loading="lazy" width="420" height="525">{%- if p[1] -%}<figcaption>{{ p[1] | strip }}</figcaption>{%- endif -%}</figure>{%- endif -%}
+          {%- endfor -%}
+        {%- endfor -%}
+      </div>
+    </div>
+    {%- if ilustrativas -%}<p class="lm-nota">Imágenes ilustrativas.</p>{%- endif -%}
+    {%- endif -%}
+    {%- if rn > 0 -%}
+    <div class="lm-revs">
+      {%- for fila in filas -%}
+        {%- assign c = fila | strip | split: '|' -%}
+        {%- if c.size >= 5 -%}
+          {%- assign e = c[2] | strip | plus: 0 -%}
+          <article class="lm-rev">
+            {%- if c[5] and c[5] != '' -%}<img src="{{ c[5] | strip }}" alt="Foto de {{ c[0] | strip | escape }} con su vestido" loading="lazy">{%- endif -%}
+            <div>
+              <p class="lm-est" style="margin:0">{% for s in (1..5) %}{% if s <= e %}★{% else %}<i>★</i>{% endif %}{% endfor %}</p>
+              <h4>“{{ c[3] | strip | escape }}”</h4>
+              <p>{{ c[4] | strip | escape }}</p>
+              <small>{{ c[0] | strip | escape }} · {{ c[1] | strip | escape }} <span class="lm-ver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Compra verificada</span></small>
+            </div>
+          </article>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+    {%- endif -%}
+    <div class="lm-w">
+      <div class="lm-conf"><span><i>🚚</i>Envíos a toda Colombia</span><span><i>💵</i>Pagas al recibir</span><span><i>📏</i>Talla única · se adapta</span></div>
+    </div>
+  </section>
+
+  <!-- ═══ 2 · VIDEO ═══ -->
+  {%- if vid_1 != '' -%}
+  <section class="lm-sec o">
+    <div class="lm-w">
+      <p class="lm-k">Míralo puesto</p>
+      <h2 class="lm-h">Te lo pones y <em>ya estás lista</em></h2>
+      <figure class="lm-vid lm-vid1"><video muted loop playsinline preload="none" data-src="{{ vid_1 }}" aria-label="Mujer luciendo el Vestido Pádel"></video><figcaption>6 colores · talla única</figcaption></figure>
+      <button type="button" class="lm-cta" data-q="sel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.6 12.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.1L21 8H6"/></svg><span>Quiero el mío</span></button>
+      <div class="lm-sellos"><span>Pagas al recibir</span><span>Envío gratis</span><span>Talla única</span></div>
+    </div>
+  </section>
+  {%- endif -%}
+
+  <!-- ═══ 3 · TELA Y AJUSTE ═══ -->
+  <section class="lm-sec o">
+    <div class="lm-w">
+      <p class="lm-k">Diseño y acabados</p>
+      <h2 class="lm-h">Textura, ajuste <em>y movimiento</em></h2>
+      {%- if img_detalle != '' -%}<img class="lm-img" src="{{ img_detalle }}" alt="Detalles del vestido: cuello redondo, manga corta y tela rib" loading="lazy" width="1000" height="1000" style="margin-top:16px">{%- endif -%}
+      <ul class="lm-lin">
+        <li>Tela rib 2×2 acanalada, gruesa y elástica</li>
+        <li>Manga corta y escote redondo</li>
+        <li>Largo corto para combinar con tenis o tacones</li>
+        <li>Talla única: se adapta a tu cuerpo</li>
+      </ul>
+      <button type="button" class="lm-cta" data-q="sel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.6 12.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.1L21 8H6"/></svg><span>Elegir mi pack</span></button>
+    </div>
+  </section>
+
+  <!-- ═══ 4 · PACKS ═══ -->
+  <section class="lm-sec t" id="lmPacks">
+    <div class="lm-w">
+      <p class="lm-k">Elige tu pack</p>
+      <h2 class="lm-h">Lleva 3 y <em>paga 2</em></h2>
+      <p class="lm-p" style="margin-bottom:0">Tres colores, tres planes distintos. Es talla única: solo eliges los colores y los confirmas por WhatsApp.</p>
+      {%- if img_tallas != '' -%}<img class="lm-img" src="{{ img_tallas }}" alt="Guía de tallas del Vestido Pádel" loading="lazy" width="1000" height="1000" style="margin-top:16px">{%- endif -%}
+      <div class="lm-planes">
+        <div class="lm-of star on" data-plan="3" role="button" tabindex="0" aria-pressed="true">
+          <span class="tag best">🎁 Lleva 3, paga 2</span>
+          <span class="rd"></span>
+          <span class="qn"><b>2 + 1 GRATIS</b><small>$56.633 c/u · solo $20.000 más que 2</small><span class="free">3 vestidos · combina colores</span></span>
+          <span class="cu"><b>$169.900</b><s>$269.700</s></span>
+        </div>
+        <div class="lm-of" data-plan="2" role="button" tabindex="0" aria-pressed="false">
+          <span class="rd"></span>
+          <span class="qn"><b>2 vestidos</b><small>$74.950 c/u</small></span>
+          <span class="cu"><b>$149.900</b><s>$179.800</s></span>
+        </div>
+        <div class="lm-of" data-plan="1" role="button" tabindex="0" aria-pressed="false">
+          <span class="rd"></span>
+          <span class="qn"><b>1 vestido</b><small>Para probarlo</small></span>
+          <span class="cu"><b>$89.900</b><s>$129.900</s></span>
+        </div>
+      </div>
+      <button type="button" class="lm-cta" data-q="sel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.6 12.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.1L21 8H6"/></svg><span>Pedir y pagar al recibir</span></button>
+      <div class="lm-sellos"><span>Pagas en efectivo o Nequi</span><span>Envío gratis</span><span>Combina colores</span></div>
+      <div class="lm-gt"><i>CAMBIO<strong>30</strong>DÍAS</i><p><b>Talla única que se adapta a tu cuerpo.</b> Tienes 30 días de garantía y te confirmamos el pedido por WhatsApp antes de enviarlo.</p></div>
+    </div>
+  </section>
+
+  <!-- ═══ 5 · DUDAS ═══ -->
+  <section class="lm-sec">
+    <div class="lm-w">
+      <p class="lm-k">Antes de pedir</p>
+      <h2 class="lm-h" style="margin-bottom:10px">Tus dudas, <em>resueltas</em></h2>
+      <div class="lm-faq">
+        <details><summary>¿Se transparenta?</summary><p>Es tela rib gruesa, con cuerpo. Con el blanco te recomendamos ropa interior color piel.</p></details>
+        <details><summary>¿Qué talla pido?</summary><p>Ninguna: es <b>talla única</b>. La tela rib es elástica y se adapta a tu cuerpo, solo eliges el color. Si normalmente usas L o XL, escríbenos por WhatsApp antes de pedir y te asesoramos.</p></details>
+        <details><summary>¿Puedo combinar colores en el pack?</summary><p>Sí. Al confirmar por WhatsApp nos dices qué colores quieres en tu pack de 2 o de 3.</p></details>
+        <details><summary>¿Cómo pago y cuánto se demora?</summary><p>Haces el pedido sin pagar nada. Te llega en 3 a 5 días hábiles y le pagas al mensajero en efectivo o Nequi.</p></details>
+      </div>
+      <a class="lm-wa" href="https://wa.me/573125923915?text=Hola!%20Tengo%20una%20pregunta%20sobre%20el%20Vestido%20P%C3%A1del" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M.06 24l1.69-6.16A11.87 11.87 0 0 1 .16 11.9C.16 5.34 5.5 0 12.05 0a11.82 11.82 0 0 1 8.41 3.49 11.82 11.82 0 0 1 3.48 8.41c0 6.56-5.34 11.9-11.89 11.9a11.9 11.9 0 0 1-5.69-1.45zm6.6-3.8c1.67 1 3.28 1.59 5.39 1.59 5.45 0 9.89-4.43 9.89-9.88A9.88 9.88 0 0 0 12.06 2C6.6 2 2.17 6.43 2.17 11.88c0 2.23.65 3.9 1.75 5.64l-1 3.65z"/></svg>Pregúntanos por WhatsApp</a>
+      <p class="lm-legal">Los colores pueden variar levemente según la pantalla. Talla única. Garantía de 30 días, con la prenda sin uso y con etiqueta.</p>
+    </div>
+  </section>
+
+  <!-- ═══ 6 · CIERRE ═══ -->
+  <section class="lm-sec o">
+    <div class="lm-w" style="text-align:center">
+      {%- if img_cierre != '' -%}<img class="lm-cierre-img" src="{{ img_cierre }}" alt="Mujer feliz con el Vestido Pádel" loading="lazy" width="600" height="800">{%- endif -%}
+      <h2 class="lm-h">Te lo pones en un minuto y <em>sales lista para todo el día</em></h2>
+      <button type="button" class="lm-cta" data-q="sel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.6 12.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.1L21 8H6"/></svg><span>Elegir mi pack</span></button>
+      <div class="lm-sellos"><span>Pagas al recibir</span><span>Envío gratis</span><span>Talla única</span></div>
+    </div>
+  </section>
+
+  <footer class="lm-pie">
+    <div class="lm-w">
+      <nav><a href="/policies/refund-policy">Garantía y cambios</a><a href="/policies/shipping-policy">Envíos</a><a href="/policies/privacy-policy">Privacidad</a><a href="/policies/terms-of-service">Términos</a></nav>
+      <strong>LUMENS</strong>
+      <p>EFECTIVO · NEQUI · DAVIPLATA<br>© {{ "now" | date: "%Y" }} LUMENS Colombia</p>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var root = document.getElementById('lmLanding');
+  if(!root) return;
+
+  // 0. Videos: se cargan y reproducen solo cuando aparecen en pantalla.
+  var vids = root.querySelectorAll('video[data-src]');
+  function cargar(v){ if(!v.src){ v.src = v.getAttribute('data-src') + '#t=0.1'; v.load(); } }
+  function play(v){ cargar(v); var p = v.play(); if(p && p.catch) p.catch(function(){}); }
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting){ play(en.target); } else if(en.target.src){ en.target.pause(); } });
+    }, { rootMargin: '200px 0px', threshold: 0.15 });
+    vids.forEach(function(v){ io.observe(v); });
+  } else { vids.forEach(play); }
+
+  // 0B. Antes / después
+  var ba = document.getElementById('lmBA');
+  if(ba){
+    var rng = ba.querySelector('input'), dp = ba.querySelector('.dp'), bar = ba.querySelector('.bar'), knob = ba.querySelector('.knob');
+    var mover = function(){ var v = rng.value; dp.style.clipPath = 'inset(0 0 0 ' + v + '%)'; bar.style.left = v + '%'; knob.style.left = v + '%'; };
+    rng.addEventListener('input', mover); mover();
+  }
+
+  // 1. Packs de la landing (1, 2 o 3 vestidos). Por defecto se ve marcado el de 3 (lleva 3, paga 2).
+  var selectedQty = '3';
+  var plans = root.querySelectorAll('.lm-of');
+  function syncShopifyQty(qty){
+    document.querySelectorAll('input[name="quantity"]').forEach(function(inp){
+      inp.value = qty;
+      inp.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  }
+  function selectPlan(el){
+    plans.forEach(function(p){ p.classList.remove('on'); p.setAttribute('aria-pressed','false'); });
+    el.classList.add('on'); el.setAttribute('aria-pressed','true');
+    selectedQty = el.getAttribute('data-plan') || '2';
+    syncShopifyQty(selectedQty);
+  }
+  plans.forEach(function(p){
+    p.addEventListener('click', function(){ selectPlan(p); });
+    p.addEventListener('keydown', function(e){ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); selectPlan(p); } });
+  });
+
+  // 2. Releasit: marca la oferta de la misma posición (0 = 1 vestido, 1 = 2, 2 = 3).
+  function clickOferta(qty){
+    var pos = String(parseInt(qty, 10) - 1);
+    var todas = document.querySelectorAll('._rsi-quantity-offers-offer-container[data-offer-pos="' + pos + '"]');
+    if(!todas.length) return false;
+    var visibles = [].filter.call(todas, function(o){ return o.offsetParent !== null; });
+    (visibles.length ? visibles : [].slice.call(todas)).forEach(function(o){ o.click(); });
+    return true;
+  }
+  function marcarOferta(qty, n){
+    n = n || 0;
+    if(clickOferta(qty)){
+      setTimeout(function(){ clickOferta(qty); }, 400);
+      setTimeout(function(){ clickOferta(qty); }, 1000);
+      return;
+    }
+    if(n < 50) setTimeout(function(){ marcarOferta(qty, n + 1); }, 100);
+  }
+  function botonReleasit(){
+    return document.querySelector('#product-form-lmn ._rsi-buy-now-button-product, #product-form-lmn ._rsi-buy-now-button, #_rsi-buy-now-button, ._rsi-buy-now-button-product, ._rsi-buy-now-button');
+  }
+
+  // 3. Botones de la landing → abren el formulario de Releasit con el pack elegido
+  root.querySelectorAll('.lm-cta[data-q="sel"]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var qty = selectedQty;
+      syncShopifyQty(qty);
+      var intentos = 0;
+      (function abrir(){
+        var rsi = botonReleasit();
+        if(rsi){
+          clickOferta(qty);
+          rsi.click();
+          marcarOferta(qty, 0);
+        } else if(intentos++ < 30){
+          setTimeout(abrir, 100);
+        } else {
+          var packs = document.getElementById('lmPacks');
+          if(packs) packs.scrollIntoView({ behavior: 'smooth' });
+        }
+      })();
+    });
+  });
+})();
+</script>

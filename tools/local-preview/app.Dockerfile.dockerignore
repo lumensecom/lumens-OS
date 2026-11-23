@@ -19,5 +19,7 @@
 !tools/local-preview/gateway.mjs
 !docs/
 !docs/landing/
+!docs/landing/agente-3b.md
 !docs/landing/plantillas/
-!docs/landing/plantillas/simple-*.liquid
+!docs/landing/agente-3b.md
+!docs/landing/plantillas/*.liquid

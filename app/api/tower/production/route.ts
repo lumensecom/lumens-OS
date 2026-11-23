@@ -4,6 +4,7 @@ import { join } from "node:path"
 import { ProductionBlocked, runProduction } from "@/lib/production/pipeline"
 import { createClient } from "@/lib/supabase/server"
 import demoBrief from "@/lib/production/demo/brief.json"
+import milanBrief from "@/lib/production/milan/brief.json"
 
 export const runtime = "nodejs"
 const limit = 3_700_000
@@ -27,21 +28,23 @@ export async function POST(request: Request) {
   try {
     const data = await request.formData()
     const demo = data.get("demo") === "1"
-    const brief = demo ? demoBrief : JSON.parse(String(data.get("brief") ?? ""))
+    const milan = data.get("sample") === "milan"
+    const example = milan ? { folder: "milan", brief: milanBrief, count: 3 } : demo ? { folder: "demo", brief: demoBrief, count: 4 } : null
+    const brief = example?.brief ?? JSON.parse(String(data.get("brief") ?? ""))
     const uploads = data.getAll("photos").filter((file): file is File => file instanceof File && file.size > 0)
     if (uploads.length > 7 || uploads.reduce((sum, file) => sum + file.size, 0) > 3_500_000) {
       throw new ProductionBlocked("Adjunta entre 1 y 7 fotos que sumen menos de 3,5 MB.")
     }
-    const photos = demo
-      ? await Promise.all([1, 2, 3, 4].map(async (index) => ({
-        data: await readFile(join(process.cwd(), "lib", "production", "demo", `G${index}.webp`)),
+    const photos = example
+      ? await Promise.all(Array.from({ length: example.count }, async (_, index) => ({
+        data: await readFile(join(process.cwd(), "lib", "production", example.folder, `G${index + 1}.webp`)),
       })))
       : await Promise.all(uploads.map(async (file) => ({ data: new Uint8Array(await file.arrayBuffer()) })))
-    const result = await runProduction(brief, photos, demo)
+    const result = await runProduction(brief, photos, demo && !milan)
     return new Response(new Uint8Array(result.zip), {
       headers: {
         ...headers, "Content-Type": "application/zip",
-        "Content-Disposition": 'attachment; filename="LUMENS-Produccion.zip"',
+        "Content-Disposition": milan ? 'attachment; filename="LUMENS-Enterizo-Milan.zip"' : 'attachment; filename="LUMENS-Produccion.zip"',
         "X-Content-Type-Options": "nosniff",
       },
     })

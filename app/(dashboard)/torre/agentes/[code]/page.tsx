@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises"
+import { join } from "node:path"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 
@@ -17,6 +19,7 @@ export default async function AgentPage({ params }: { params: { code: string } }
   if (agentResult.error) throw new Error(agentResult.error.message)
   if (!agentResult.data) notFound()
   const agent = agentResult.data
+  const instructions = agent.code === "3B" ? await readFile(join(process.cwd(), "docs/landing/agente-3b.md"), "utf8") : null
   const officeTask = productionRoster.find(([code]) => code === agent.code)?.[2]
   const routines = requireRows(routineResult)
   const codes = routines.map((routine) => routine.code)
@@ -37,6 +40,10 @@ export default async function AgentPage({ params }: { params: { code: string } }
         <p className="text-sm text-muted-foreground">{officeTask}</p>
         <Link className="text-sm font-medium underline" href="/torre/produccion">Abrir producción de landings</Link>
       </section>}
+      {instructions && <details className="rounded-xl border bg-card p-4">
+        <summary className="cursor-pointer font-semibold">Instrucciones del agente de landings</summary>
+        <pre className="mt-3 max-h-[32rem] overflow-y-auto whitespace-pre-wrap break-words text-sm text-muted-foreground">{instructions}</pre>
+      </details>}
       <section className="space-y-3">
         <h2 className="font-display text-lg font-bold">Rutinas</h2>
         <RoutineList routines={routines} latest={latest} />

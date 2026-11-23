@@ -13,7 +13,7 @@ COPY .eslintrc.json next.config.mjs middleware.ts postcss.config.mjs tailwind.co
 COPY app ./app
 COPY components ./components
 COPY --chown=node:node lib ./lib
-COPY --chown=node:node docs/landing/plantillas/simple-*.liquid ./docs/landing/plantillas/
+COPY --chown=node:node docs/landing ./docs/landing
 COPY tools/local-preview/gateway.mjs ./gateway.mjs
 
 ENV LUMENS_LOCAL_PREVIEW=1 \

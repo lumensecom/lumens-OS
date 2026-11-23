@@ -1,14 +1,20 @@
 # Producción de landings
 
-En la Torre, abre **Producción**. Puedes descargar la entrega de demostración o generar una con el problema, los hechos del producto, los costos, los precios, una fuente y las fotos autorizadas. Cada ficha de agente incluye su responsabilidad. El módulo lista el recorrido de las 18 oficinas y el ZIP registra qué etapas quedaron como borrador, completadas o pendientes.
+En la Torre, abre **Producción**. Elige una prueba o genera una entrega con el nombre, precio unitario y al menos una foto autorizada. Agrega datos, costos y fuentes cuando estén disponibles. Cada ficha de agente incluye su responsabilidad. El módulo lista el recorrido de las 18 oficinas y el ZIP registra qué etapas quedaron como borrador, completadas o pendientes.
 
-El generador deriva el hero y el cuerpo de la plantilla simple de Ionfit. Empaqueta los dos bloques Liquid, la galería, la vista previa HTML, los prompts, la oferta con margen por pack, un borrador de campaña y el informe JSON. El ZIP contiene los archivos de imagen reales que entraron al flujo. El ejemplo contiene cuatro imágenes generadas para un producto ficticio.
+El agente 3B ofrece tres estructuras validadas: corta de Vestido Pádel para moda o accesorios, explicativa de Ionfit y completa de Chaleco V-Boost. Las [instrucciones del agente](landing/agente-3b.md) también se pueden consultar en su oficina. Para arrancar, indica el producto, un precio y al menos una foto autorizada. Los costos, variantes y medios faltantes aparecen como pendientes en el informe. Empaqueta los dos bloques Liquid, la galería, la vista previa HTML, los prompts, la oferta con margen por pack, un borrador de campaña y el informe JSON. El ZIP contiene los archivos de imagen reales que entraron al flujo. El ejemplo contiene cuatro imágenes generadas para un producto ficticio.
 
 Los resultados dependen de hechos y medios aportados. La revisión sanitaria, la verificación independiente de las fuentes, la generación de nuevas fotos de un producto real, Shopify, Releasit, los anuncios y el contacto con clientes requieren sus propios datos y pruebas. El generador prepara un borrador y no publica ni contacta automáticamente.
 
+## Enterizo Milán
+
+En **Torre → Producción → Probar Enterizo Milán** se genera la entrega del caso con un precio de $149.900 COP. La galería contiene tres imágenes ilustrativas del modelo negro. La tabla de tallas, los precios de packs, los plazos y los testimonios se reservan para información propia verificada.
+
+[Descargar la prueba de Enterizo Milán](../downloads/LUMENS-Enterizo-Milan.zip)
+
 ## Pruebas
 
-`pnpm test:production` ejecuta 50 pruebas con medios reales de demostración. Treinta generan y abren el ZIP para verificar artefactos y las 18 oficinas. Veinte cubren bloqueos por evidencia, derechos, cumplimiento, formato y contribución. GitHub Actions ejecuta esta suite antes del build.
+`pnpm test:production` ejecuta 55 pruebas de las entregas, sus controles y los tres formatos. Incluye el caso del Enterizo Milán, Liquid en ambos bloques, orden y consistencia de precios, medios opcionales y el informe de las 18 oficinas. GitHub Actions ejecuta esta suite antes del build.
 
 Puedes generar el ZIP desde la raíz del repositorio con Node 24:
 
@@ -30,7 +36,7 @@ node tools/production/generate.mjs lib/production/demo/brief.json entrega-demo.z
 | 2B | Rentabilidad y proveedor | Comprueba costo unitario, logística y contribución por pack. Deja stock y proveedor pendientes si faltan datos. |
 | 2C | Cumplimiento | Verifica autorización de fotos y filtra promesas riesgosas. Escala revisión sanitaria y evidencia insuficiente. |
 | 3A | Oferta y precio | Verifica precios, contribución y orden de las ofertas. Destaca el pack de mayor cantidad disponible. |
-| 3B | Landing Shopify | Adapta el hero y el cuerpo de Ionfit, conserva las conexiones de Releasit y prepara la vista previa. |
+| 3B | Landing Shopify | Elige la plantilla corta, explicativa o completa. Adapta dos bloques Liquid, conserva la conexión con Releasit y entrega galería, prompts y control de calidad. |
 | 4A | Estrategia creativa | Organiza el ángulo problema → solución y redacta el titular, beneficios y pasos a partir del brief. |
 | 4B | Prompts visuales | Entrega las fotos autorizadas y prompts para mantener apariencia, material y colores reales. |
 | 5A | Borradores de campaña | Deja un borrador de ángulo, CTA y creatividades para revisión del dueño. |
