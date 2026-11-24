@@ -14,3 +14,6 @@ select to_regprocedure('tower_private.report_morning(text,timestamp with time zo
 \if :needs_morning_reports
   \i /preview/0022_tower_morning_reports.sql
 \endif
+
+\i /preview/0023_dapta_call_history.sql
+grant service_role to lumens_authenticator;

@@ -1,5 +1,7 @@
 import { readFile } from "node:fs/promises"
 import { join } from "node:path"
+import { revalidatePath } from "next/cache"
+import { z } from "zod"
 
 import { ProductionBlocked, runProduction } from "@/lib/production/pipeline"
 import { createClient } from "@/lib/supabase/server"
@@ -41,6 +43,18 @@ export async function POST(request: Request) {
       })))
       : await Promise.all(uploads.map(async (file) => ({ data: new Uint8Array(await file.arrayBuffer()) })))
     const result = await runProduction(brief, photos, demo && !milan)
+    const opportunity = data.get("opportunity")
+    if (opportunity !== null) {
+      const id = z.uuid().safeParse(opportunity)
+      if (!id.success || example) throw new ProductionBlocked("Abre una oportunidad aprobada y usa su brief para enviar al Lobby.")
+      const review = await client.rpc("tower_submit_landing", {
+        target_id: id.data, hero_liquid: result.liquid.hero, body_liquid: result.liquid.body,
+      })
+      if (review.error?.code === "P0001") throw new ProductionBlocked(review.error.message)
+      if (review.error) return Response.json({ message: "No se pudo guardar la versión en el Lobby." }, { status: 503, headers })
+      revalidatePath("/torre/lobby")
+      revalidatePath(`/torre/product-lab/${id.data}`)
+    }
     return new Response(new Uint8Array(result.zip), {
       headers: {
         ...headers, "Content-Type": "application/zip",

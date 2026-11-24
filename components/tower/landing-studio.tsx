@@ -18,7 +18,7 @@ export async function LandingStudio({ opportunityId }: { opportunityId: string }
   return (
     <section className="space-y-3 rounded-xl border bg-card p-4">
       <h2 className="font-display text-lg font-bold">Landing Studio</h2>
-      <Link href="/torre/produccion#brief-landing" className="block text-sm font-medium underline">Generar archivos con el agente 3B</Link>
+      <Link href={`/torre/produccion?oportunidad=${opportunityId}#brief-landing`} className="block text-sm font-medium underline">Generar archivos con el agente 3B</Link>
       {waiting && <Link href="/torre/lobby" className="text-sm font-medium underline">Revisar la versión pendiente en el Lobby</Link>}
       {versions.map((version) => {
         const status = reviews.find((review) => review.id === version.approval_id)?.status

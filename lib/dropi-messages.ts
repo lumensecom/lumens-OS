@@ -1,3 +1,5 @@
+import { parseMoney } from "./dropi"
+
 /**
  * Generador de mensajes de WhatsApp a partir del listado que se copia
  * directamente del panel de Dropi (copiar-pegar, no Excel).
@@ -31,6 +33,8 @@ export type PastedOrder = {
   status: string
   carrier: string
   orderId: string
+  quantity?: number
+  totalCop?: number
 }
 
 const DATE_RE = /\d{1,2}\/\d{1,2}\/\d{2,4}/
@@ -153,14 +157,14 @@ function parseBlock(block: string[]): PastedOrder | null {
   let product = ""
   const guiaIdx = trimmed.findIndex((l) => GUIA_RE.test(l.replace(/\t/g, " ").trim()))
   const limit = dateIdx > 0 ? dateIdx : telIdx
-  for (let i = Math.max(0, guiaIdx) + 1; i < limit; i++) {
-    if (trimmed[i]) {
-      product = trimmed[i]
-      break
-    }
-  }
+  const productLines = trimmed.slice(guiaIdx + 1, Math.max(0, limit))
+    .filter((line) => line && !/^(?:total|cantidad)\s*:/i.test(line))
+  product = productLines.join(" · ")
 
   const orderMatch = block.join("\n").match(ORDER_ID_RE)
+  const amount = trimmed.find((line) => /^total\s*:/i.test(line))?.replace(/^total\s*:\s*/i, "")
+  const total = amount && /^[\d.,$\s]+(?:COP)?$/i.test(amount) ? parseMoney(amount) : NaN
+  const quantity = Number(trimmed.find((line) => /^cantidad\s*:\s*\d+$/i.test(line))?.split(":")[1])
 
   return {
     guia,
@@ -174,6 +178,8 @@ function parseBlock(block: string[]): PastedOrder | null {
     status,
     carrier,
     orderId: orderMatch?.[1] ?? "",
+    quantity: Number.isSafeInteger(quantity) && quantity > 0 ? quantity : undefined,
+    totalCop: Number.isSafeInteger(total) && total > 0 ? total : undefined,
   }
 }
 

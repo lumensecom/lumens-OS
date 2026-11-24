@@ -431,5 +431,5 @@ ${missing.length ? missing.map((label) => `- ${label}`).join("\n") : "- Revisar 
     "informe.json": strToU8(JSON.stringify({ demo, template: brief.template, blockSizes, packs, illustrative: brief.illustrative, missing, sources: brief.sources, reference: brief.reference, stages }, null, 2)),
     ...Object.fromEntries(gallery.map(({name,data}) => [name,data])),
   }
-  return { zip: zipSync(files, { level: 5 }), packs, stages, blockSizes }
+  return { zip: zipSync(files, { level: 5 }), liquid: { hero, body }, packs, stages, blockSizes }
 }

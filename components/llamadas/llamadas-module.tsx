@@ -1,10 +1,8 @@
 "use client"
 
-import { Fragment, useMemo, useState } from "react"
+import { Fragment, useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
-import { format, parseISO } from "date-fns"
-import { es } from "date-fns/locale"
 import {
   ClipboardPaste, FileQuestion, Loader2, PhoneCall, PhoneOff, RefreshCw,
   Trash2, Info, CheckCircle2, XCircle, CalendarClock, PhoneMissed, ChevronDown,
@@ -12,8 +10,7 @@ import {
 } from "lucide-react"
 
 import { parsePastedOrders, toTitleCase, FORMAT_EXAMPLE, type PastedOrder } from "@/lib/dropi-messages"
-import { orderToDaptaPayload, isCallable } from "@/lib/dapta"
-import { normalizePhone } from "@/lib/dropi"
+import { callBatchSize, orderToDaptaPayload, isCallable, voiceOrderId, voicePhone } from "@/lib/dapta"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -25,9 +22,11 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table"
 
-type CallResult = { order_id: string; phone: string; ok: boolean; error?: string }
+type CallResult = { order_id: string; state?: Status | null; ok: boolean; error?: string }
 
 type StoredResult = {
+  id: string
+  duration_seconds: number | null
   order_id: string | null
   outcome: string | null
   success: boolean | null
@@ -38,11 +37,13 @@ type StoredResult = {
 }
 
 type Status =
-  | "por_llamar" | "en_cola" | "error"
+  | "por_llamar" | "despachando" | "en_cola" | "error" | "revisar"
   | "confirmado" | "reprogramado" | "no_contesta" | "cancelado"
 
 const STATUS_META: Record<Status, { label: string; cls: string; Icon: typeof CheckCircle2 }> = {
   por_llamar: { label: "Por llamar", cls: "text-muted-foreground", Icon: Clock },
+  despachando: { label: "Enviando", cls: "text-blue-500", Icon: PhoneCall },
+  revisar: { label: "Verificar en Dapta", cls: "text-orange-500", Icon: Info },
   en_cola: { label: "En cola", cls: "text-blue-500", Icon: PhoneCall },
   error: { label: "Error", cls: "text-lumens-red", Icon: PhoneOff },
   confirmado: { label: "Confirmado", cls: "text-lumens-green", Icon: CheckCircle2 },
@@ -59,9 +60,13 @@ const FILTERS: { id: "todos" | Status; label: string }[] = [
   { id: "reprogramado", label: "Reagendar" },
   { id: "no_contesta", label: "Recontacto" },
   { id: "cancelado", label: "Cancelados" },
+  { id: "revisar", label: "Verificar" },
 ]
 
-const OUTCOMES = new Set(["confirmado", "reprogramado", "no_contesta", "cancelado"])
+const OUTCOMES = new Set(Object.keys(STATUS_META))
+const selectable = new Set<Status>(["por_llamar", "error", "reprogramado", "no_contesta"])
+const money = new Intl.NumberFormat("es-CO")
+const time = new Intl.DateTimeFormat("es-CO", { timeZone: "America/Bogota", dateStyle: "short", timeStyle: "short" })
 
 function StatusBadge({ status }: { status: Status }) {
   const { label, cls, Icon } = STATUS_META[status]
@@ -74,9 +79,11 @@ function StatusBadge({ status }: { status: Status }) {
 
 export function LlamadasModule({
   configured,
+  historyAvailable,
   recentResults = [],
 }: {
   configured: boolean
+  historyAvailable: boolean
   recentResults?: StoredResult[]
 }) {
   const router = useRouter()
@@ -84,31 +91,42 @@ export function LlamadasModule({
   const [selected, setSelected] = useState<Set<number>>(new Set())
   const [expanded, setExpanded] = useState<Set<number>>(new Set())
   const [sending, setSending] = useState(false)
-  const [sendByPhone, setSendByPhone] = useState<Record<string, CallResult>>({})
+  const [sendByOrder, setSendByOrder] = useState<Record<string, CallResult>>({})
   const [filter, setFilter] = useState<"todos" | Status>("todos")
 
   // Resultados guardados (de la base) indexados por order_id.
   const storedByOrder = useMemo(() => {
-    const map: Record<string, StoredResult> = {}
+    const map = new Map<string, StoredResult>()
     for (const r of recentResults) {
-      if (r.order_id && !map[r.order_id]) map[r.order_id] = r
+      if (r.order_id && !map.has(voiceOrderId(r.order_id))) map.set(voiceOrderId(r.order_id), r)
     }
     return map
   }, [recentResults])
 
-  // Solo pedidos con teléfono válido son llamables.
-  const orders = useMemo(() => parsePastedOrders(text).filter(isCallable), [text])
+  const parsedOrders = useMemo(() => parsePastedOrders(text), [text])
+  const orders = useMemo(() => Array.from(new Map(parsedOrders.filter(isCallable)
+    .map((order) => [voiceOrderId(order.orderId), order])).values()), [parsedOrders])
+  const pendingResponses = recentResults.some((record) => record.called_at && Date.now() - Date.parse(record.called_at) < 30 * 60_000 &&
+    ["despachando", "en_cola"].includes(record.outcome ?? ""))
+
+  useEffect(() => {
+    if (!pendingResponses) return
+    const timer = window.setInterval(() => { if (!document.hidden) router.refresh() }, 10_000)
+    return () => window.clearInterval(timer)
+  }, [pendingResponses, router])
 
   const statusOf = (o: PastedOrder): Status => {
-    const stored = o.orderId ? storedByOrder[o.orderId] : undefined
+    const id = voiceOrderId(o.orderId)
+    const stored = storedByOrder.get(id)
+    if (stored?.outcome === "despachando" && stored.called_at && Date.now() - Date.parse(stored.called_at) > 30_000) return "revisar"
     if (stored?.outcome && OUTCOMES.has(stored.outcome)) return stored.outcome as Status
-    const send = sendByPhone[normalizePhone(o.phone)]
-    if (send) return send.ok ? "en_cola" : "error"
+    const sent = sendByOrder[id]
+    if (sent) return sent.state ?? (sent.ok ? "en_cola" : "error")
     return "por_llamar"
   }
 
   const storedOf = (o: PastedOrder) =>
-    o.orderId ? storedByOrder[o.orderId] : undefined
+    storedByOrder.get(voiceOrderId(o.orderId))
 
   // Conteos por filtro (sobre todos los pedidos).
   const counts = useMemo(() => {
@@ -119,7 +137,7 @@ export function LlamadasModule({
     }
     return c
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [orders, sendByPhone, storedByOrder])
+  }, [orders, sendByOrder, storedByOrder])
 
   // Índices visibles según el filtro activo.
   const visibleIdx = useMemo(() => {
@@ -128,15 +146,16 @@ export function LlamadasModule({
       .filter(({ o }) => filter === "todos" || statusOf(o) === filter)
       .map(({ i }) => i)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [orders, filter, sendByPhone, storedByOrder])
+  }, [orders, filter, sendByOrder, storedByOrder])
 
   const pendingIdx = useMemo(
     () => orders.map((o, i) => ({ o, i })).filter(({ o }) => statusOf(o) === "por_llamar").map(({ i }) => i),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [orders, sendByPhone, storedByOrder],
+    [orders, sendByOrder, storedByOrder],
   )
 
-  const allVisibleSelected = visibleIdx.length > 0 && visibleIdx.every((i) => selected.has(i))
+  const selectableVisible = visibleIdx.filter((i) => selectable.has(statusOf(orders[i])))
+  const allVisibleSelected = selectableVisible.length > 0 && selectableVisible.every((i) => selected.has(i))
 
   function toggle(i: number) {
     setSelected((prev) => {
@@ -149,8 +168,8 @@ export function LlamadasModule({
   function toggleAllVisible() {
     setSelected((prev) => {
       const next = new Set(prev)
-      if (allVisibleSelected) visibleIdx.forEach((i) => next.delete(i))
-      else visibleIdx.forEach((i) => next.add(i))
+      if (allVisibleSelected) selectableVisible.forEach((i) => next.delete(i))
+      else selectableVisible.forEach((i) => next.add(i))
       return next
     })
   }
@@ -176,8 +195,8 @@ export function LlamadasModule({
   }
 
   async function callOrders(list: PastedOrder[], label: string) {
-    if (!configured) return toast.error("Falta configurar Dapta (DAPTA_FLOW_WEBHOOK_URL)")
-    if (list.length === 0) return
+    if (!configured || !historyAvailable || !list.length) return
+    if (list.length > callBatchSize) return toast.error(`Selecciona hasta ${callBatchSize} pedidos por envío.`)
     setSending(true)
     try {
       const res = await fetch("/api/dapta/call", {
@@ -189,25 +208,23 @@ export function LlamadasModule({
         | { queued: number; total: number; results: CallResult[]; error?: string }
         | null
       if (!res.ok || !data) throw new Error(data?.error ?? `Error ${res.status}`)
-      setSendByPhone((prev) => {
-        const next = { ...prev }
-        for (const r of data.results) next[normalizePhone(r.phone)] = r
-        return next
-      })
+      setSendByOrder((prev) => ({ ...prev, ...Object.fromEntries(data.results.map((result) => [result.order_id, result])) }))
       if (data.queued === data.total) {
         toast.success(`${data.queued} ${label} en cola para Juliana`)
       } else {
         toast.warning(`${data.queued} de ${data.total} en cola — revisa los errores`)
       }
       setSelected(new Set())
+      router.refresh()
     } catch (err) {
       toast.error((err as Error).message || "No se pudo enviar a Dapta")
+      router.refresh()
     } finally {
       setSending(false)
     }
   }
 
-  const selectedOrders = () => orders.filter((_, i) => selected.has(i))
+  const selectedOrders = () => orders.filter((order, i) => selected.has(i) && selectable.has(statusOf(order)))
 
   return (
     <div className="space-y-5 pb-28">
@@ -223,11 +240,12 @@ export function LlamadasModule({
         <div className="flex items-start gap-2 rounded-xl border border-primary/40 bg-primary/10 px-3 py-2.5 text-sm">
           <Info className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(43_90%_38%)] dark:text-primary" />
           <p>
-            La conexión con Dapta aún no está activa (falta <code className="mx-1">DAPTA_FLOW_WEBHOOK_URL</code>
-            en Vercel). Puedes preparar la lista igual; el botón de llamar se activa al configurarla.
+            Configura el flujo de voz y el webhook de resultados de Dapta para habilitar los envíos. Puedes preparar los pedidos mientras tanto.
           </p>
         </div>
       )}
+
+      {!historyAvailable && <p role="alert" className="rounded-xl border bg-card p-3 text-sm">El historial de llamadas no está disponible. Verifica la migración 0023 en Supabase.</p>}
 
       {/* Input */}
       <Card>
@@ -250,8 +268,7 @@ export function LlamadasModule({
                   <DialogHeader>
                     <DialogTitle>Formato esperado</DialogTitle>
                     <DialogDescription>
-                      Es el mismo listado que copias de Dropi. Cada pedido con teléfono válido queda
-                      listo para llamar.
+                      Pega el listado de Dropi. Puedes añadir Cantidad: 2 y Total: $149.900 COP a cada pedido cuando tengas esos datos.
                     </DialogDescription>
                   </DialogHeader>
                   <pre className="max-h-[50vh] overflow-auto whitespace-pre-wrap rounded-lg bg-muted p-3 font-mono text-xs">
@@ -275,11 +292,9 @@ export function LlamadasModule({
             className="min-h-[160px] bg-muted/50 font-mono text-xs leading-relaxed"
             spellCheck={false}
           />
-          {orders.length > 0 && (
-            <p className="text-sm text-muted-foreground">
-              {orders.length} pedido{orders.length === 1 ? "" : "s"} con teléfono detectado{orders.length === 1 ? "" : "s"}.
-            </p>
-          )}
+          {text.trim() && <p className="text-sm text-muted-foreground">
+            {orders.length} pedidos listos. {parsedOrders.length > orders.length && `${parsedOrders.length - orders.length} con datos incompletos o número de pedido repetido.`}
+          </p>}
         </CardContent>
       </Card>
 
@@ -318,6 +333,7 @@ export function LlamadasModule({
                       <input
                         type="checkbox"
                         checked={allVisibleSelected}
+                        disabled={selectableVisible.length === 0 || sending}
                         onChange={toggleAllVisible}
                         className="h-4 w-4 accent-[hsl(var(--primary))]"
                         aria-label="Seleccionar visibles"
@@ -336,7 +352,7 @@ export function LlamadasModule({
                     const o = orders[i]
                     const st = statusOf(o)
                     const stored = storedOf(o)
-                    const hasAnalysis = Boolean(stored?.summary)
+                    const note = stored?.summary || sendByOrder[voiceOrderId(o.orderId)]?.error
                     const isOpen = expanded.has(i)
                     return (
                       <Fragment key={`${o.guia}-${i}`}>
@@ -345,6 +361,7 @@ export function LlamadasModule({
                             <input
                               type="checkbox"
                               checked={selected.has(i)}
+                              disabled={sending || !selectable.has(st)}
                               onChange={() => toggle(i)}
                               className="h-4 w-4 accent-[hsl(var(--primary))]"
                               aria-label={`Seleccionar ${o.customerName}`}
@@ -358,37 +375,34 @@ export function LlamadasModule({
                             {o.city ? toTitleCase(o.city) : "—"}
                           </TableCell>
                           <TableCell className="whitespace-nowrap font-mono text-xs">
-                            {normalizePhone(o.phone)}
+                            {voicePhone(o.phone)}
                           </TableCell>
                           <TableCell className="font-mono text-xs">{o.orderId || "—"}</TableCell>
                           <TableCell><StatusBadge status={st} /></TableCell>
                           <TableCell className="text-right">
-                            {hasAnalysis ? (
-                              <button
+                            <button
                                 type="button"
                                 onClick={() => toggleExpand(i)}
                                 className="inline-flex items-center gap-1 text-xs font-medium text-foreground/80 hover:text-foreground"
                               >
                                 <MessageSquareText className="h-3.5 w-3.5" />
-                                Leer
+                                Ver datos
                                 <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", isOpen && "rotate-180")} />
                               </button>
-                            ) : (
-                              <span className="text-xs text-muted-foreground">—</span>
-                            )}
                           </TableCell>
                         </TableRow>
-                        {isOpen && stored && (
+                        {isOpen && (
                           <TableRow className="bg-muted/30 hover:bg-muted/30">
                             <TableCell colSpan={7} className="py-3">
                               <div className="rounded-lg border bg-background p-3">
                                 <div className="mb-1 flex items-center gap-2 text-xs text-muted-foreground">
                                   <StatusBadge status={st} />
-                                  {stored.called_at && (
-                                    <span>· {format(parseISO(stored.called_at), "d MMM HH:mm", { locale: es })}</span>
-                                  )}
+                                  {stored?.called_at && <span>· {time.format(new Date(stored.called_at))}</span>}
+                                  {stored?.duration_seconds != null && <span>· {stored.duration_seconds} s</span>}
                                 </div>
-                                <p className="text-sm leading-relaxed">{stored.summary}</p>
+                                <p className="text-sm">{o.address} · {o.date}</p>
+                                {(o.quantity || o.totalCop) && <p className="text-sm">{o.quantity ? `Unidades ${o.quantity}` : ""}{o.quantity && o.totalCop ? " · " : ""}{o.totalCop ? `$${money.format(o.totalCop)} COP` : ""}</p>}
+                                {note && <p className="mt-2 text-sm leading-relaxed">{note}</p>}
                               </div>
                             </TableCell>
                           </TableRow>
@@ -439,10 +453,10 @@ export function LlamadasModule({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {recentResults.map((r, i) => (
-                    <TableRow key={`${r.order_id ?? "sin"}-${i}`}>
+                  {recentResults.map((r) => (
+                    <TableRow key={r.id}>
                       <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
-                        {r.called_at ? format(parseISO(r.called_at), "d MMM HH:mm", { locale: es }) : "—"}
+                        {r.called_at ? time.format(new Date(r.called_at)) : "—"}
                       </TableCell>
                       <TableCell className="font-medium">
                         <span className="block max-w-[160px] truncate">{r.customer_name || r.phone || "—"}</span>
@@ -481,16 +495,16 @@ export function LlamadasModule({
                 type="button"
                 variant="outline"
                 size="sm"
-                disabled={!configured || sending || pendingIdx.length === 0}
-                onClick={() => callOrders(pendingIdx.map((i) => orders[i]), "pendientes")}
-                title="Llama a todos los que aún no están en cola"
+                disabled={!configured || !historyAvailable || sending || pendingIdx.length === 0}
+                onClick={() => callOrders(pendingIdx.slice(0, callBatchSize).map((i) => orders[i]), "pendientes")}
+                title="Envía hasta 20 pedidos pendientes por lote"
               >
                 <PhoneCall className="mr-1 h-4 w-4" />
                 Pendientes ({pendingIdx.length})
               </Button>
               <Button
                 type="button"
-                disabled={!configured || sending || selected.size === 0}
+                disabled={!configured || !historyAvailable || sending || selectedOrders().length === 0}
                 onClick={() => callOrders(selectedOrders(), "llamadas")}
               >
                 {sending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <PhoneCall className="mr-2 h-4 w-4" />}

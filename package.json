@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:production": "node --experimental-strip-types --test tests/production.test.mjs"
+    "test:production": "node --experimental-strip-types --test tests/production.test.mjs tests/calls.test.mjs"
   },
   "engines": {
     "node": "24.x"

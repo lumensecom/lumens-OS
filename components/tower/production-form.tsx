@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { useState, type FormEvent } from "react"
 import { Download, FlaskConical } from "lucide-react"
 
@@ -9,7 +10,14 @@ import { TowerField, towerInput } from "@/components/tower/field"
 const splitLines = (value: FormDataEntryValue | null) => String(value ?? "").split("\n").map((line) => line.trim()).filter(Boolean)
 const number = (value: FormDataEntryValue | null) => value === null || value === "" ? undefined : Number(value)
 
-export function ProductionForm() {
+type Source = {
+  id: string
+  title: string
+  problem: string
+  assessment?: { pack_qty: number; pack_price_cop: number; unit_cost_cop: number; variable_cost_cop: number }
+}
+
+export function ProductionForm({ source }: { source?: Source }) {
   const [pending, setPending] = useState(false)
   const [feedback, setFeedback] = useState<{ text: string; ok: boolean } | null>(null)
 
@@ -30,7 +38,9 @@ export function ProductionForm() {
       link.click()
       link.remove()
       window.setTimeout(() => URL.revokeObjectURL(url), 1000)
-      setFeedback({ text: "Paquete listo. Extrae el ZIP y abre vista-previa.html.", ok: true })
+      setFeedback({ text: data.has("opportunity")
+        ? "Paquete descargado y versión enviada al Lobby."
+        : "Paquete listo. Extrae el ZIP y abre vista-previa.html.", ok: true })
     } catch (error) {
       setFeedback({ text: error instanceof Error ? error.message : "No se pudo generar el paquete.", ok: false })
     } finally { setPending(false) }
@@ -40,6 +50,8 @@ export function ProductionForm() {
     event.preventDefault()
     const fields = new FormData(event.currentTarget)
     const payload = new FormData()
+    const submitter = (event.nativeEvent as SubmitEvent).submitter
+    if (source && submitter?.getAttribute("value") === "lobby") payload.set("opportunity", source.id)
     for (const photo of fields.getAll("photos")) payload.append("photos", photo)
     if (fields.get("p3") && !fields.get("p2")) {
       setFeedback({ text: "Indica el precio de dos unidades antes de agregar el de tres.", ok: false })
@@ -69,8 +81,13 @@ export function ProductionForm() {
     void produce(payload)
   }
 
+  const assessment = source?.assessment
+  const approvedPrice = (name: string) => assessment && name === `p${assessment.pack_qty}` ? assessment.pack_price_cop
+    : name === "unitCost" ? assessment?.unit_cost_cop : name === "fulfillment" ? assessment?.variable_cost_cop : undefined
+
   return (
     <div className="space-y-4">
+      {source && <p className="rounded-xl border bg-card p-4 text-sm">Oportunidad aprobada · <strong>{source.title}</strong></p>}
       <div className="flex flex-wrap items-center gap-3 rounded-xl border bg-card p-4">
         <Button type="button" variant="outline" disabled={pending} onClick={() => {
           const data = new FormData()
@@ -95,12 +112,12 @@ export function ProductionForm() {
           </select>
         </TowerField>
         <div className="grid gap-3 sm:grid-cols-2">
-          <TowerField label="Producto"><input className={towerInput} name="product" required maxLength={80} /></TowerField>
+          <TowerField label="Producto"><input className={towerInput} name="product" defaultValue={source?.title.slice(0, 80)} required maxLength={80} /></TowerField>
           <TowerField label="Beneficio principal comprobable"><input className={towerInput} name="benefit" maxLength={80} /></TowerField>
         </div>
         <TowerField label="Para quién"><input className={towerInput} name="audience" maxLength={220} /></TowerField>
         <TowerField label="Descripción visual para los prompts"><input className={towerInput} name="garment" maxLength={220} /></TowerField>
-        <TowerField label="Problema del comprador"><textarea className={towerInput} name="problem" maxLength={220} rows={2} /></TowerField>
+        <TowerField label="Problema del comprador"><textarea className={towerInput} name="problem" defaultValue={source?.problem.replace(/\s+/g, " ").slice(0, 220)} maxLength={220} rows={2} /></TowerField>
         <div className="grid gap-3 sm:grid-cols-2">
           <TowerField label="Hasta 5 hechos del producto, uno por línea"><textarea className={towerInput} name="facts" rows={4} /></TowerField>
           <TowerField label="3 pasos de uso, uno por línea"><textarea className={towerInput} name="steps" rows={4} /></TowerField>
@@ -116,7 +133,7 @@ export function ProductionForm() {
         </select></TowerField>
         <div className="grid gap-3 sm:grid-cols-3">
           {([["p1", "Precio 1 unidad"], ["p2", "Precio 2 unidades"], ["p3", "Precio 3 unidades (opcional)"], ["unitCost", "Costo unitario"], ["fulfillment", "Costo logístico por pedido"]] as const).map(([name, label]) =>
-            <TowerField key={name} label={label + " · COP"}><input className={towerInput} name={name} type="number" min={name === "fulfillment" ? 0 : 1} max={100000000} required={name === "p1"} /></TowerField>
+            <TowerField key={name} label={label + " · COP"}><input className={towerInput} name={name} defaultValue={approvedPrice(name)} type="number" min={name === "fulfillment" ? 0 : 1} max={100000000} required={name === "p1"} /></TowerField>
           )}
           <TowerField label="Plazo confirmado (opcional)"><input className={towerInput} name="delivery" maxLength={220} /></TowerField>
         </div>
@@ -146,7 +163,11 @@ export function ProductionForm() {
         <label className="flex items-center gap-2 text-sm"><input name="illustrative" type="checkbox" /> Las fotos son ilustrativas</label>
         <TowerField label="Fotos autorizadas · 1 a 7 · Máximo 3,5 MB en total"><input className={towerInput} name="photos" type="file" accept="image/jpeg,image/png,image/webp" multiple required /></TowerField>
         <label className="flex items-center gap-2 text-sm"><input name="hasImageRights" type="checkbox" required /> Tengo autorización para usar estas fotos</label>
-        <Button type="submit" disabled={pending}><Download className="mr-2 h-4 w-4" aria-hidden="true" /> {pending ? "Preparando entrega…" : "Generar paquete"}</Button>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button type="submit" disabled={pending}><Download className="mr-2 h-4 w-4" aria-hidden="true" /> {pending ? "Preparando entrega…" : "Generar paquete"}</Button>
+          {source && <Button type="submit" value="lobby" variant="outline" disabled={pending}>Generar y enviar al Lobby</Button>}
+          {source && <Link href="/torre/lobby" className="text-sm font-medium underline">Abrir Lobby</Link>}
+        </div>
       </form>
     </div>
   )

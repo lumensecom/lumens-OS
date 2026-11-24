@@ -1,3 +1,4 @@
+import { voiceConfig } from "@/lib/dapta"
 import { CheckCircle2, CircleDashed, Plug } from "lucide-react"
 
 import { createClient } from "@/lib/supabase/server"
@@ -54,8 +55,8 @@ export default async function ConfiguracionPage() {
     {
       name: "Dapta (Llamadas IA · Juliana)",
       detail: "Envía pedidos al flujo de voz desde /llamadas",
-      configured: Boolean(process.env.DAPTA_FLOW_WEBHOOK_URL),
-      badge: "DAPTA_FLOW_WEBHOOK_URL",
+      configured: Boolean(voiceConfig()),
+      badge: "Flujo de voz y webhook de resultados",
     },
     {
       name: "Shopify",

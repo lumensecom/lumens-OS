@@ -41,9 +41,7 @@ El `service_role` key se copia desde el dashboard de Supabase:
 
 ## Base de datos
 
-Las migraciones están en `supabase/migrations/` (orden `0001` → `0011`) y el seed en
-`supabase/seed.sql`. Ya fueron aplicadas al proyecto Supabase `lumens-os`. Para regenerar
-los tipos de TypeScript tras un cambio de esquema:
+Las migraciones están en `supabase/migrations/` y se aplican en orden. Para regenerar los tipos de TypeScript tras un cambio de esquema:
 
 ```bash
 supabase gen types typescript --project-id <ref> > lib/database.types.ts
@@ -70,6 +68,8 @@ El **primer** usuario que se registra queda como `owner` automáticamente (trigg
 La torre del propietario agrupa oficinas, rutinas, Product Lab y aprobaciones. El [manual de la torre](docs/torre.md) cubre el despliegue, el programador en Supabase y las pruebas.
 
 [Producción de landings](docs/produccion.md) reúne el flujo de las 18 oficinas, la suite de pruebas y la entrega de demostración.
+
+[Llamadas de Juliana con datos del pedido](docs/llamadas-dapta.md) cubre la migración del historial y los campos del flujo Dapta.
 
 ## Scripts
 

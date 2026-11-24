@@ -4,6 +4,8 @@ En la Torre, abre **Producción**. Elige una prueba o genera una entrega con el 
 
 El agente 3B ofrece tres estructuras validadas: corta de Vestido Pádel para moda o accesorios, explicativa de Ionfit y completa de Chaleco V-Boost. Las [instrucciones del agente](landing/agente-3b.md) también se pueden consultar en su oficina. Para arrancar, indica el producto, un precio y al menos una foto autorizada. Los costos, variantes y medios faltantes aparecen como pendientes en el informe. Empaqueta los dos bloques Liquid, la galería, la vista previa HTML, los prompts, la oferta con margen por pack, un borrador de campaña y el informe JSON. El ZIP contiene los archivos de imagen reales que entraron al flujo. El ejemplo contiene cuatro imágenes generadas para un producto ficticio.
 
+En una oportunidad aprobada, **Landing Studio → Generar archivos con el agente 3B** recupera el producto, problema, costos y pack evaluado. Adjunta las fotos y completa los precios que falten. **Generar y enviar al Lobby** descarga el ZIP y registra los dos bloques como versión pendiente. Tras la aprobación en el Lobby, se pueden descargar desde la ficha del producto.
+
 Los resultados dependen de hechos y medios aportados. La revisión sanitaria, la verificación independiente de las fuentes, la generación de nuevas fotos de un producto real, Shopify, Releasit, los anuncios y el contacto con clientes requieren sus propios datos y pruebas. El generador prepara un borrador y no publica ni contacta automáticamente.
 
 ## Enterizo Milán
@@ -14,7 +16,7 @@ En **Torre → Producción → Probar Enterizo Milán** se genera la entrega del
 
 ## Pruebas
 
-`pnpm test:production` ejecuta 55 pruebas de las entregas, sus controles y los tres formatos. Incluye el caso del Enterizo Milán, Liquid en ambos bloques, orden y consistencia de precios, medios opcionales y el informe de las 18 oficinas. GitHub Actions ejecuta esta suite antes del build.
+`pnpm test:production` ejecuta las pruebas de las entregas y llamadas. Las 55 pruebas de landings cubren los controles y los tres formatos. Incluyen el caso del Enterizo Milán, Liquid en ambos bloques, orden y consistencia de precios, medios opcionales y el informe de las 18 oficinas. GitHub Actions ejecuta esta suite antes del build.
 
 Puedes generar el ZIP desde la raíz del repositorio con Node 24:
 

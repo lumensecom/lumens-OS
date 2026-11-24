@@ -1,93 +1,84 @@
 import { NextResponse, type NextRequest } from "next/server"
 import { z } from "zod"
 
+import { createAdminClient } from "@/lib/supabase/admin"
 import { createClient } from "@/lib/supabase/server"
-import { daptaCallPayloadSchema } from "@/lib/dapta"
+import { callBatchSize, daptaCallPayloadSchema, voiceConfig, type DaptaCallPayload } from "@/lib/dapta"
 
 export const runtime = "nodejs"
 export const maxDuration = 60
 
-/**
- * Envía pedidos seleccionados al flujo de Dapta (un request por pedido).
- * El flujo dispara a Juliana para que llame al cliente.
- *
- * Configuración (env vars, nunca en el cliente):
- *  - DAPTA_FLOW_WEBHOOK_URL: URL del webhook del flujo (get_flow_webhook_url en Dapta).
- *  - DAPTA_WEBHOOK_SECRET (opcional): si el flujo valida un header compartido.
- */
-const requestSchema = z.object({
-  orders: z.array(daptaCallPayloadSchema).min(1).max(1000),
-})
-
-/** Cuántas invocaciones al webhook se disparan en paralelo por tanda. */
-const BATCH_SIZE = 20
+const requestSchema = z.object({ orders: z.array(daptaCallPayloadSchema).min(1).max(callBatchSize) })
+const guardedStates = ["despachando", "en_cola", "revisar", "confirmado", "cancelado"]
 
 export async function POST(request: NextRequest) {
-  // Solo usuarios autenticados de LUMENS OS.
-  const supabase = createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) {
-    return NextResponse.json({ error: "No autorizado" }, { status: 401 })
+  if (request.headers.get("sec-fetch-site") === "cross-site") {
+    return NextResponse.json({ error: "No autorizado" }, { status: 403 })
   }
+  const client = createClient()
+  const { data: { user } } = await client.auth.getUser()
+  if (!user) return NextResponse.json({ error: "No autorizado" }, { status: 401 })
+  const owner = await client.rpc("is_owner")
+  if (owner.error) return NextResponse.json({ error: "No se pudo verificar el acceso." }, { status: 503 })
+  if (!owner.data) return NextResponse.json({ error: "Acceso reservado al dueño." }, { status: 403 })
 
-  const webhookUrl = process.env.DAPTA_FLOW_WEBHOOK_URL
-  if (!webhookUrl) {
-    return NextResponse.json(
-      { error: "Llamadas no configuradas todavía (falta DAPTA_FLOW_WEBHOOK_URL)" },
-      { status: 503 },
-    )
-  }
+  const config = voiceConfig()
+  if (!config) return NextResponse.json({ error: "Completa la conexión y el webhook de resultados de Dapta." }, { status: 503 })
 
-  let body: unknown
-  try {
-    body = await request.json()
-  } catch {
-    return NextResponse.json({ error: "JSON inválido" }, { status: 400 })
-  }
+  const body = await request.json().catch(() => null)
+  if (body === null) return NextResponse.json({ error: "JSON inválido" }, { status: 400 })
   const parsed = requestSchema.safeParse(body)
-  if (!parsed.success) {
-    return NextResponse.json({ error: "Datos inválidos" }, { status: 422 })
+  if (!parsed.success) return NextResponse.json({ error: "Revisa número de pedido, producto, cliente, fecha, dirección, ciudad y celular. Máximo 20 por envío." }, { status: 422 })
+  if (new Set(parsed.data.orders.map((order) => order.order_id)).size !== parsed.data.orders.length) {
+    return NextResponse.json({ error: "El lote contiene un número de pedido repetido." }, { status: 422 })
   }
 
-  const secret = process.env.DAPTA_WEBHOOK_SECRET
+  const { url, webhookSecret } = config
+  const admin = createAdminClient()
   const headers: Record<string, string> = { "Content-Type": "application/json" }
-  if (secret) headers["x-webhook-secret"] = secret
+  if (webhookSecret) headers["x-webhook-secret"] = webhookSecret
 
-  const fireOne = async (order: (typeof parsed.data.orders)[number]) => {
-    try {
-      const res = await fetch(webhookUrl, {
-        method: "POST",
-        headers,
-        body: JSON.stringify(order),
-      })
-      return {
-        order_id: order.order_id,
-        phone: order.phone,
-        ok: res.ok,
-        status: res.status,
-        error: res.ok ? undefined : `HTTP ${res.status}`,
-      }
-    } catch (err) {
-      return {
-        order_id: order.order_id,
-        phone: order.phone,
-        ok: false,
-        status: 0,
-        error: (err as Error).message || "Fallo de red",
-      }
+  async function fireOne(order: DaptaCallPayload) {
+    const result = { order_id: order.order_id, phone: order.phone }
+    const prior = await admin.from("call_results").select("id, outcome")
+      .eq("order_id", order.order_id).in("outcome", guardedStates).limit(1).maybeSingle()
+    if (prior.error) return { ...result, ok: false, skipped: false, error: "No se pudo consultar el historial." }
+    if (prior.data) return { ...result, ok: false, skipped: true, state: prior.data.outcome }
+
+    const reserved = await admin.from("call_results").insert({
+      order_id: order.order_id, customer_name: order.customer_name, phone: order.phone,
+      outcome: "despachando", requested: true,
+    }).select("id").single()
+    if (reserved.error) {
+      return reserved.error.code === "23505"
+        ? { ...result, ok: false, skipped: true, state: "despachando" }
+        : { ...result, ok: false, skipped: false, error: "No se pudo registrar el intento." }
     }
+
+    let outcome = "revisar"
+    let message: string | null = "Verifica en Dapta si recibió la solicitud antes de repetirla."
+    try {
+      const res = await fetch(url, {
+        method: "POST", headers, redirect: "error", signal: AbortSignal.timeout(10_000),
+        body: JSON.stringify({ ...order, attempt_id: reserved.data.id }),
+      })
+      if (res.ok) {
+        outcome = "en_cola"
+        message = null
+      } else if (res.status >= 400 && res.status < 500 && ![408, 409, 429].includes(res.status)) {
+        outcome = "error"
+        message = `Dapta rechazó la solicitud (HTTP ${res.status}).`
+      }
+    } catch {
+      // Dapta may have accepted the request before the connection failed.
+    }
+
+    const saved = await admin.from("call_results").update({ outcome, summary: message })
+      .eq("id", reserved.data.id).eq("outcome", "despachando")
+    if (saved.error) return { ...result, ok: false, skipped: false, state: "revisar", error: "Verifica el envío en Dapta." }
+    return { ...result, ok: outcome === "en_cola", skipped: false, state: outcome, error: message ?? undefined }
   }
 
-  // Dispara en tandas (un request por pedido = una llamada) para no abrir
-  // cientos de conexiones a la vez con listas grandes.
-  const results: Awaited<ReturnType<typeof fireOne>>[] = []
-  for (let i = 0; i < parsed.data.orders.length; i += BATCH_SIZE) {
-    const batch = parsed.data.orders.slice(i, i + BATCH_SIZE)
-    results.push(...(await Promise.all(batch.map(fireOne))))
-  }
-
-  const queued = results.filter((r) => r.ok).length
-  return NextResponse.json({ queued, total: results.length, results })
+  const results = await Promise.all(parsed.data.orders.map(fireOne))
+  return NextResponse.json({ queued: results.filter((r) => r.ok).length, total: results.length, results })
 }

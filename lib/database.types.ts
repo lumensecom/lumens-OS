@@ -27,6 +27,8 @@ export type Database = {
           order_id: string | null
           outcome: string | null
           phone: string | null
+          provider_call_id: string | null
+          requested: boolean
           raw: Json | null
           success: boolean | null
           summary: string | null
@@ -41,6 +43,8 @@ export type Database = {
           order_id?: string | null
           outcome?: string | null
           phone?: string | null
+          provider_call_id?: string | null
+          requested?: boolean
           raw?: Json | null
           success?: boolean | null
           summary?: string | null
@@ -55,6 +59,8 @@ export type Database = {
           order_id?: string | null
           outcome?: string | null
           phone?: string | null
+          provider_call_id?: string | null
+          requested?: boolean
           raw?: Json | null
           success?: boolean | null
           summary?: string | null
