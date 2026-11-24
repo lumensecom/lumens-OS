@@ -2,9 +2,6 @@ import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
 import type { Database } from "@/lib/database.types"
 
-/** Rutas públicas que no requieren sesión. */
-const PUBLIC_ROUTES = ["/login"]
-
 /**
  * Refresca la sesión de Supabase en cada request y aplica las reglas de acceso:
  * - Sin sesión y ruta privada  → redirige a /login
@@ -40,18 +37,16 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   const { pathname } = request.nextUrl
-  const isPublic = PUBLIC_ROUTES.some((route) => pathname.startsWith(route))
+  const isLogin = pathname === "/login"
 
-  if (!user && !isPublic) {
-    const url = request.nextUrl.clone()
-    url.pathname = "/login"
-    return NextResponse.redirect(url)
-  }
-
-  if (user && isPublic) {
-    const url = request.nextUrl.clone()
-    url.pathname = "/"
-    return NextResponse.redirect(url)
+  if ((!user && !isLogin) || (user && isLogin)) {
+    const url = new URL(user ? "/" : "/login", request.url)
+    const redirectResponse = NextResponse.redirect(url)
+    for (const cookie of supabaseResponse.cookies.getAll()) {
+      redirectResponse.cookies.set(cookie)
+    }
+    redirectResponse.headers.set("Cache-Control", "private, no-store")
+    return redirectResponse
   }
 
   return supabaseResponse
