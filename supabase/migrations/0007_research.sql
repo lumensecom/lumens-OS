@@ -1,6 +1,6 @@
 -- LUMENS OS · 0007 · Research de productos
 create table research_products (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   name text not null,
   status text default 'candidate',             -- 'candidate', 'testing', 'winner', 'rejected'
 
@@ -41,7 +41,7 @@ create index idx_research_status on research_products(status);
 create index idx_research_score on research_products(total_score desc);
 
 create table research_references (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   research_product_id uuid references research_products(id) on delete cascade,
   ref_type text not null,                      -- 'ad', 'store', 'video', 'article'
   url text not null,

@@ -1,6 +1,6 @@
 -- LUMENS OS · 0006 · Base de conocimiento
 create table knowledge_categories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   name text not null,
   slug text unique not null,
   icon text,                                   -- lucide icon name
@@ -10,7 +10,7 @@ create table knowledge_categories (
 );
 
 create table knowledge_articles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   category_id uuid references knowledge_categories(id) on delete cascade,
   title text not null,
   slug text unique not null,
@@ -32,7 +32,7 @@ create index idx_articles_content_search on knowledge_articles
   using gin(to_tsvector('spanish', coalesce(title,'') || ' ' || coalesce(content,'')));
 
 create table knowledge_resources (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   article_id uuid references knowledge_articles(id) on delete cascade,
   name text not null,
   file_url text not null,

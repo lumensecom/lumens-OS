@@ -1,6 +1,6 @@
 -- LUMENS OS · 0009 · Pedidos y clientes (Fase 2 — tablas listas para el futuro)
 create table orders (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   dropi_order_id text unique,
   shopify_order_id text,
 
@@ -39,7 +39,7 @@ create index idx_orders_customer_phone on orders(customer_phone);
 create index idx_orders_dropi on orders(dropi_order_id);
 
 create table customers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   phone text unique not null,
   name text,
   email text,

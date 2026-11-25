@@ -1,6 +1,6 @@
 -- LUMENS OS · 0004 · Campañas + métricas diarias
 create table campaigns (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   name text not null,
   platform campaign_platform not null,
   product_id uuid references products(id) on delete set null,
@@ -18,7 +18,7 @@ create index idx_campaigns_platform on campaigns(platform);
 create index idx_campaigns_status on campaigns(status);
 
 create table campaign_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   campaign_id uuid references campaigns(id) on delete cascade,
   date date not null,
   spend numeric(10,2) not null default 0,

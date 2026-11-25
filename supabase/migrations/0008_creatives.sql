@@ -1,6 +1,6 @@
 -- LUMENS OS · 0008 · Creativos (anuncios)
 create table creatives (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   name text not null,                          -- ej: "C3 - Mi novio no es el típico"
   product_id uuid references products(id) on delete cascade,
   platform angle_platform not null,

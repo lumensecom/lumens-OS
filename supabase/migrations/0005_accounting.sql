@@ -1,7 +1,7 @@
 -- LUMENS OS · 0005 · Contabilidad (ingresos y gastos)
 -- Nota: va después de products y campaigns porque las referencia.
 create table revenue_entries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   date date not null,
   source revenue_source not null default 'shopify',
   product_id uuid references products(id) on delete set null,
@@ -16,7 +16,7 @@ create index idx_revenue_date on revenue_entries(date desc);
 create index idx_revenue_product on revenue_entries(product_id);
 
 create table expense_entries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   date date not null,
   category expense_category not null,
   amount numeric(12,2) not null,

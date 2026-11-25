@@ -1,6 +1,6 @@
 -- LUMENS OS · 0003 · Productos (+ referencias, historial de precios, vista de margen)
 create table products (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   name text not null,
   slug text unique not null,
   status product_status not null default 'testing',
@@ -51,7 +51,7 @@ from products;
 
 -- Referencias de tiendas/anuncios competidores
 create table product_references (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   product_id uuid references products(id) on delete cascade,
   ref_type text not null,                      -- 'store', 'ad', 'video'
   url text not null,
@@ -63,7 +63,7 @@ create table product_references (
 
 -- Historial de cambios de precio
 create table product_price_history (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   product_id uuid references products(id) on delete cascade,
   selling_price numeric(10,2),
   cost_dropi numeric(10,2),
